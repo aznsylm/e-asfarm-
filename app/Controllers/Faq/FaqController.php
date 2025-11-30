@@ -12,11 +12,17 @@ class FaqController extends BaseController
     {
         $faqModel = new FaqModel();
         
-        $categoryMap = ['kehamilan' => 'Bidan', 'gizi' => 'Gizi', 'farmasi' => 'Farmasi', 'etnomedisin' => 'Etnomedisin'];
-        $categoryName = $categoryMap[$name] ?? ucfirst($name);
+        $displayNames = [
+            'kehamilan' => 'Kehamilan',
+            'menyusui' => 'Menyusui',
+            'persalinan' => 'Persalinan',
+            'vaksin' => 'Vaksin',
+            'nutrisi' => 'Nutrisi',
+            'etnomedisin' => 'Etnomedisin'
+        ];
         
-        $kategori = ['name' => $name, 'display_name' => $categoryName];
-        $tanyaJawab = $faqModel->where('category', $categoryName)->findAll();
+        $kategori = ['name' => $name, 'display_name' => $displayNames[$name] ?? ucfirst($name)];
+        $tanyaJawab = $faqModel->where('category', $name)->findAll();
 
         return view('pages/tanya-jawab', compact('kategori', 'tanyaJawab'));
     }

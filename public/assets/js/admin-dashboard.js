@@ -131,9 +131,97 @@ function tolakArtikel(id) {
     }
 }
 
+function previewArtikel(id) {
+    const article = dataArticles.find(a => a.id == id);
+    if (!article) return;
+    
+    $('#previewArtikelId').val(article.id);
+    $('#previewTitle').text(article.title);
+    $('#previewCategory').text(article.category);
+    $('#previewAuthor').text(article.author_name);
+    $('#previewContent').html(article.content);
+    
+    const status = article.status || 'pending';
+    $('#previewStatus').val(status);
+    
+    const statusText = {
+        'pending': '⏳ Pending',
+        'approved': '✅ Approved',
+        'rejected': '❌ Rejected'
+    };
+    const statusClass = {
+        'pending': 'bg-warning',
+        'approved': 'bg-success',
+        'rejected': 'bg-danger'
+    };
+    $('#previewStatusBadge').text(statusText[status]).attr('class', 'badge fs-6 ' + statusClass[status]);
+    
+    const date = article.created_at ? new Date(article.created_at).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'}) : '-';
+    $('#previewDate').text(date);
+    
+    const imgPath = article.image.includes('uploads/articles/') ? article.image : 'uploads/articles/' + article.image;
+    $('#previewImage').attr('src', `${baseUrl}/${imgPath}`);
+    
+    $('#modalPreviewArtikel').modal('show');
+}
+
+function updateStatusArtikel() {
+    const id = $('#previewArtikelId').val();
+    const status = $('#previewStatus').val();
+    
+    const statusText = {
+        'pending': 'Pending (Menunggu Review)',
+        'approved': 'Approved (Publish ke Publik)',
+        'rejected': 'Rejected (Tidak Disetujui)'
+    };
+    
+    if(confirm(`Ubah status artikel menjadi ${statusText[status]}?`)) {
+        $.post(`${baseUrl}/admin/artikel/update-status/${id}`, {status: status}, function(res) {
+            alert(res.message);
+            if(res.success) {
+                $('#modalPreviewArtikel').modal('hide');
+                location.reload();
+            }
+        });
+    }
+}
+
+function quickApprove() {
+    $('#previewStatus').val('approved');
+    updateStatusArtikel();
+}
+
+function quickPending() {
+    $('#previewStatus').val('pending');
+    updateStatusArtikel();
+}
+
+function quickReject() {
+    $('#previewStatus').val('rejected');
+    updateStatusArtikel();
+}
+
+function editArtikelFromPreview() {
+    const id = $('#previewArtikelId').val();
+    $('#modalPreviewArtikel').modal('hide');
+    setTimeout(() => editArtikel(id), 300);
+}
+
+function hapusArtikelFromPreview() {
+    const id = $('#previewArtikelId').val();
+    $('#modalPreviewArtikel').modal('hide');
+    setTimeout(() => hapusArtikel(id), 300);
+}
+
 // FAQ
 $('#formFaq').on('submit', function(e) {
     e.preventDefault();
+    
+    // Sync CKEditor content
+    if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances.jawabanFaq) {
+        CKEDITOR.instances.jawabanFaq.updateElement();
+    }
+    
     const id = $('#faqId').val();
     const url = id ? `${baseUrl}/admin/faq/ubah/${id}` : `${baseUrl}/admin/faq/tambah`;
     
@@ -153,7 +241,14 @@ function editFaq(id) {
     $('#faqId').val(faq.id);
     $('#formFaq [name="category"]').val(faq.category);
     $('[name="pertanyaan"]').val(faq.pertanyaan);
-    $('[name="jawaban"]').val(faq.jawaban);
+    
+    // Set CKEditor content
+    if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances.jawabanFaq) {
+        CKEDITOR.instances.jawabanFaq.setData(faq.jawaban || '');
+    } else {
+        $('[name="jawaban"]').val(faq.jawaban);
+    }
+    
     $('#modalFaq').modal('show');
 }
 
@@ -219,6 +314,9 @@ $('.modal').on('hidden.bs.modal', function() {
     // Reset CKEditor
     if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances.contentArtikel) {
         CKEDITOR.instances.contentArtikel.setData('');
+    }
+    if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances.jawabanFaq) {
+        CKEDITOR.instances.jawabanFaq.setData('');
     }
     
     // Reset password fields

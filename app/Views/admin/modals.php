@@ -233,10 +233,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         <label>Kategori *</label>
                         <select class="form-select form-select-sm" name="category" required>
                             <option value="">Pilih</option>
-                            <option value="Farmasi">Farmasi</option>
-                            <option value="Gizi">Gizi</option>
-                            <option value="Bidan">Bidan</option>
-                            <option value="Etnomedisin">Etnomedisin</option>
+                            <option value="kehamilan">Kehamilan</option>
+                            <option value="menyusui">Menyusui</option>
+                            <option value="persalinan">Persalinan</option>
+                            <option value="vaksin">Vaksin</option>
+                            <option value="nutrisi">Nutrisi</option>
+                            <option value="etnomedisin">Etnomedisin</option>
                         </select>
                     </div>
                     <div class="mb-2">
@@ -245,7 +247,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <div class="mb-2">
                         <label>Jawaban *</label>
-                        <textarea class="form-control form-control-sm" name="jawaban" rows="5" required></textarea>
+                        <textarea class="form-control form-control-sm" name="jawaban" id="jawabanFaq" rows="5" required></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -253,6 +255,104 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Preview Artikel -->
+<div class="modal fade" id="modalPreviewArtikel" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="bi bi-eye"></i> Preview & Kelola Artikel</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="row g-0">
+                    <div class="col-lg-8 border-end">
+                        <div class="p-4">
+                            <img id="previewImage" class="img-fluid rounded shadow-sm mb-4" style="max-height: 400px; width: 100%; object-fit: cover;">
+                            <div class="mb-3">
+                                <span class="badge bg-info fs-6 me-2" id="previewCategory"></span>
+                                <span class="badge bg-secondary fs-6" id="previewStatusBadge"></span>
+                            </div>
+                            <h2 class="fw-bold mb-3" id="previewTitle"></h2>
+                            <div class="d-flex align-items-center text-muted mb-4">
+                                <i class="bi bi-person-circle me-2"></i>
+                                <span id="previewAuthor"></span>
+                                <i class="bi bi-calendar3 ms-3 me-2"></i>
+                                <span id="previewDate"></span>
+                            </div>
+                            <hr>
+                            <div id="previewContent" class="article-content" style="line-height: 1.8; font-size: 1.05rem;"></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 bg-light">
+                        <div class="p-4">
+                            <input type="hidden" id="previewArtikelId">
+                            <h6 class="fw-bold mb-3"><i class="bi bi-gear"></i> Panel Kelola</h6>
+                            
+                            <div class="card mb-3 shadow-sm">
+                                <div class="card-header bg-white">
+                                    <h6 class="mb-0 fw-semibold"><i class="bi bi-flag"></i> Ubah Status</h6>
+                                </div>
+                                <div class="card-body">
+                                    <label class="form-label">Pilih Status Artikel</label>
+                                    <select class="form-select mb-3" id="previewStatus">
+                                        <option value="pending">⏳ Pending - Menunggu Review</option>
+                                        <option value="approved">✅ Approved - Publish ke Publik</option>
+                                        <option value="rejected">❌ Rejected - Tidak Disetujui</option>
+                                    </select>
+                                    <div class="d-grid">
+                                        <button class="btn btn-primary" onclick="updateStatusArtikel()">
+                                            <i class="bi bi-save"></i> Update Status
+                                        </button>
+                                    </div>
+                                    <small class="text-muted mt-2 d-block">
+                                        <i class="bi bi-info-circle"></i> Status bisa diubah kapan saja
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            
+                            <div class="card mb-3 shadow-sm">
+                                <div class="card-header bg-white">
+                                    <h6 class="mb-0 fw-semibold"><i class="bi bi-lightning"></i> Quick Actions</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-success btn-sm" onclick="quickApprove()">
+                                            <i class="bi bi-check-circle-fill"></i> Setujui & Publish
+                                        </button>
+                                        <button class="btn btn-warning btn-sm" onclick="quickPending()">
+                                            <i class="bi bi-clock-fill"></i> Ubah ke Pending
+                                        </button>
+                                        <button class="btn btn-danger btn-sm" onclick="quickReject()">
+                                            <i class="bi bi-x-circle-fill"></i> Tolak Artikel
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card shadow-sm">
+                                <div class="card-header bg-white">
+                                    <h6 class="mb-0 fw-semibold"><i class="bi bi-pencil-square"></i> Aksi Lainnya</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-warning" onclick="editArtikelFromPreview()">
+                                            <i class="bi bi-pencil"></i> Edit Artikel
+                                        </button>
+                                        <button class="btn btn-outline-danger" onclick="hapusArtikelFromPreview()">
+                                            <i class="bi bi-trash"></i> Hapus Artikel
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -313,6 +413,13 @@ if (document.getElementById('contentArtikel')) {
     CKEDITOR.replace('contentArtikel', {
         height: 300,
         removeButtons: 'Save,NewPage,Preview,Print,Templates,Cut,Copy,Paste,PasteText,PasteFromWord,Undo,Redo,Find,Replace,SelectAll,Scayt,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,Strike,Subscript,Superscript,CopyFormatting,RemoveFormat,Outdent,Indent,CreateDiv,Blockquote,BidiLtr,BidiRtl,Language,Unlink,Anchor,Image,Flash,Table,HorizontalRule,Smiley,SpecialChar,PageBreak,Iframe,Maximize,ShowBlocks,About'
+    });
+}
+
+if (document.getElementById('jawabanFaq')) {
+    CKEDITOR.replace('jawabanFaq', {
+        height: 250,
+        removeButtons: 'Save,NewPage,Preview,Print,Templates'
     });
 }
 

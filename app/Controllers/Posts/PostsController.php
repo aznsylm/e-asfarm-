@@ -68,6 +68,24 @@ class PostsController extends BaseController
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
 
+        // Track views dengan session (unique per session)
+        $session = session();
+        $viewedArticles = $session->get('viewed_articles') ?? [];
+        
+        if (!in_array($artikel['id'], $viewedArticles)) {
+            // Increment views
+            $articleModel->set('views', 'views + 1', false)
+                        ->where('id', $artikel['id'])
+                        ->update();
+            
+            // Simpan ke session
+            $viewedArticles[] = $artikel['id'];
+            $session->set('viewed_articles', $viewedArticles);
+            
+            // Refresh data artikel untuk mendapatkan views terbaru
+            $artikel = $articleModel->find($artikel['id']);
+        }
+
         $numCategories = [
             ['name' => 'Farmasi', 'id' => 1, 'count_posts' => $articleModel->where(['category' => 'Farmasi', 'status' => 'approved'])->countAllResults(false)],
             ['name' => 'Gizi', 'id' => 2, 'count_posts' => $articleModel->where(['category' => 'Gizi', 'status' => 'approved'])->countAllResults(false)],

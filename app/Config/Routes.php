@@ -94,6 +94,7 @@ $routes->group('admin', ['filter' => 'admin'], function ($routes) {
     $routes->post('artikel/hapus/(:num)', 'Admin\Dashboard::hapusArtikel/$1');
     $routes->post('artikel/setujui/(:num)', 'Admin\Dashboard::setujuiArtikel/$1');
     $routes->post('artikel/tolak/(:num)', 'Admin\Dashboard::tolakArtikel/$1');
+    $routes->post('artikel/update-status/(:num)', 'Admin\Dashboard::updateStatusArtikel/$1');
     
     // FAQ
     $routes->post('faq/tambah', 'Admin\Dashboard::tambahFaq');
@@ -158,6 +159,7 @@ $routes->group('admin', ['filter' => 'admin'], function ($routes) {
     $routes->get('pinjau-artikel/(:num)', 'Admins\AdminsController::pinjauPost/$1', ['as' => 'admin.pinjau.artikel']);
     $routes->post('setujui-artikel/(:num)', 'Admins\AdminsController::approvePost/$1', ['as' => 'admin.setujui.artikel']);
     $routes->post('tolak-artikel/(:num)', 'Admins\AdminsController::rejectPost/$1', ['as' => 'admin.tolak.artikel']);
+    $routes->post('update-status-artikel/(:num)', 'Admins\AdminsController::updateStatusPost/$1', ['as' => 'admin.update.status.artikel']);
 
     // kelola tanya jawab
     $routes->get('semua-tanya-jawab', 'Admins\AdminsFaqController::index',['as' => 'admin.semua.tanya.jawab']);

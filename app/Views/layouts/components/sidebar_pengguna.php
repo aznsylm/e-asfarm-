@@ -5,6 +5,13 @@
     </div>
     
     <ul class="sidebar-menu">
+        <li class="menu-item">
+            <a href="<?= base_url('/') ?>">
+                <i class="ti ti-home"></i>
+                <span>Halaman Beranda</span>
+            </a>
+        </li>
+        
         <li class="menu-item <?= url_is('pengguna/dashboard') ? 'active' : '' ?>">
             <a href="<?= base_url('pengguna/dashboard') ?>">
                 <i class="ti ti-dashboard"></i>

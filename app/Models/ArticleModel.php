@@ -11,7 +11,7 @@ class ArticleModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['title', 'slug', 'seo_title', 'meta_description', 'content', 'category', 'image', 'author_id', 'author_name', 'status', 'approved_by', 'approved_at'];
+    protected $allowedFields = ['title', 'slug', 'seo_title', 'meta_description', 'content', 'category', 'image', 'author_id', 'author_name', 'status', 'views', 'approved_by', 'approved_at'];
     protected $useTimestamps = true;
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';

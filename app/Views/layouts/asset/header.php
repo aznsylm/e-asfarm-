@@ -106,10 +106,12 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <?php if($isAdmin): ?>
-                                            <li><a class="dropdown-item" href="<?= base_url('admin/dashboard') ?>"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
-                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item" href="<?= base_url('admin/dashboard') ?>"><i class="fas fa-tachometer-alt me-2"></i>Dashboard Admin</a></li>
+                                        <?php else: ?>
+                                            <li><a class="dropdown-item" href="<?= base_url('pengguna/dashboard') ?>"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
                                         <?php endif; ?>
-                                        <li><a class="dropdown-item" href="<?= base_url('logout') ?>"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="<?= base_url('logout') ?>"><i class="fas fa-sign-out-alt me-2"></i>Keluar</a></li>
                                     </ul>
                                 </div>
                             <?php endif; ?>

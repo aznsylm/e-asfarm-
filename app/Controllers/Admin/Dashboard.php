@@ -408,6 +408,38 @@ class Dashboard extends BaseController
         return $this->response->setJSON(['success' => false, 'message' => 'Gagal menolak artikel']);
     }
 
+    public function updateStatusArtikel($id)
+    {
+        $this->response->setContentType('application/json');
+        $status = $this->request->getPost('status');
+
+        if (!in_array($status, ['pending', 'approved', 'rejected'])) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Status tidak valid']);
+        }
+
+        $data = ['status' => $status];
+        
+        if ($status === 'approved') {
+            $user = $this->getAuthUser();
+            $data['approved_by'] = $user->id;
+            $data['approved_at'] = date('Y-m-d H:i:s');
+        } else {
+            $data['approved_by'] = null;
+            $data['approved_at'] = null;
+        }
+
+        if ($this->articleModel->update($id, $data)) {
+            $statusText = [
+                'pending' => 'Pending',
+                'approved' => 'Approved & Published',
+                'rejected' => 'Rejected'
+            ];
+            return $this->response->setJSON(['success' => true, 'message' => 'Status artikel berhasil diubah menjadi ' . $statusText[$status]]);
+        }
+
+        return $this->response->setJSON(['success' => false, 'message' => 'Gagal mengubah status artikel']);
+    }
+
     // CRUD FAQ
     public function tambahFaq()
     {

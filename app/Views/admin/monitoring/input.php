@@ -6,7 +6,10 @@
 <div class="container-fluid">
     <div class="row mb-4">
         <div class="col-12">
-            <h2>Input Data Monitoring Kesehatan</h2>
+            <a href="<?= base_url('admin/monitoring/ibu-hamil') ?>" class="btn btn-outline-secondary btn-sm mb-2">
+                <i class="ti ti-arrow-left"></i> Kembali
+            </a>
+            <h2>Input Data Monitoring Ibu Hamil</h2>
             <p class="text-muted">Form Input 7 Tahap - Kesehatan Ibu Hamil dan Menyusui</p>
         </div>
     </div>
@@ -49,40 +52,40 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Nama Ibu *</label>
-                                    <input type="text" name="nama_ibu" class="form-control" required>
+                                    <input type="text" name="nama_ibu" class="form-control" placeholder="Contoh: Siti Aminah" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Nama Suami *</label>
-                                    <input type="text" name="nama_suami" class="form-control" required>
+                                    <input type="text" name="nama_suami" class="form-control" placeholder="Contoh: Ahmad Fauzi" required>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Usia Ibu (tahun) *</label>
-                                    <input type="number" name="usia_ibu" class="form-control" min="15" max="50" required>
+                                    <input type="number" name="usia_ibu" class="form-control" min="15" max="50" placeholder="Contoh: 25" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Usia Suami (tahun) *</label>
-                                    <input type="number" name="usia_suami" class="form-control" min="18" max="70" required>
+                                    <input type="number" name="usia_suami" class="form-control" min="18" max="70" placeholder="Contoh: 28" required>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label">Alamat *</label>
-                                    <textarea name="alamat" class="form-control" rows="3" required></textarea>
+                                    <textarea name="alamat" class="form-control" rows="3" placeholder="Contoh: Jl. Mawar No. 10, RT 02/RW 05" required></textarea>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Nomor Telepon *</label>
-                                    <input type="tel" name="nomor_telepon" class="form-control" required>
+                                    <input type="tel" name="nomor_telepon" class="form-control" placeholder="Contoh: 081234567890" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Usia Kehamilan (bulan) *</label>
-                                    <input type="number" name="usia_kehamilan" class="form-control" min="1" max="9" required>
+                                    <input type="number" name="usia_kehamilan" class="form-control" min="1" max="9" placeholder="Contoh: 5" required>
                                 </div>
                             </div>
 
@@ -106,18 +109,18 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Berat Badan (kg) *</label>
-                                    <input type="number" name="berat_badan" class="form-control" step="0.1" min="30" max="150" required>
+                                    <input type="number" name="berat_badan" class="form-control" step="0.1" min="30" max="150" placeholder="Contoh: 55.5" required>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Tinggi Badan (cm) *</label>
-                                    <input type="number" name="tinggi_badan" class="form-control" step="0.1" min="130" max="200" required>
+                                    <input type="number" name="tinggi_badan" class="form-control" step="0.1" min="130" max="200" placeholder="Contoh: 160.0" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Lila - Lingkar Lengan Atas (cm) *</label>
-                                    <input type="number" name="lila" class="form-control" step="0.1" min="15" max="50" required>
+                                    <input type="number" name="lila" class="form-control" step="0.1" min="15" max="50" placeholder="Contoh: 28.5" required>
                                 </div>
                             </div>
                         </div>

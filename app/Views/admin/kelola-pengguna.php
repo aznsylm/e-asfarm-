@@ -31,8 +31,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php $no=1; foreach($users as $u): ?>
-                    <?php if($u['role'] === 'pengguna'): ?>
+                    <?php 
+                    $no = 1 + (10 * ((isset($_GET['page']) ? $_GET['page'] : 1) - 1));
+                    foreach($users as $u): 
+                    if($u['role'] === 'pengguna'): 
+                    ?>
                     <tr>
                         <td><?= $no++ ?></td>
                         <td><?= esc($u['username']) ?></td>
@@ -55,10 +58,14 @@
                             <button class="btn btn-danger btn-sm" onclick="hapusPengguna(<?= $u['id'] ?>)"><i class="bi bi-trash"></i></button>
                         </td>
                     </tr>
-                    <?php endif; ?>
-                    <?php endforeach; ?>
+                    <?php endif; endforeach; ?>
                 </tbody>
             </table>
+            <?php if($pager): ?>
+            <div class="mt-3">
+                <?= $pager->links() ?>
+            </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>

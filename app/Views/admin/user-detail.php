@@ -4,7 +4,7 @@
 <div class="container-fluid">
     <div class="row mb-3">
         <div class="col-12">
-            <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-secondary btn-sm">
+            <a href="<?= base_url('admin/kelola-pengguna') ?>" class="btn btn-secondary btn-sm">
                 <i class="bi bi-arrow-left"></i> Kembali
             </a>
         </div>
@@ -28,15 +28,7 @@
                             <td>: <?= esc($user['email']) ?></td>
                         </tr>
                         <tr>
-                            <th>Nama Lengkap</th>
-                            <td>: <?= esc($user['full_name'] ?? '-') ?></td>
-                        </tr>
-                        <tr>
-                            <th>NIK</th>
-                            <td>: <?= esc($user['nik'] ?? '-') ?></td>
-                        </tr>
-                        <tr>
-                            <th>No. Telepon</th>
+                            <th>No. WhatsApp</th>
                             <td>: <?= esc($user['phone_number'] ?? '-') ?></td>
                         </tr>
                     </table>
@@ -44,20 +36,8 @@
                 <div class="col-md-6">
                     <table class="table table-sm table-borderless">
                         <tr>
-                            <th width="150">Jenis Kelamin</th>
-                            <td>: <?= esc($user['gender'] ?? '-') ?></td>
-                        </tr>
-                        <tr>
-                            <th>Tanggal Lahir</th>
-                            <td>: <?= $user['birth_date'] ? date('d-m-Y', strtotime($user['birth_date'])) : '-' ?></td>
-                        </tr>
-                        <tr>
-                            <th>Padukuhan</th>
+                            <th width="150">Padukuhan</th>
                             <td>: <?= $padukuhan ? esc($padukuhan['nama_padukuhan']) : '-' ?></td>
-                        </tr>
-                        <tr>
-                            <th>Alamat</th>
-                            <td>: <?= esc($user['address'] ?? '-') ?></td>
                         </tr>
                         <tr>
                             <th>Role</th>
@@ -69,111 +49,93 @@
         </div>
     </div>
 
-    <?php if ($monitoring): ?>
-    <!-- Data Identitas Ibu Hamil -->
-    <?php if ($identitas): ?>
-    <div class="card mb-3">
-        <div class="card-header bg-success text-white">
-            <h5 class="mb-0"><i class="bi bi-clipboard-data"></i> Data Identitas Ibu Hamil</h5>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <table class="table table-sm table-borderless">
-                        <tr>
-                            <th width="200">Nama Ibu</th>
-                            <td>: <?= esc($identitas['nama_ibu']) ?></td>
-                        </tr>
-                        <tr>
-                            <th>Nama Suami</th>
-                            <td>: <?= esc($identitas['nama_suami']) ?></td>
-                        </tr>
-                        <tr>
-                            <th>Usia Ibu</th>
-                            <td>: <?= esc($identitas['usia_ibu']) ?> tahun</td>
-                        </tr>
-                        <tr>
-                            <th>Usia Suami</th>
-                            <td>: <?= esc($identitas['usia_suami']) ?> tahun</td>
-                        </tr>
-                    </table>
+    <!-- Tab Navigation -->
+    <ul class="nav nav-tabs" role="tablist">
+        <?php if ($monitoring): ?>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#ibu-hamil" type="button">Data Ibu Hamil</button>
+        </li>
+        <?php endif; ?>
+        <?php if ($monitoringBalita): ?>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link<?= !$monitoring ? ' active' : '' ?>" data-bs-toggle="tab" data-bs-target="#balita" type="button">Data Balita & Anak</button>
+        </li>
+        <?php endif; ?>
+        <?php if ($monitoringRemaja): ?>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link<?= !$monitoring && !$monitoringBalita ? ' active' : '' ?>" data-bs-toggle="tab" data-bs-target="#remaja" type="button">Data Remaja</button>
+        </li>
+        <?php endif; ?>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content mt-3">
+        <?php if ($monitoring): ?>
+        <!-- Tab Ibu Hamil -->
+        <div class="tab-pane fade show active" id="ibu-hamil" role="tabpanel">
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Data Identitas Ibu Hamil</h5>
                 </div>
-                <div class="col-md-6">
-                    <table class="table table-sm table-borderless">
-                        <tr>
-                            <th width="200">Alamat</th>
-                            <td>: <?= esc($identitas['alamat']) ?></td>
-                        </tr>
-                        <tr>
-                            <th>Nomor Telepon</th>
-                            <td>: <?= esc($identitas['nomor_telepon']) ?></td>
-                        </tr>
-                        <tr>
-                            <th>Usia Kehamilan</th>
-                            <td>: <?= esc($identitas['usia_kehamilan']) ?> minggu</td>
-                        </tr>
-                        <tr>
-                            <th>Rencana Persalinan</th>
-                            <td>: <?= date('d-m-Y', strtotime($identitas['rencana_tanggal_persalinan'])) ?></td>
-                        </tr>
-                    </table>
+                <div class="card-body">
+                    <?php if ($identitas): ?>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-sm table-borderless">
+                                <tr><th width="200">Nama Ibu</th><td>: <?= esc($identitas['nama_ibu']) ?></td></tr>
+                                <tr><th>Nama Suami</th><td>: <?= esc($identitas['nama_suami']) ?></td></tr>
+                                <tr><th>Usia Ibu</th><td>: <?= esc($identitas['usia_ibu']) ?> tahun</td></tr>
+                                <tr><th>Usia Suami</th><td>: <?= esc($identitas['usia_suami']) ?> tahun</td></tr>
+                                <tr><th>Usia Kehamilan</th><td>: <?= esc($identitas['usia_kehamilan']) ?> minggu</td></tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-sm table-borderless">
+                                <tr><th width="200">Alamat</th><td>: <?= esc($identitas['alamat']) ?></td></tr>
+                                <tr><th>Nomor Telepon</th><td>: <?= esc($identitas['nomor_telepon']) ?></td></tr>
+                                <tr><th>Rencana Persalinan</th><td>: <?= date('d-m-Y', strtotime($identitas['rencana_tanggal_persalinan'])) ?></td></tr>
+                                <?php if ($skrining): ?>
+                                <tr><th>Tempat Persalinan</th><td>: <?= esc($skrining['tempat_persalinan']) ?></td></tr>
+                                <tr><th>Penolong Persalinan</th><td>: <?= esc($skrining['penolong_persalinan']) ?></td></tr>
+                                <?php endif; ?>
+                            </table>
+                        </div>
+                    </div>
+                    <?php if ($riwayat): ?>
+                    <div class="mt-3">
+                        <strong>Riwayat Penyakit:</strong>
+                        <?php if ($riwayat['tidak_ada_riwayat'] === '1'): ?>
+                            <span class="text-success"> Tidak ada riwayat penyakit</span>
+                        <?php else: ?>
+                            <p class="mb-0 mt-1"><?= esc($riwayat['riwayat_penyakit']) ?></p>
+                        <?php endif; ?>
+                    </div>
+                    <?php endif; ?>
+                    <?php else: ?>
+                    <p class="text-muted">Data identitas belum lengkap</p>
+                    <?php endif; ?>
                 </div>
             </div>
-        </div>
-    </div>
-    <?php endif; ?>
+            
 
-    <!-- Riwayat Penyakit -->
-    <?php if ($riwayat): ?>
-    <div class="card mb-3">
-        <div class="card-header bg-warning">
-            <h5 class="mb-0"><i class="bi bi-heart-pulse"></i> Riwayat Penyakit</h5>
-        </div>
-        <div class="card-body">
-            <?php if ($riwayat['tidak_ada_riwayat'] === '1'): ?>
-                <p class="text-success mb-0"><i class="bi bi-check-circle"></i> Tidak ada riwayat penyakit</p>
-            <?php else: ?>
-                <p class="mb-0"><?= esc($riwayat['riwayat_penyakit']) ?></p>
-            <?php endif; ?>
-        </div>
-    </div>
-    <?php endif; ?>
-
-    <!-- Skrining -->
-    <?php if ($skrining): ?>
-    <div class="card mb-3">
-        <div class="card-header bg-info text-white">
-            <h5 class="mb-0"><i class="bi bi-hospital"></i> Data Skrining</h5>
-        </div>
-        <div class="card-body">
-            <table class="table table-sm table-borderless">
-                <tr>
-                    <th width="200">Tempat Persalinan</th>
-                    <td>: <?= esc($skrining['tempat_persalinan']) ?></td>
-                </tr>
-                <tr>
-                    <th>Penolong Persalinan</th>
-                    <td>: <?= esc($skrining['penolong_persalinan']) ?></td>
-                </tr>
-            </table>
-        </div>
-    </div>
-    <?php endif; ?>
-
-    <!-- Riwayat Kunjungan -->
     <div class="card">
-        <div class="card-header bg-dark text-white">
-            <h5 class="mb-0"><i class="bi bi-calendar-check"></i> Riwayat Kunjungan (<?= count($kunjunganList) ?> kunjungan)</h5>
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Riwayat Kunjungan (<?= count($kunjunganList) ?> kunjungan)</h5>
         </div>
         <div class="card-body">
             <?php if (empty($kunjunganList)): ?>
                 <p class="text-muted">Belum ada data kunjungan</p>
             <?php else: ?>
-                <?php foreach ($kunjunganList as $k): ?>
-                <div class="border rounded p-3 mb-3">
-                    <h6 class="text-primary">Kunjungan ke-<?= $k['kunjungan_ke'] ?> 
-                        <small class="text-muted">(<?= date('d-m-Y', strtotime($k['tanggal_kunjungan'])) ?>)</small>
-                    </h6>
+                <div class="accordion" id="accordionIbuHamil">
+                <?php foreach ($kunjunganList as $idx => $k): ?>
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button<?= $k['kunjungan_ke'] > 1 ? ' collapsed' : '' ?>" type="button" data-bs-toggle="collapse" data-bs-target="#kunjungan-<?= $k['id'] ?>">
+                            Kunjungan ke-<?= $k['kunjungan_ke'] ?> <small class="text-muted ms-2">(<?= date('d-m-Y', strtotime($k['tanggal_kunjungan'])) ?>)</small>
+                        </button>
+                    </h2>
+                    <div id="kunjungan-<?= $k['id'] ?>" class="accordion-collapse collapse<?= $k['kunjungan_ke'] === 1 ? ' show' : '' ?>" data-bs-parent="#accordionIbuHamil">
+                        <div class="accordion-body">
                     
                     <?php if ($k['antropometri']): ?>
                     <div class="mt-2">
@@ -189,7 +151,16 @@
 
                     <?php if ($k['keluhan']): ?>
                     <div class="mt-2">
-                        <strong>Keluhan:</strong> <?= esc($k['keluhan']['keluhan']) ?>
+                        <strong>Keluhan:</strong>
+                        <ul class="mb-1">
+                            <?php 
+                            $keluhan = str_replace(['[', ']', '"'], '', $k['keluhan']['keluhan']);
+                            $keluhanArray = array_filter(array_map('trim', explode(',', $keluhan)));
+                            foreach ($keluhanArray as $item): 
+                            ?>
+                            <li><?= esc($item) ?></li>
+                            <?php endforeach; ?>
+                        </ul>
                     </div>
                     <?php endif; ?>
 
@@ -208,26 +179,383 @@
                     <?php if ($k['etnomedisin']): ?>
                     <div class="mt-2">
                         <strong>Etnomedisin:</strong>
-                        <?php if ($k['etnomedisin']['menggunakan_obat_tradisional'] === '1'): ?>
-                            <ul class="mb-1">
-                                <li>Jenis: <?= esc($k['etnomedisin']['jenis_obat']) ?></li>
-                                <li>Tujuan: <?= esc($k['etnomedisin']['tujuan_penggunaan']) ?></li>
-                                <li>Dosis: <?= esc($k['etnomedisin']['dosis_frekuensi']) ?></li>
-                            </ul>
-                        <?php else: ?>
-                            <span class="text-muted">Tidak menggunakan obat tradisional</span>
-                        <?php endif; ?>
+                        <?php 
+                        $etnoList = [];
+                        if ($k['etnomedisin']['jenis_obat']) {
+                            $jenis = str_replace(['[', ']', '"'], '', $k['etnomedisin']['jenis_obat']);
+                            $etnoList[] = 'Jenis: ' . esc($jenis);
+                        }
+                        if ($k['etnomedisin']['tujuan_penggunaan']) {
+                            $tujuan = str_replace(['[', ']', '"'], '', $k['etnomedisin']['tujuan_penggunaan']);
+                            $etnoList[] = 'Tujuan: ' . esc($tujuan);
+                        }
+                        if ($k['etnomedisin']['edukasi_diberikan']) {
+                            $edukasi = str_replace(['[', ']', '"'], '', $k['etnomedisin']['edukasi_diberikan']);
+                            $etnoList[] = 'Edukasi: ' . esc($edukasi);
+                        }
+                        
+                        if (!empty($etnoList)) {
+                            echo implode(', ', $etnoList);
+                        } else {
+                            echo $k['etnomedisin']['menggunakan_obat_tradisional'] == '1' ? 'Menggunakan obat tradisional' : 'Tidak menggunakan obat tradisional';
+                        }
+                        ?>
                     </div>
                     <?php endif; ?>
+                        </div>
+                    </div>
                 </div>
                 <?php endforeach; ?>
+                </div>
             <?php endif; ?>
         </div>
     </div>
 
-    <?php else: ?>
-    <div class="alert alert-info">
-        <i class="bi bi-info-circle"></i> Pengguna ini belum memiliki data monitoring kesehatan.
+        </div>
+        <?php endif; ?>
+
+        <?php if ($monitoringBalita): ?>
+        <!-- Tab Balita -->
+        <div class="tab-pane fade<?= !$monitoring ? ' show active' : '' ?>" id="balita" role="tabpanel">
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Data Identitas Balita</h5>
+                </div>
+                <div class="card-body">
+                    <?php if ($identitasBalita): ?>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-sm table-borderless">
+                                <tr><th width="200">Nama Anak</th><td>: <?= esc($identitasBalita['nama_anak'] ?? '-') ?></td></tr>
+                                <tr><th>Tanggal Lahir</th><td>: <?= $identitasBalita['tanggal_lahir'] ? date('d-m-Y', strtotime($identitasBalita['tanggal_lahir'])) : '-' ?></td></tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-sm table-borderless">
+                                <tr><th width="200">Nama Wali</th><td>: <?= esc($identitasBalita['nama_wali'] ?? '-') ?></td></tr>
+                                <tr><th>No. HP Wali</th><td>: <?= esc($identitasBalita['no_hp_wali'] ?? '-') ?></td></tr>
+                            </table>
+                        </div>
+                    </div>
+                    <?php else: ?>
+                    <p class="text-muted">Data identitas belum lengkap</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Riwayat Kunjungan (<?= count($kunjunganBalita) ?> kunjungan)</h5>
+                </div>
+                <div class="card-body">
+                    <?php if (empty($kunjunganBalita)): ?>
+                        <p class="text-muted">Belum ada data kunjungan</p>
+                    <?php else: ?>
+                        <div class="accordion" id="accordionBalita">
+                        <?php foreach ($kunjunganBalita as $idx => $kb): ?>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button<?= $kb['kunjungan_ke'] > 1 ? ' collapsed' : '' ?>" type="button" data-bs-toggle="collapse" data-bs-target="#kunjungan-balita-<?= $kb['id'] ?>">
+                                    Kunjungan ke-<?= $kb['kunjungan_ke'] ?> <small class="text-muted ms-2">(<?= date('d-m-Y', strtotime($kb['tanggal_kunjungan'])) ?>)</small>
+                                </button>
+                            </h2>
+                            <div id="kunjungan-balita-<?= $kb['id'] ?>" class="accordion-collapse collapse<?= $kb['kunjungan_ke'] === 1 ? ' show' : '' ?>" data-bs-parent="#accordionBalita">
+                                <div class="accordion-body">
+                                    <?php if ($kb['antropometri']): ?>
+                                    <div class="mb-2">
+                                        <strong>Antropometri:</strong>
+                                        <?php 
+                                        $antropometriList = [];
+                                        if ($kb['antropometri']['berat_badan']) {
+                                            $bb = floatval($kb['antropometri']['berat_badan']);
+                                            $antropometriList[] = 'BB: ' . ($bb == intval($bb) ? intval($bb) : $bb) . ' kg';
+                                        }
+                                        if ($kb['antropometri']['tinggi_badan']) {
+                                            $tb = floatval($kb['antropometri']['tinggi_badan']);
+                                            $antropometriList[] = 'TB: ' . ($tb == intval($tb) ? intval($tb) : $tb) . ' cm';
+                                        }
+                                        if ($kb['antropometri']['lingkar_kepala']) {
+                                            $lk = floatval($kb['antropometri']['lingkar_kepala']);
+                                            $antropometriList[] = 'LK: ' . ($lk == intval($lk) ? intval($lk) : $lk) . ' cm';
+                                        }
+                                        echo !empty($antropometriList) ? implode(', ', $antropometriList) : 'Tidak ada data';
+                                        ?>
+                                    </div>
+                                    <?php else: ?>
+                                    <div class="mb-2"><strong>Antropometri:</strong> Tidak ada data</div>
+                                    <?php endif; ?>
+                                    
+                                    <?php if ($kb['keluhan']): ?>
+                                    <div class="mt-2">
+                                        <strong>Keluhan:</strong>
+                                        <?php 
+                                        $keluhanList = [];
+                                        if ($kb['keluhan']['batuk']) $keluhanList[] = 'Batuk';
+                                        if ($kb['keluhan']['pilek']) $keluhanList[] = 'Pilek';
+                                        if ($kb['keluhan']['demam']) $keluhanList[] = 'Demam';
+                                        if ($kb['keluhan']['diare']) $keluhanList[] = 'Diare';
+                                        if ($kb['keluhan']['sembelit']) $keluhanList[] = 'Sembelit';
+                                        if ($kb['keluhan']['gtm']) $keluhanList[] = 'GTM';
+                                        if ($kb['keluhan']['lainnya']) $keluhanList[] = esc($kb['keluhan']['lainnya']);
+                                        echo !empty($keluhanList) ? implode(', ', $keluhanList) : 'Tidak ada keluhan';
+                                        ?>
+                                    </div>
+                                    <?php else: ?>
+                                    <div class="mt-2"><strong>Keluhan:</strong> Tidak ada data</div>
+                                    <?php endif; ?>
+                                    
+                                    <?php if ($kb['imunisasi']): ?>
+                                    <div class="mt-2">
+                                        <strong>Imunisasi & Alergi:</strong>
+                                        <?php 
+                                        $imunisasiList = [];
+                                        if ($kb['imunisasi']['status_imunisasi']) $imunisasiList[] = 'Status: ' . esc($kb['imunisasi']['status_imunisasi']);
+                                        if ($kb['imunisasi']['riwayat_alergi']) $imunisasiList[] = 'Alergi: ' . esc($kb['imunisasi']['riwayat_alergi']);
+                                        echo !empty($imunisasiList) ? implode(', ', $imunisasiList) : 'Tidak ada data';
+                                        ?>
+                                    </div>
+                                    <?php else: ?>
+                                    <div class="mt-2"><strong>Imunisasi & Alergi:</strong> Tidak ada data</div>
+                                    <?php endif; ?>
+                                    
+                                    <?php if ($kb['swamedikasi']): ?>
+                                    <div class="mt-2">
+                                        <strong>Swamedikasi:</strong>
+                                        <?php 
+                                        $swamedList = [];
+                                        if ($kb['swamedikasi']['ke_nakes']) $swamedList[] = 'Ke Nakes';
+                                        if ($kb['swamedikasi']['obat_modern']) $swamedList[] = 'Obat Modern';
+                                        if ($kb['swamedikasi']['antibiotik']) $swamedList[] = 'Antibiotik';
+                                        if ($kb['swamedikasi']['etnomedisin']) $swamedList[] = 'Etnomedisin';
+                                        echo !empty($swamedList) ? implode(', ', $swamedList) : 'Tidak ada';
+                                        ?>
+                                    </div>
+                                    <?php else: ?>
+                                    <div class="mt-2"><strong>Swamedikasi:</strong> Tidak ada data</div>
+                                    <?php endif; ?>
+                                    
+                                    <?php if ($kb['gizi']): ?>
+                                    <div class="mt-2">
+                                        <strong>Data Gizi:</strong>
+                                        <ul class="mb-1">
+                                            <li>Vitamin A: <?= $kb['gizi']['vitamin_a'] ? 'Ya' : 'Tidak' ?></li>
+                                            <li>Obat Cacing: <?= $kb['gizi']['obat_cacing'] ? 'Ya' : 'Tidak' ?></li>
+                                            <?php if ($kb['gizi']['pola_makan']): ?>
+                                            <li>Pola Makan: <?= esc(str_replace(['[', ']', '"'], '', $kb['gizi']['pola_makan'])) ?></li>
+                                            <?php endif; ?>
+                                        </ul>
+                                    </div>
+                                    <?php else: ?>
+                                    <div class="mt-2"><strong>Data Gizi:</strong> Tidak ada data</div>
+                                    <?php endif; ?>
+                                    
+                                    <?php if ($kb['kpsp']): ?>
+                                    <div class="mt-2">
+                                        <strong>Hasil KPSP:</strong> <?= esc($kb['kpsp']['hasil_skrining']) ?>
+                                    </div>
+                                    <?php else: ?>
+                                    <div class="mt-2"><strong>Hasil KPSP:</strong> Tidak ada data</div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <?php if ($monitoringRemaja): ?>
+        <!-- Tab Remaja -->
+        <div class="tab-pane fade<?= !$monitoring && !$monitoringBalita ? ' show active' : '' ?>" id="remaja" role="tabpanel">
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Data Identitas Remaja</h5>
+                </div>
+                <div class="card-body">
+                    <?php if ($identitasRemaja): ?>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-sm table-borderless">
+                                <tr><th width="200">Nama Lengkap</th><td>: <?= esc($identitasRemaja['nama_lengkap'] ?? '-') ?></td></tr>
+                                <tr><th>NIK</th><td>: <?= esc($identitasRemaja['nik'] ?? '-') ?></td></tr>
+                                <tr><th>Tanggal Lahir</th><td>: <?= $identitasRemaja['tanggal_lahir'] ? date('d-m-Y', strtotime($identitasRemaja['tanggal_lahir'])) : '-' ?></td></tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-sm table-borderless">
+                                <tr><th width="200">Jenis Kelamin</th><td>: <?= $identitasRemaja['jenis_kelamin'] ? ucfirst(strtolower($identitasRemaja['jenis_kelamin'])) : '-' ?></td></tr>
+                                <tr><th>Nama Wali</th><td>: <?= esc($identitasRemaja['nama_wali'] ?? '-') ?></td></tr>
+                                <tr><th>No. HP Wali</th><td>: <?= esc($identitasRemaja['no_hp_wali'] ?? '-') ?></td></tr>
+                            </table>
+                        </div>
+                    </div>
+                    <?php else: ?>
+                    <p class="text-muted">Data identitas belum lengkap</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Riwayat Kunjungan (<?= count($kunjunganRemaja) ?> kunjungan)</h5>
+                </div>
+                <div class="card-body">
+                    <?php if (empty($kunjunganRemaja)): ?>
+                        <p class="text-muted">Belum ada data kunjungan</p>
+                    <?php else: ?>
+                        <div class="accordion" id="accordionRemaja">
+                        <?php foreach ($kunjunganRemaja as $idx => $kr): ?>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button<?= $kr['kunjungan_ke'] > 1 ? ' collapsed' : '' ?>" type="button" data-bs-toggle="collapse" data-bs-target="#kunjungan-remaja-<?= $kr['id'] ?>">
+                                    Kunjungan ke-<?= $kr['kunjungan_ke'] ?> <small class="text-muted ms-2">(<?= date('d-m-Y', strtotime($kr['tanggal_kunjungan'])) ?>)</small>
+                                </button>
+                            </h2>
+                            <div id="kunjungan-remaja-<?= $kr['id'] ?>" class="accordion-collapse collapse<?= $kr['kunjungan_ke'] === 1 ? ' show' : '' ?>" data-bs-parent="#accordionRemaja">
+                                <div class="accordion-body">
+                                    <?php if ($kr['antropometri']): ?>
+                                    <div class="mb-2">
+                                        <strong>Antropometri:</strong>
+                                        <?php 
+                                        $antropometriList = [];
+                                        if ($kr['antropometri']['berat_badan']) {
+                                            $bb = floatval($kr['antropometri']['berat_badan']);
+                                            $antropometriList[] = 'BB: ' . ($bb == intval($bb) ? intval($bb) : $bb) . ' kg';
+                                        }
+                                        if ($kr['antropometri']['tinggi_badan']) {
+                                            $tb = floatval($kr['antropometri']['tinggi_badan']);
+                                            $antropometriList[] = 'TB: ' . ($tb == intval($tb) ? intval($tb) : $tb) . ' cm';
+                                        }
+                                        if ($kr['antropometri']['lingkar_perut']) {
+                                            $lp = floatval($kr['antropometri']['lingkar_perut']);
+                                            $antropometriList[] = 'LP: ' . ($lp == intval($lp) ? intval($lp) : $lp) . ' cm';
+                                        }
+                                        if ($kr['antropometri']['tekanan_darah']) {
+                                            $antropometriList[] = 'TD: ' . esc($kr['antropometri']['tekanan_darah']);
+                                        }
+                                        echo !empty($antropometriList) ? implode(', ', $antropometriList) : 'Tidak ada data';
+                                        ?>
+                                    </div>
+                                    <?php else: ?>
+                                    <div class="mb-2"><strong>Antropometri:</strong> Tidak ada data</div>
+                                    <?php endif; ?>
+                                    
+                                    <?php if ($kr['anemia']): ?>
+                                    <div class="mb-2">
+                                        <strong>Gejala Anemia:</strong>
+                                        <?php if ($kr['anemia']['gejala_anemia']): ?>
+                                        <ul class="mb-1">
+                                            <?php 
+                                            $gejala = str_replace(['[', ']', '"'], '', $kr['anemia']['gejala_anemia']);
+                                            $gejalaArray = array_filter(array_map('trim', explode(',', $gejala)));
+                                            foreach ($gejalaArray as $item): 
+                                            ?>
+                                            <li><?= esc($item) ?></li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                        <?php else: ?>
+                                        Tidak ada gejala
+                                        <?php endif; ?>
+                                    </div>
+                                    <?php else: ?>
+                                    <div class="mb-2"><strong>Gejala Anemia:</strong> Tidak ada data</div>
+                                    <?php endif; ?>
+                                    
+                                    <?php if ($kr['haid']): ?>
+                                    <div class="mt-2">
+                                        <strong>Data Menstruasi:</strong>
+                                        <ul class="mb-1">
+                                            <li>Sudah Menstruasi: <?= $kr['haid']['sudah_menstruasi'] ? 'Ya' : 'Tidak' ?></li>
+                                            <?php if ($kr['haid']['sudah_menstruasi']): ?>
+                                            <li>Keteraturan Haid: <?= $kr['haid']['keteraturan_haid'] ? esc($kr['haid']['keteraturan_haid']) : 'Tidak ada data' ?></li>
+                                            <li>Nyeri Haid: <?= $kr['haid']['nyeri_haid'] ? esc($kr['haid']['nyeri_haid']) : 'Tidak ada data' ?></li>
+                                            <?php endif; ?>
+                                        </ul>
+                                    </div>
+                                    <?php else: ?>
+                                    <div class="mt-2"><strong>Data Menstruasi:</strong> Tidak ada data</div>
+                                    <?php endif; ?>
+                                    
+                                    <?php if ($kr['suplementasi']): ?>
+                                    <div class="mt-2">
+                                        <strong>Suplementasi:</strong>
+                                        <?php 
+                                        $suplementasiList = [];
+                                        if ($kr['suplementasi']['dapat_ttd']) $suplementasiList[] = 'Dapat TTD';
+                                        if ($kr['suplementasi']['minum_ttd']) $suplementasiList[] = 'Minum TTD';
+                                        if ($kr['suplementasi']['kebiasaan_sarapan']) $suplementasiList[] = 'Sarapan: ' . esc($kr['suplementasi']['kebiasaan_sarapan']);
+                                        echo !empty($suplementasiList) ? implode(', ', $suplementasiList) : 'Tidak ada data';
+                                        ?>
+                                    </div>
+                                    <?php else: ?>
+                                    <div class="mt-2"><strong>Suplementasi:</strong> Tidak ada data</div>
+                                    <?php endif; ?>
+                                    
+                                    <?php if ($kr['gaya_hidup']): ?>
+                                    <div class="mt-2">
+                                        <strong>Gaya Hidup & Risiko PTM:</strong>
+                                        <?php if ($kr['gaya_hidup']['risiko_ptm']): ?>
+                                        <ul class="mb-1">
+                                            <?php 
+                                            $risiko = str_replace(['[', ']', '"'], '', $kr['gaya_hidup']['risiko_ptm']);
+                                            $risikoArray = array_filter(array_map('trim', explode(',', $risiko)));
+                                            foreach ($risikoArray as $item): 
+                                            ?>
+                                            <li><?= esc($item) ?></li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                        <?php else: ?>
+                                        Tidak ada data
+                                        <?php endif; ?>
+                                    </div>
+                                    <?php else: ?>
+                                    <div class="mt-2"><strong>Gaya Hidup & Risiko PTM:</strong> Tidak ada data</div>
+                                    <?php endif; ?>
+                                    
+                                    <?php if ($kr['swamedikasi']): ?>
+                                    <div class="mt-2">
+                                        <strong>Perilaku Swamedikasi:</strong>
+                                        <?php if ($kr['swamedikasi']['perilaku_swamedikasi']): ?>
+                                        <ul class="mb-1">
+                                            <?php 
+                                            $swamed = str_replace(['[', ']', '"'], '', $kr['swamedikasi']['perilaku_swamedikasi']);
+                                            $swamedArray = array_filter(array_map('trim', explode(',', $swamed)));
+                                            foreach ($swamedArray as $item): 
+                                            ?>
+                                            <li><?= esc($item) ?></li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                        <?php else: ?>
+                                        Tidak ada data
+                                        <?php endif; ?>
+                                    </div>
+                                    <?php else: ?>
+                                    <div class="mt-2"><strong>Perilaku Swamedikasi:</strong> Tidak ada data</div>
+                                    <?php endif; ?>
+                                    
+                                    <?php if (!empty($kr['catatan'])): ?>
+                                    <div class="mt-2">
+                                        <strong>Catatan:</strong> <?= esc($kr['catatan']) ?>
+                                    </div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+    </div>
+
+    <?php if (!$monitoring && !$monitoringBalita && !$monitoringRemaja): ?>
+    <div class="alert alert-info mt-3">
+        Pengguna ini belum memiliki data monitoring kesehatan.
     </div>
     <?php endif; ?>
 </div>

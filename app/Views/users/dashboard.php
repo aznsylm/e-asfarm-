@@ -54,14 +54,19 @@
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <a href="<?= route_to('pengguna.artikel') ?>" class="btn btn-primary w-100 py-3">
                                 <i class="bi bi-plus-circle"></i> Buat Artikel Baru
                             </a>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <a href="<?= route_to('pengguna.artikel') ?>" class="btn btn-outline-primary w-100 py-3">
                                 <i class="bi bi-folder"></i> Kelola Artikel Saya
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="<?= route_to('pengguna.monitoring') ?>" class="btn btn-outline-success w-100 py-3">
+                                <i class="bi bi-heart-pulse"></i> Monitoring Kesehatan
                             </a>
                         </div>
                     </div>

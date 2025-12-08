@@ -3,7 +3,84 @@ const baseUrl = window.location.origin;
 // PENGGUNA
 $('#formPengguna').on('submit', function(e) {
     e.preventDefault();
+    
+    // Clear previous errors
+    $('.error-message').hide().text('');
+    $('.form-control, .form-select').removeClass('is-invalid');
+    
+    let hasError = false;
     const id = $('#penggunaId').val();
+    
+    // Validate username
+    const username = $('#usernameInput').val().trim();
+    if (!username) {
+        $('#error-username').text('Username wajib diisi').show();
+        $('#usernameInput').addClass('is-invalid');
+        hasError = true;
+    } else if (username.length < 3) {
+        $('#error-username').text('Username minimal 3 karakter').show();
+        $('#usernameInput').addClass('is-invalid');
+        hasError = true;
+    }
+    
+    // Validate email
+    const email = $('#emailInput').val().trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) {
+        $('#error-email').text('Email wajib diisi').show();
+        $('#emailInput').addClass('is-invalid');
+        hasError = true;
+    } else if (!emailRegex.test(email)) {
+        $('#error-email').text('Format email tidak valid').show();
+        $('#emailInput').addClass('is-invalid');
+        hasError = true;
+    }
+    
+    // Validate password (only for new user or when reset is checked)
+    if (!id) {
+        const password = $('#password').val();
+        if (!password) {
+            $('#error-password').text('Password wajib diisi').show();
+            $('#password').addClass('is-invalid');
+            hasError = true;
+        } else if (password.length < 8) {
+            $('#error-password').text('Password minimal 8 karakter').show();
+            $('#password').addClass('is-invalid');
+            hasError = true;
+        }
+    } else if ($('#resetPasswordCheck').is(':checked')) {
+        const passwordEdit = $('#password_edit').val();
+        if (!passwordEdit) {
+            $('#error-password-edit').text('Password baru wajib diisi').show();
+            $('#password_edit').addClass('is-invalid');
+            hasError = true;
+        } else if (passwordEdit.length < 8) {
+            $('#error-password-edit').text('Password minimal 8 karakter').show();
+            $('#password_edit').addClass('is-invalid');
+            hasError = true;
+        }
+    }
+    
+    // Validate phone number
+    const phone = $('#phone_number').val().trim();
+    if (!phone) {
+        $('#error-phone_number').text('Nomor WhatsApp wajib diisi').show();
+        $('#phone_number').addClass('is-invalid');
+        hasError = true;
+    } else if (!phone.startsWith('08')) {
+        $('#error-phone_number').text('Nomor harus dimulai dengan 08').show();
+        $('#phone_number').addClass('is-invalid');
+        hasError = true;
+    } else if (phone.length < 10 || phone.length > 15) {
+        $('#error-phone_number').text('Nomor harus 10-15 digit').show();
+        $('#phone_number').addClass('is-invalid');
+        hasError = true;
+    }
+    
+    if (hasError) {
+        return false;
+    }
+    
     const url = id ? `${baseUrl}/admin/pengguna/ubah/${id}` : `${baseUrl}/admin/pengguna/tambah`;
     
     $.ajax({
@@ -17,8 +94,21 @@ $('#formPengguna').on('submit', function(e) {
                 alert(res.message);
                 location.reload();
             } else {
-                alert(res.errors ? Object.values(res.errors).join('\n') : res.message);
+                if (res.errors) {
+                    Object.keys(res.errors).forEach(field => {
+                        const errorDiv = $(`#error-${field}`);
+                        if (errorDiv.length) {
+                            errorDiv.text('' + res.errors[field]).show();
+                            $(`[name="${field}"]`).addClass('is-invalid');
+                        }
+                    });
+                } else {
+                    alert(res.message);
+                }
             }
+        },
+        error: function() {
+            alert('Terjadi kesalahan. Silakan coba lagi.');
         }
     });
 });
@@ -61,12 +151,72 @@ function hapusPengguna(id) {
 $('#formArtikel').on('submit', function(e) {
     e.preventDefault();
     
+    // Clear previous errors
+    $('.error-message').hide().text('');
+    $('.form-control, .form-select').removeClass('is-invalid');
+    
     // Sync CKEditor content
     if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances.contentArtikel) {
         CKEDITOR.instances.contentArtikel.updateElement();
     }
     
+    // Client-side validation
+    let hasError = false;
+    
+    // Validate title
+    const title = $('#titleInput').val().trim();
+    if (!title) {
+        $('#error-title').text('Judul artikel wajib diisi').show();
+        $('#titleInput').addClass('is-invalid');
+        hasError = true;
+    } else if (title.length < 10) {
+        $('#error-title').text('Judul minimal 10 karakter').show();
+        $('#titleInput').addClass('is-invalid');
+        hasError = true;
+    }
+    
+    // Validate category
+    const category = $('#categoryInput').val();
+    if (!category) {
+        $('#error-category').text('Kategori wajib dipilih').show();
+        $('#categoryInput').addClass('is-invalid');
+        hasError = true;
+    }
+    
+    // Validate content
+    const content = CKEDITOR.instances.contentArtikel ? CKEDITOR.instances.contentArtikel.getData().trim() : $('#contentArtikel').val().trim();
+    if (!content || content === '') {
+        $('#error-content').text('Konten artikel wajib diisi').show();
+        hasError = true;
+    } else if (content.length < 50) {
+        $('#error-content').text('Konten minimal 50 karakter').show();
+        hasError = true;
+    }
+    
+    // Validate image (only for new article)
     const id = $('#artikelId').val();
+    const imageFile = $('#imageArtikel')[0].files[0];
+    if (!id && !imageFile) {
+        $('#error-image').text('Gambar artikel wajib diupload').show();
+        $('#imageArtikel').addClass('is-invalid');
+        hasError = true;
+    } else if (imageFile) {
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+        if (!allowedTypes.includes(imageFile.type)) {
+            $('#error-image').text('Format gambar harus JPG, PNG, atau WEBP').show();
+            $('#imageArtikel').addClass('is-invalid');
+            hasError = true;
+        } else if (imageFile.size > 2 * 1024 * 1024) {
+            $('#error-image').text('Ukuran gambar maksimal 2MB').show();
+            $('#imageArtikel').addClass('is-invalid');
+            hasError = true;
+        }
+    }
+    
+    if (hasError) {
+        return false;
+    }
+    
     const url = id ? `${baseUrl}/admin/artikel/ubah/${id}` : `${baseUrl}/admin/artikel/tambah`;
     
     $.ajax({
@@ -80,8 +230,22 @@ $('#formArtikel').on('submit', function(e) {
                 alert(res.message);
                 location.reload();
             } else {
-                alert(res.errors ? Object.values(res.errors).join('\n') : res.message);
+                // Display server-side errors
+                if (res.errors) {
+                    Object.keys(res.errors).forEach(field => {
+                        const errorDiv = $(`#error-${field}`);
+                        if (errorDiv.length) {
+                            errorDiv.text('' + res.errors[field]).show();
+                            $(`[name="${field}"]`).addClass('is-invalid');
+                        }
+                    });
+                } else {
+                    alert(res.message);
+                }
             }
+        },
+        error: function() {
+            alert('Terjadi kesalahan. Silakan coba lagi.');
         }
     });
 });
@@ -145,9 +309,9 @@ function previewArtikel(id) {
     $('#previewStatus').val(status);
     
     const statusText = {
-        'pending': '⏳ Pending',
-        'approved': '✅ Approved',
-        'rejected': '❌ Rejected'
+        'pending': 'Menunggu Persetujuan',
+        'approved': 'Disetujui',
+        'rejected': 'Ditolak'
     };
     const statusClass = {
         'pending': 'bg-warning',
@@ -217,9 +381,49 @@ function hapusArtikelFromPreview() {
 $('#formFaq').on('submit', function(e) {
     e.preventDefault();
     
+    // Clear previous errors
+    $('.error-message').hide().text('');
+    $('.form-control, .form-select').removeClass('is-invalid');
+    
     // Sync CKEditor content
     if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances.jawabanFaq) {
         CKEDITOR.instances.jawabanFaq.updateElement();
+    }
+    
+    let hasError = false;
+    
+    // Validate category
+    const category = $('#faqCategoryInput').val();
+    if (!category) {
+        $('#error-faq-category').text('Kategori wajib dipilih').show();
+        $('#faqCategoryInput').addClass('is-invalid');
+        hasError = true;
+    }
+    
+    // Validate pertanyaan
+    const pertanyaan = $('#pertanyaanInput').val().trim();
+    if (!pertanyaan) {
+        $('#error-pertanyaan').text('Pertanyaan wajib diisi').show();
+        $('#pertanyaanInput').addClass('is-invalid');
+        hasError = true;
+    } else if (pertanyaan.length < 10) {
+        $('#error-pertanyaan').text('Pertanyaan minimal 10 karakter').show();
+        $('#pertanyaanInput').addClass('is-invalid');
+        hasError = true;
+    }
+    
+    // Validate jawaban
+    const jawaban = CKEDITOR.instances.jawabanFaq ? CKEDITOR.instances.jawabanFaq.getData().trim() : $('#jawabanFaq').val().trim();
+    if (!jawaban || jawaban === '') {
+        $('#error-jawaban').text('Jawaban wajib diisi').show();
+        hasError = true;
+    } else if (jawaban.length < 20) {
+        $('#error-jawaban').text('Jawaban minimal 20 karakter').show();
+        hasError = true;
+    }
+    
+    if (hasError) {
+        return false;
     }
     
     const id = $('#faqId').val();
@@ -230,7 +434,17 @@ $('#formFaq').on('submit', function(e) {
             alert(res.message);
             location.reload();
         } else {
-            alert(res.errors ? Object.values(res.errors).join('\n') : res.message);
+            if (res.errors) {
+                Object.keys(res.errors).forEach(field => {
+                    const errorDiv = field === 'category' ? $('#error-faq-category') : $(`#error-${field}`);
+                    if (errorDiv.length) {
+                        errorDiv.text('' + res.errors[field]).show();
+                        $(`[name="${field}"]`).addClass('is-invalid');
+                    }
+                });
+            } else {
+                alert(res.message);
+            }
         }
     });
 });
@@ -264,7 +478,69 @@ function hapusFaq(id) {
 // UNDUHAN
 $('#formUnduhan').on('submit', function(e) {
     e.preventDefault();
+    
+    // Clear previous errors
+    $('.error-message').hide().text('');
+    $('.form-control, .form-select').removeClass('is-invalid');
+    
+    let hasError = false;
     const id = $('#unduhanId').val();
+    
+    // Validate title
+    const title = $('#unduhanTitleInput').val().trim();
+    if (!title) {
+        $('#error-unduhan-title').text('Judul wajib diisi').show();
+        $('#unduhanTitleInput').addClass('is-invalid');
+        hasError = true;
+    } else if (title.length < 5) {
+        $('#error-unduhan-title').text('Judul minimal 5 karakter').show();
+        $('#unduhanTitleInput').addClass('is-invalid');
+        hasError = true;
+    }
+    
+    // Validate category
+    const category = $('#unduhanCategoryInput').val();
+    if (!category) {
+        $('#error-unduhan-category').text('Kategori wajib dipilih').show();
+        $('#unduhanCategoryInput').addClass('is-invalid');
+        hasError = true;
+    }
+    
+    // Validate link drive
+    const linkDrive = $('#linkDriveInput').val().trim();
+    if (!linkDrive) {
+        $('#error-link_drive').text('Link Google Drive wajib diisi').show();
+        $('#linkDriveInput').addClass('is-invalid');
+        hasError = true;
+    } else if (!linkDrive.includes('drive.google.com')) {
+        $('#error-link_drive').text('Link harus dari Google Drive').show();
+        $('#linkDriveInput').addClass('is-invalid');
+        hasError = true;
+    }
+    
+    // Validate thumbnail (only for new upload)
+    const thumbnailFile = $('#thumbnailUnduhan')[0].files[0];
+    if (!id && !thumbnailFile) {
+        $('#error-thumbnail').text('Thumbnail wajib diupload').show();
+        $('#thumbnailUnduhan').addClass('is-invalid');
+        hasError = true;
+    } else if (thumbnailFile) {
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+        if (!allowedTypes.includes(thumbnailFile.type)) {
+            $('#error-thumbnail').text('Format gambar harus JPG, PNG, atau WEBP').show();
+            $('#thumbnailUnduhan').addClass('is-invalid');
+            hasError = true;
+        } else if (thumbnailFile.size > 2 * 1024 * 1024) {
+            $('#error-thumbnail').text('Ukuran gambar maksimal 2MB').show();
+            $('#thumbnailUnduhan').addClass('is-invalid');
+            hasError = true;
+        }
+    }
+    
+    if (hasError) {
+        return false;
+    }
+    
     const url = id ? `${baseUrl}/admin/unduhan/ubah/${id}` : `${baseUrl}/admin/unduhan/tambah`;
     
     $.ajax({
@@ -278,8 +554,23 @@ $('#formUnduhan').on('submit', function(e) {
                 alert(res.message);
                 location.reload();
             } else {
-                alert(res.errors ? Object.values(res.errors).join('\n') : res.message);
+                if (res.errors) {
+                    Object.keys(res.errors).forEach(field => {
+                        const errorDiv = field === 'title' ? $('#error-unduhan-title') : 
+                                       field === 'category' ? $('#error-unduhan-category') : 
+                                       $(`#error-${field}`);
+                        if (errorDiv.length) {
+                            errorDiv.text('' + res.errors[field]).show();
+                            $(`[name="${field}"]`).addClass('is-invalid');
+                        }
+                    });
+                } else {
+                    alert(res.message);
+                }
             }
+        },
+        error: function() {
+            alert('Terjadi kesalahan. Silakan coba lagi.');
         }
     });
 });
@@ -311,6 +602,10 @@ $('.modal').on('hidden.bs.modal', function() {
     $(this).find('.modal-title').text($(this).find('.modal-title').text().replace('Edit', 'Tambah'));
     $(this).find('[type="file"]').attr('required', 'required');
     
+    // Clear error messages
+    $('.error-message').hide().text('');
+    $('.form-control, .form-select').removeClass('is-invalid');
+    
     // Reset CKEditor
     if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances.contentArtikel) {
         CKEDITOR.instances.contentArtikel.setData('');
@@ -327,4 +622,37 @@ $('.modal').on('hidden.bs.modal', function() {
     $('#password_edit').attr('disabled', true).removeAttr('required');
     $('#resetPasswordCheck').prop('checked', false);
     $('#passwordResetField').hide();
+});
+
+// Clear error on input change - Artikel
+$('#titleInput, #categoryInput, #imageArtikel').on('change input', function() {
+    const fieldName = $(this).attr('name');
+    $(`#error-${fieldName}`).hide().text('');
+    $(this).removeClass('is-invalid');
+});
+
+// Clear error on input change - Pengguna
+$('#usernameInput, #emailInput, #password, #password_edit, #phone_number').on('change input', function() {
+    const fieldName = $(this).attr('name');
+    const errorId = this.id === 'password_edit' ? 'error-password-edit' : `error-${fieldName}`;
+    $(`#${errorId}`).hide().text('');
+    $(this).removeClass('is-invalid');
+});
+
+// Clear error on input change - FAQ
+$('#faqCategoryInput, #pertanyaanInput').on('change input', function() {
+    const fieldName = $(this).attr('name');
+    const errorId = fieldName === 'category' ? 'error-faq-category' : `error-${fieldName}`;
+    $(`#${errorId}`).hide().text('');
+    $(this).removeClass('is-invalid');
+});
+
+// Clear error on input change - Unduhan
+$('#unduhanTitleInput, #unduhanCategoryInput, #linkDriveInput, #thumbnailUnduhan').on('change input', function() {
+    const fieldName = $(this).attr('name');
+    const errorId = fieldName === 'title' ? 'error-unduhan-title' : 
+                   fieldName === 'category' ? 'error-unduhan-category' : 
+                   `error-${fieldName}`;
+    $(`#${errorId}`).hide().text('');
+    $(this).removeClass('is-invalid');
 });

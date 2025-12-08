@@ -17,8 +17,18 @@
             <a href="<?= base_url('admin/monitoring/riwayat/'.$monitoring['id']) ?>" class="btn btn-outline-secondary btn-sm mb-2">
                 <i class="ti ti-arrow-left"></i> Kembali
             </a>
-            <h2>Input Kunjungan Rutin - Kunjungan ke-<?= $kunjunganKe ?></h2>
+            <h2><?= $isEdit ? 'Edit' : 'Input' ?> Kunjungan Rutin - Kunjungan ke-<?= $kunjunganKe ?></h2>
             <p class="text-muted">Pasien: <strong><?= esc($identitas['nama_ibu']) ?></strong></p>
+            <?php if(!$isEdit): ?>
+            <p class="mb-0">
+                <span class="badge bg-<?= $kunjunganKe >= 13 ? 'warning' : 'info' ?> fs-6">
+                    Kunjungan ke-<?= $kunjunganKe ?> dari maksimal <?= $maxKunjungan ?>
+                </span>
+                <?php if($kunjunganKe >= 13): ?>
+                    <span class="badge bg-warning fs-6 ms-2">⚠️ Mendekati Batas Maksimal</span>
+                <?php endif; ?>
+            </p>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -27,14 +37,14 @@
             <div class="card">
                 <div class="card-body">
                     <!-- Info & Tanggal Kunjungan -->
-                    <div class="alert alert-info mb-4">
+                    <div class="alert alert-<?= $isEdit ? 'warning' : 'info' ?> mb-4">
                         <div class="row align-items-center">
                             <div class="col-md-6">
-                                <h5 class="mb-0"><i class="ti ti-calendar-event"></i> Kunjungan ke-<?= $kunjunganKe ?></h5>
+                                <h5 class="mb-0"><i class="ti ti-calendar-event"></i> <?= $isEdit ? 'Edit' : '' ?> Kunjungan ke-<?= $kunjunganKe ?></h5>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label mb-1">Tanggal Kunjungan *</label>
-                                <input type="date" id="tanggalKunjungan" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                                <input type="date" id="tanggalKunjungan" class="form-control" value="<?= $isEdit ? ($kunjunganData['kunjungan']['tanggal_kunjungan'] ?? date('Y-m-d')) : date('Y-m-d') ?>" required>
                             </div>
                         </div>
                     </div>
@@ -48,9 +58,9 @@
                         </div>
                     </div>
 
-                    <form id="kunjunganForm" method="POST" action="<?= base_url('admin/monitoring/store-kunjungan/'.$monitoring['id']) ?>">
+                    <form id="kunjunganForm" method="POST" action="<?= $isEdit ? base_url('admin/monitoring/update-kunjungan/'.$kunjunganData['kunjungan']['id']) : base_url('admin/monitoring/store-kunjungan/'.$monitoring['id']) ?>">
                         <?= csrf_field() ?>
-                        <input type="hidden" name="tanggal_kunjungan" id="tanggalKunjunganHidden" value="<?= date('Y-m-d') ?>">
+                        <input type="hidden" name="tanggal_kunjungan" id="tanggalKunjunganHidden" value="<?= $isEdit ? ($kunjunganData['kunjungan']['tanggal_kunjungan'] ?? date('Y-m-d')) : date('Y-m-d') ?>">
 
                         <!-- Step 1: Antropometri (SAMA dengan Tahap 2 input awal) -->
                         <div class="wizard-step active" id="step1">
@@ -59,23 +69,23 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Tekanan Darah (TD) *</label>
-                                    <input type="text" name="tekanan_darah" class="form-control" placeholder="120/80" required>
+                                    <input type="text" name="tekanan_darah" class="form-control" placeholder="120/80" value="<?= $isEdit ? esc($kunjunganData['antropometri']['tekanan_darah'] ?? '') : '' ?>" required>
                                     <small class="text-muted">Format: Sistolik/Diastolik (contoh: 120/80)</small>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Berat Badan (kg) *</label>
-                                    <input type="number" name="berat_badan" class="form-control" step="0.1" min="30" max="150" required>
+                                    <input type="number" name="berat_badan" class="form-control" step="0.1" min="30" max="150" placeholder="Contoh: 55.5" value="<?= $isEdit ? esc($kunjunganData['antropometri']['berat_badan'] ?? '') : '' ?>" required>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Tinggi Badan (cm) *</label>
-                                    <input type="number" name="tinggi_badan" class="form-control" step="0.1" min="130" max="200" required>
+                                    <input type="number" name="tinggi_badan" class="form-control" step="0.1" min="130" max="200" placeholder="Contoh: 160.0" value="<?= $isEdit ? esc($kunjunganData['antropometri']['tinggi_badan'] ?? '') : '' ?>" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Lila - Lingkar Lengan Atas (cm) *</label>
-                                    <input type="number" name="lila" class="form-control" step="0.1" min="15" max="50" required>
+                                    <input type="number" name="lila" class="form-control" step="0.1" min="15" max="50" placeholder="Contoh: 28.5" value="<?= $isEdit ? esc($kunjunganData['antropometri']['lila'] ?? '') : '' ?>" required>
                                 </div>
                             </div>
                         </div>
@@ -84,53 +94,58 @@
                         <div class="wizard-step" id="step2">
                             <h4 class="mb-4">Tahap 2: Keluhan & Gejala</h4>
                             <p class="text-muted">Pilih keluhan yang dialami (bisa lebih dari satu)</p>
-                            
+                            <?php 
+                            $keluhanList = [];
+                            if($isEdit && isset($kunjunganData['keluhan']['keluhan'])) {
+                                $keluhanList = json_decode($kunjunganData['keluhan']['keluhan'], true) ?? [];
+                            }
+                            ?>
                             <div class="row">
                                 <div class="col-md-6 mb-2">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="keluhan[]" value="Mual/muntah berlebihan" id="k1">
+                                        <input class="form-check-input" type="checkbox" name="keluhan[]" value="Mual/muntah berlebihan" id="k1" <?= in_array('Mual/muntah berlebihan', $keluhanList) ? 'checked' : '' ?>>
                                         <label class="form-check-label" for="k1">Mual/muntah berlebihan</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="keluhan[]" value="Perdarahan sedikit/banyak" id="k2">
+                                        <input class="form-check-input" type="checkbox" name="keluhan[]" value="Perdarahan sedikit/banyak" id="k2" <?= in_array('Perdarahan sedikit/banyak', $keluhanList) ? 'checked' : '' ?>>
                                         <label class="form-check-label" for="k2">Perdarahan sedikit/banyak</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="keluhan[]" value="Gerakan janin" id="k3">
+                                        <input class="form-check-input" type="checkbox" name="keluhan[]" value="Gerakan janin" id="k3" <?= in_array('Gerakan janin', $keluhanList) ? 'checked' : '' ?>>
                                         <label class="form-check-label" for="k3">Gerakan janin</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="keluhan[]" value="Kaki bengkak" id="k4">
+                                        <input class="form-check-input" type="checkbox" name="keluhan[]" value="Kaki bengkak" id="k4" <?= in_array('Kaki bengkak', $keluhanList) ? 'checked' : '' ?>>
                                         <label class="form-check-label" for="k4">Kaki bengkak</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="keluhan[]" value="Sakit kepala hebat" id="k5">
+                                        <input class="form-check-input" type="checkbox" name="keluhan[]" value="Sakit kepala hebat" id="k5" <?= in_array('Sakit kepala hebat', $keluhanList) ? 'checked' : '' ?>>
                                         <label class="form-check-label" for="k5">Sakit kepala hebat</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="keluhan[]" value="Gangguan penglihatan" id="k6">
+                                        <input class="form-check-input" type="checkbox" name="keluhan[]" value="Gangguan penglihatan" id="k6" <?= in_array('Gangguan penglihatan', $keluhanList) ? 'checked' : '' ?>>
                                         <label class="form-check-label" for="k6">Gangguan penglihatan</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="keluhan[]" value="Lainnya" id="k7">
+                                        <input class="form-check-input" type="checkbox" name="keluhan[]" value="Lainnya" id="k7" <?= in_array('Lainnya', $keluhanList) ? 'checked' : '' ?>>
                                         <label class="form-check-label" for="k7">Lainnya</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="keluhan[]" value="Tidak ada keluhan" id="k8">
+                                        <input class="form-check-input" type="checkbox" name="keluhan[]" value="Tidak ada keluhan" id="k8" <?= in_array('Tidak ada keluhan', $keluhanList) ? 'checked' : '' ?>>
                                         <label class="form-check-label" for="k8">Tidak ada keluhan</label>
                                     </div>
                                 </div>
@@ -141,17 +156,20 @@
                         <div class="wizard-step" id="step3">
                             <h4 class="mb-4">Tahap 3: Penggunaan Tablet Tambah Darah atau Suplementasi Kehamilan</h4>
                             
+                            <?php 
+                            $suplementasi = $isEdit ? $kunjunganData['suplementasi'] : null;
+                            ?>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Nama Suplemen *</label>
-                                    <input type="text" name="nama_suplemen" class="form-control" required>
+                                    <input type="text" name="nama_suplemen" class="form-control" placeholder="Contoh: Tablet Fe" value="<?= $isEdit ? esc($suplementasi['nama_suplemen'] ?? '') : '' ?>" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Status Pemberian *</label>
                                     <select name="status_pemberian" class="form-select" required>
                                         <option value="">-- Pilih --</option>
-                                        <option value="sudah_diberikan">Sudah diberikan</option>
-                                        <option value="belum_diberikan">Belum diberikan</option>
+                                        <option value="sudah_diberikan" <?= $isEdit && ($suplementasi['status_pemberian'] ?? '') == 'sudah_diberikan' ? 'selected' : '' ?>>Sudah diberikan</option>
+                                        <option value="belum_diberikan" <?= $isEdit && ($suplementasi['status_pemberian'] ?? '') == 'belum_diberikan' ? 'selected' : '' ?>>Belum diberikan</option>
                                     </select>
                                 </div>
                             </div>
@@ -159,15 +177,15 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Jumlah Tablet yang Diberikan</label>
-                                    <input type="number" name="jumlah_tablet" class="form-control" min="0">
+                                    <input type="number" name="jumlah_tablet" class="form-control" min="0" placeholder="Contoh: 30" value="<?= $isEdit ? esc($suplementasi['jumlah_tablet'] ?? '') : '' ?>">
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Frekuensi Pemberian *</label>
                                     <select name="frekuensi" class="form-select" required>
                                         <option value="">-- Pilih --</option>
-                                        <option value="1x sehari">1x sehari</option>
-                                        <option value="2x sehari">2x sehari</option>
-                                        <option value="3x sehari">3x sehari</option>
+                                        <option value="1x sehari" <?= $isEdit && ($suplementasi['frekuensi'] ?? '') == '1x sehari' ? 'selected' : '' ?>>1x sehari</option>
+                                        <option value="2x sehari" <?= $isEdit && ($suplementasi['frekuensi'] ?? '') == '2x sehari' ? 'selected' : '' ?>>2x sehari</option>
+                                        <option value="3x sehari" <?= $isEdit && ($suplementasi['frekuensi'] ?? '') == '3x sehari' ? 'selected' : '' ?>>3x sehari</option>
                                     </select>
                                 </div>
                             </div>
@@ -197,20 +215,23 @@
                         <!-- Step 4: Etnomedisin -->
                         <div class="wizard-step" id="step4">
                             <h4 class="mb-4">Tahap 4: Penggunaan Etnomedisin</h4>
-                            
+                            <?php 
+                            $etnomedisin = $isEdit ? $kunjunganData['etnomedisin'] : null;
+                            $menggunakanObat = $isEdit ? ($etnomedisin['menggunakan_obat_tradisional'] ?? 'tidak') : 'tidak';
+                            ?>
                             <div class="mb-4">
                                 <label class="form-label">Apakah ibu hamil menggunakan obat tradisional? *</label>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="menggunakan_obat_tradisional" value="ya" id="etno_ya" onchange="toggleEtnomedisin(true)" required>
+                                    <input class="form-check-input" type="radio" name="menggunakan_obat_tradisional" value="ya" id="etno_ya" onchange="toggleEtnomedisin(true)" <?= $menggunakanObat == 'ya' ? 'checked' : '' ?> required>
                                     <label class="form-check-label" for="etno_ya">Ya</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="menggunakan_obat_tradisional" value="tidak" id="etno_tidak" onchange="toggleEtnomedisin(false)">
+                                    <input class="form-check-input" type="radio" name="menggunakan_obat_tradisional" value="tidak" id="etno_tidak" onchange="toggleEtnomedisin(false)" <?= $menggunakanObat == 'tidak' ? 'checked' : '' ?>>
                                     <label class="form-check-label" for="etno_tidak">Tidak</label>
                                 </div>
                             </div>
 
-                            <div id="etnomedisinForm" style="display:none;">
+                            <div id="etnomedisinForm" style="display:<?= $menggunakanObat == 'ya' ? 'block' : 'none' ?>;">
                                 <div class="mb-3">
                                     <label class="form-label">Jenis obat tradisional yang digunakan</label>
                                     <div class="row">
@@ -225,8 +246,8 @@
                                             <div class="form-check"><input class="form-check-input" type="checkbox" name="jenis_obat[]" value="Daun Selasih" id="j6"><label class="form-check-label" for="j6">Daun Selasih</label></div>
                                             <div class="form-check"><input class="form-check-input" type="checkbox" name="jenis_obat[]" value="Minyak Kelapa" id="j7"><label class="form-check-label" for="j7">Minyak Kelapa</label></div>
                                             <div class="form-check"><input class="form-check-input" type="checkbox" name="jenis_obat[]" value="Pasak Bumi" id="j8"><label class="form-check-label" for="j8">Pasak Bumi</label></div>
-                                            <div class="form-check"><input class="form-check-input" type="checkbox" value="1" id="j9" onchange="toggleLainnyaObat(this)"><label class="form-check-label" for="j9">Herbal lainnya</label></div>
-                                            <input type="text" name="jenis_obat_lainnya" class="form-control mt-2" id="obatLainnya" placeholder="Sebutkan..." style="display:none;">
+                                            <div class="form-check mb-2"><input class="form-check-input" type="checkbox" value="1" id="j9"><label class="form-check-label" for="j9">Lainnya</label></div>
+                                            <input type="text" name="jenis_obat_lainnya" class="form-control" id="obatLainnya" placeholder="Sebutkan jenis obat lainnya...">
                                         </div>
                                     </div>
                                 </div>
@@ -242,8 +263,8 @@
                                         <div class="col-md-6">
                                             <div class="form-check"><input class="form-check-input" type="checkbox" name="tujuan_penggunaan[]" value="Mengatasi keputihan" id="tu4"><label class="form-check-label" for="tu4">Mengatasi keputihan</label></div>
                                             <div class="form-check"><input class="form-check-input" type="checkbox" name="tujuan_penggunaan[]" value="Menjaga stamina ibu hamil" id="tu5"><label class="form-check-label" for="tu5">Menjaga stamina ibu hamil</label></div>
-                                            <div class="form-check"><input class="form-check-input" type="checkbox" value="1" id="tu6" onchange="toggleLainnyaTujuan(this)"><label class="form-check-label" for="tu6">Lainnya</label></div>
-                                            <input type="text" name="tujuan_lainnya" class="form-control mt-2" id="tujuanLainnya" placeholder="Sebutkan..." style="display:none;">
+                                            <div class="form-check mb-2"><input class="form-check-input" type="checkbox" value="1" id="tu6"><label class="form-check-label" for="tu6">Lainnya</label></div>
+                                            <input type="text" name="tujuan_lainnya" class="form-control" id="tujuanLainnya" placeholder="Sebutkan tujuan lainnya...">
                                         </div>
                                     </div>
                                 </div>
@@ -280,7 +301,7 @@
                                 Lanjut <i class="ti ti-arrow-right"></i>
                             </button>
                             <button type="submit" class="btn btn-success" id="submitBtn" style="display:none;">
-                                <i class="ti ti-check"></i> Simpan Kunjungan
+                                <i class="ti ti-check"></i> <?= $isEdit ? 'Update' : 'Simpan' ?> Kunjungan
                             </button>
                         </div>
                     </form>

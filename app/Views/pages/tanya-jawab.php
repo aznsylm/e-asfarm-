@@ -339,11 +339,6 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link <?= $kategori['name'] == 'tumbuh kembang' ? 'active' : '' ?>" href="<?= base_url('tanya-jawab/tumbuh kembang'); ?>">
-                                    <i class="fas fa-child me-1 me-md-2"></i><span class="d-none d-md-inline">Tumbuh Kembang</span><span class="d-md-none">Tumbuh</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
                                 <a class="nav-link <?= $kategori['name'] == 'etnomedisin' ? 'active' : '' ?>" href="<?= base_url('tanya-jawab/etnomedisin'); ?>">
                                     <i class="fas fa-leaf me-1 me-md-2"></i>Etnomedisin
                                 </a>

@@ -63,6 +63,8 @@ $routes->group('pengguna', ['filter' => 'auth'], function ($routes) {
     $routes->get('dashboard', 'Users\UsersController::dashboard', ['as' => 'pengguna.dashboard']);
     $routes->get('artikel-saya', 'Users\UsersController::artikelSaya', ['as' => 'pengguna.artikel']);
     $routes->get('monitoring', 'Users\UsersController::monitoring', ['as' => 'pengguna.monitoring']);
+    $routes->get('monitoring-remaja', 'Users\UsersController::monitoringRemaja', ['as' => 'pengguna.monitoring.remaja']);
+    $routes->get('monitoring-balita', 'Users\UsersController::monitoringBalita', ['as' => 'pengguna.monitoring.balita']);
 });
 // email
 
@@ -194,22 +196,48 @@ $routes->group('admin', ['filter' => 'admin'], function ($routes) {
     // monitoring kesehatan
     $routes->get('monitoring/dashboard', 'Admin\Monitoring\MonitoringController::dashboard', ['as' => 'admin.monitoring.dashboard']);
     $routes->get('monitoring/ibu-hamil', 'Admin\Monitoring\MonitoringController::ibuHamil', ['as' => 'admin.monitoring.ibu.hamil']);
-    $routes->get('monitoring/balita', 'Admin\Monitoring\MonitoringController::balita', ['as' => 'admin.monitoring.balita']);
-    $routes->get('monitoring/remaja', 'Admin\Monitoring\MonitoringController::remaja', ['as' => 'admin.monitoring.remaja']);
+    $routes->get('monitoring/remaja', 'Admin\Monitoring\MonitoringRemajaController::remaja', ['as' => 'admin.monitoring.remaja']);
     $routes->get('monitoring/input', 'Admin\Monitoring\MonitoringController::input', ['as' => 'admin.monitoring.input']);
     $routes->get('monitoring/input/(:num)', 'Admin\Monitoring\MonitoringController::input/$1', ['as' => 'admin.monitoring.input.user']);
     $routes->post('monitoring/store', 'Admin\Monitoring\MonitoringController::store', ['as' => 'admin.monitoring.store']);
     $routes->get('monitoring/riwayat/(:num)', 'Admin\Monitoring\MonitoringController::riwayat/$1', ['as' => 'admin.monitoring.riwayat']);
     
+    // monitoring remaja
+    $routes->get('monitoring/remaja/input', 'Admin\Monitoring\MonitoringRemajaController::input', ['as' => 'admin.monitoring.remaja.input']);
+    $routes->get('monitoring/remaja/input/(:num)', 'Admin\Monitoring\MonitoringRemajaController::input/$1', ['as' => 'admin.monitoring.remaja.input.user']);
+    $routes->post('monitoring/remaja/store', 'Admin\Monitoring\MonitoringRemajaController::store', ['as' => 'admin.monitoring.remaja.store']);
+    $routes->get('monitoring/remaja/riwayat/(:num)', 'Admin\Monitoring\MonitoringRemajaController::riwayat/$1', ['as' => 'admin.monitoring.remaja.riwayat']);
+    $routes->get('monitoring/remaja/input-kunjungan/(:num)', 'Admin\Monitoring\MonitoringRemajaController::inputKunjungan/$1', ['as' => 'admin.monitoring.remaja.input.kunjungan']);
+    $routes->post('monitoring/remaja/store-kunjungan/(:num)', 'Admin\Monitoring\MonitoringRemajaController::storeKunjungan/$1', ['as' => 'admin.monitoring.remaja.store.kunjungan']);
+    $routes->get('monitoring/remaja/edit-master/(:num)', 'Admin\Monitoring\MonitoringRemajaController::editMaster/$1', ['as' => 'admin.monitoring.remaja.edit.master']);
+    $routes->post('monitoring/remaja/update-master/(:num)', 'Admin\Monitoring\MonitoringRemajaController::updateMaster/$1', ['as' => 'admin.monitoring.remaja.update.master']);
+    $routes->get('monitoring/remaja/edit-kunjungan/(:num)/(:num)', 'Admin\Monitoring\MonitoringRemajaController::editKunjungan/$1/$2', ['as' => 'admin.monitoring.remaja.edit.kunjungan']);
+    $routes->post('monitoring/remaja/update-kunjungan/(:num)', 'Admin\Monitoring\MonitoringRemajaController::updateKunjungan/$1', ['as' => 'admin.monitoring.remaja.update.kunjungan']);
+    $routes->get('monitoring/remaja/delete-monitoring/(:num)', 'Admin\Monitoring\MonitoringRemajaController::deleteMonitoring/$1', ['as' => 'admin.monitoring.remaja.delete.monitoring']);
+    $routes->get('monitoring/remaja/delete-kunjungan/(:num)', 'Admin\Monitoring\MonitoringRemajaController::deleteKunjungan/$1', ['as' => 'admin.monitoring.remaja.delete.kunjungan']);
+    
+    // monitoring balita
+    $routes->get('monitoring/balita', 'Admin\Monitoring\MonitoringBalitaController::balita', ['as' => 'admin.monitoring.balita']);
+    $routes->get('monitoring/balita/input', 'Admin\Monitoring\MonitoringBalitaController::input', ['as' => 'admin.monitoring.balita.input']);
+    $routes->post('monitoring/balita/store', 'Admin\Monitoring\MonitoringBalitaController::store', ['as' => 'admin.monitoring.balita.store']);
+    $routes->get('monitoring/balita/riwayat/(:num)', 'Admin\Monitoring\MonitoringBalitaController::riwayat/$1', ['as' => 'admin.monitoring.balita.riwayat']);
+    $routes->get('monitoring/balita/input-kunjungan/(:num)', 'Admin\Monitoring\MonitoringBalitaController::inputKunjungan/$1', ['as' => 'admin.monitoring.balita.input.kunjungan']);
+    $routes->post('monitoring/balita/store-kunjungan', 'Admin\Monitoring\MonitoringBalitaController::storeKunjungan', ['as' => 'admin.monitoring.balita.store.kunjungan']);
+    $routes->get('monitoring/balita/edit-master/(:num)', 'Admin\Monitoring\MonitoringBalitaController::editMaster/$1', ['as' => 'admin.monitoring.balita.edit.master']);
+    $routes->post('monitoring/balita/update-master/(:num)', 'Admin\Monitoring\MonitoringBalitaController::updateMaster/$1', ['as' => 'admin.monitoring.balita.update.master']);
+    $routes->get('monitoring/balita/edit-kunjungan/(:num)/(:num)', 'Admin\Monitoring\MonitoringBalitaController::editKunjungan/$1/$2', ['as' => 'admin.monitoring.balita.edit.kunjungan']);
+    $routes->post('monitoring/balita/update-kunjungan/(:num)', 'Admin\Monitoring\MonitoringBalitaController::updateKunjungan/$1', ['as' => 'admin.monitoring.balita.update.kunjungan']);
+    $routes->get('monitoring/balita/delete-monitoring/(:num)', 'Admin\Monitoring\MonitoringBalitaController::deleteMonitoring/$1', ['as' => 'admin.monitoring.balita.delete.monitoring']);
+    $routes->get('monitoring/balita/delete-kunjungan/(:num)', 'Admin\Monitoring\MonitoringBalitaController::deleteKunjungan/$1', ['as' => 'admin.monitoring.balita.delete.kunjungan']);
+    
     // laporan
-    $routes->get('monitoring/laporan', 'Admin\Monitoring\LaporanController::index', ['as' => 'admin.monitoring.laporan']);
-    $routes->get('laporan/ibu-hamil', 'Admin\Monitoring\LaporanController::ibuHamil', ['as' => 'admin.laporan.ibu.hamil']);
-    $routes->get('laporan/balita', 'Admin\Monitoring\LaporanController::balita', ['as' => 'admin.laporan.balita']);
-    $routes->get('laporan/remaja', 'Admin\Monitoring\LaporanController::remaja', ['as' => 'admin.laporan.remaja']);
+    $routes->get('monitoring/laporan', 'Admin\Monitoring\MonitoringController::laporan', ['as' => 'admin.monitoring.laporan']);
     
     // kunjungan rutin
     $routes->get('monitoring/input-kunjungan/(:num)', 'Admin\Monitoring\MonitoringController::inputKunjungan/$1', ['as' => 'admin.monitoring.input.kunjungan']);
+    $routes->get('monitoring/edit-kunjungan/(:num)/(:num)', 'Admin\Monitoring\MonitoringController::inputKunjungan/$1/$2', ['as' => 'admin.monitoring.edit.kunjungan']);
     $routes->post('monitoring/store-kunjungan/(:num)', 'Admin\Monitoring\MonitoringController::storeKunjungan/$1', ['as' => 'admin.monitoring.store.kunjungan']);
+    $routes->post('monitoring/update-kunjungan/(:num)', 'Admin\Monitoring\MonitoringController::updateKunjungan/$1', ['as' => 'admin.monitoring.update.kunjungan']);
     
     // edit & delete
     $routes->get('monitoring/edit-master/(:num)', 'Admin\Monitoring\MonitoringController::editMaster/$1', ['as' => 'admin.monitoring.edit.master']);

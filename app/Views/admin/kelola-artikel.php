@@ -6,15 +6,8 @@
 <div class="container-fluid">
     <div class="row mb-4">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h2>Kelola Artikel</h2>
-                    <p class="text-muted mb-0">Manajemen artikel dan approval</p>
-                </div>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalArtikel">
-                    <i class="bi bi-plus-circle"></i> Tambah Artikel
-                </button>
-            </div>
+            <h2>Kelola Artikel</h2>
+            <p class="text-muted mb-0">Manajemen artikel</p>
         </div>
     </div>
 
@@ -22,35 +15,34 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header bg-white">
-                    <ul class="nav nav-tabs card-header-tabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="approved-tab" data-bs-toggle="tab" data-bs-target="#approved" type="button" role="tab">
-                                <i class="bi bi-check-circle"></i> Published 
-                                <span class="badge bg-success"><?= count(array_filter($articles, fn($a) => ($a['status'] ?? 'approved') === 'approved')) ?></span>
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab">
-                                <i class="bi bi-clock"></i> Pending 
-                                <span class="badge bg-warning"><?= count($pending_articles) ?></span>
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="rejected-tab" data-bs-toggle="tab" data-bs-target="#rejected" type="button" role="tab">
-                                <i class="bi bi-x-circle"></i> Rejected 
-                                <span class="badge bg-danger"><?= count(array_filter($articles, fn($a) => ($a['status'] ?? '') === 'rejected')) ?></span>
-                            </button>
-                        </li>
-                    </ul>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <ul class="nav nav-tabs card-header-tabs mb-0" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="approved-tab" data-bs-toggle="tab" data-bs-target="#approved" type="button" role="tab">
+                                    <i class="bi bi-check-circle"></i> Diterbitkan
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab">
+                                    <i class="bi bi-clock"></i> Menunggu Persetujuan
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="rejected-tab" data-bs-toggle="tab" data-bs-target="#rejected" type="button" role="tab">
+                                    <i class="bi bi-x-circle"></i> Ditolak
+                                </button>
+                            </li>
+                        </ul>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalArtikel">
+                            <i class="bi bi-plus-circle"></i> Tambah Artikel
+                        </button>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="tab-content">
                         <!-- Tab Published -->
                         <div class="tab-pane fade show active" id="approved" role="tabpanel">
-                            <?php 
-                            $approvedArticles = array_filter($articles, fn($a) => ($a['status'] ?? 'approved') === 'approved');
-                            if(empty($approvedArticles)): 
-                            ?>
+                            <?php if(empty($approvedArticles)): ?>
                                 <p class="text-muted text-center py-4"><i class="bi bi-inbox"></i> Tidak ada artikel yang dipublish</p>
                             <?php else: ?>
                             <div class="table-responsive">
@@ -67,14 +59,14 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php $no=1; foreach($approvedArticles as $a): ?>
+                                        <?php 
+                                        $no = 1 + (10 * ((isset($_GET['page_approved']) ? $_GET['page_approved'] : 1) - 1));
+                                        foreach($approvedArticles as $a): 
+                                        ?>
                                         <tr>
                                             <td><?= $no++ ?></td>
                                             <td>
-                                                <?php 
-                                                $imgPath = file_exists(FCPATH.'uploads/articles/'.$a['image']) ? 'uploads/articles/'.$a['image'] : 'uploads/posts/'.$a['image'];
-                                                ?>
-                                                <img src="<?= base_url($imgPath) ?>" width="60" class="rounded" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect fill=%22%23ddd%22 width=%2260%22 height=%2260%22/%3E%3C/svg%3E'">
+                                                <img src="<?= base_url('uploads/articles/'.$a['image']) ?>" width="60" class="rounded" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect fill=%22%23ddd%22 width=%2260%22 height=%2260%22/%3E%3C/svg%3E'">
                                             </td>
                                             <td>
                                                 <strong><?= esc($a['title']) ?></strong>
@@ -93,12 +85,17 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <?php if($pagerApproved): ?>
+                            <div class="mt-3">
+                                <?= $pagerApproved->links('approved') ?>
+                            </div>
+                            <?php endif; ?>
                             <?php endif; ?>
                         </div>
 
                         <!-- Tab Pending -->
                         <div class="tab-pane fade" id="pending" role="tabpanel">
-                            <?php if(empty($pending_articles)): ?>
+                            <?php if(empty($pendingArticles)): ?>
                                 <p class="text-muted text-center py-4"><i class="bi bi-inbox"></i> Tidak ada artikel yang menunggu persetujuan</p>
                             <?php else: ?>
                             <div class="table-responsive">
@@ -115,7 +112,10 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php $no=1; foreach($pending_articles as $p): ?>
+                                        <?php 
+                                        $no = 1 + (10 * ((isset($_GET['page_pending']) ? $_GET['page_pending'] : 1) - 1));
+                                        foreach($pendingArticles as $p): 
+                                        ?>
                                         <tr class="table-warning">
                                             <td><?= $no++ ?></td>
                                             <td><img src="<?= base_url('uploads/articles/'.$p['image']) ?>" width="60" class="rounded" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect fill=%22%23ddd%22 width=%2260%22 height=%2260%22/%3E%3C/svg%3E'"></td>
@@ -133,15 +133,17 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <?php if($pagerPending): ?>
+                            <div class="mt-3">
+                                <?= $pagerPending->links('pending') ?>
+                            </div>
+                            <?php endif; ?>
                             <?php endif; ?>
                         </div>
 
                         <!-- Tab Rejected -->
                         <div class="tab-pane fade" id="rejected" role="tabpanel">
-                            <?php 
-                            $rejectedArticles = array_filter($articles, fn($a) => ($a['status'] ?? '') === 'rejected');
-                            if(empty($rejectedArticles)): 
-                            ?>
+                            <?php if(empty($rejectedArticles)): ?>
                                 <p class="text-muted text-center py-4"><i class="bi bi-inbox"></i> Tidak ada artikel yang ditolak</p>
                             <?php else: ?>
                             <div class="table-responsive">
@@ -158,14 +160,14 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php $no=1; foreach($rejectedArticles as $r): ?>
+                                        <?php 
+                                        $no = 1 + (10 * ((isset($_GET['page_rejected']) ? $_GET['page_rejected'] : 1) - 1));
+                                        foreach($rejectedArticles as $r): 
+                                        ?>
                                         <tr class="table-danger">
                                             <td><?= $no++ ?></td>
                                             <td>
-                                                <?php 
-                                                $imgPath = file_exists(FCPATH.'uploads/articles/'.$r['image']) ? 'uploads/articles/'.$r['image'] : 'uploads/posts/'.$r['image'];
-                                                ?>
-                                                <img src="<?= base_url($imgPath) ?>" width="60" class="rounded" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect fill=%22%23ddd%22 width=%2260%22 height=%2260%22/%3E%3C/svg%3E'">
+                                                <img src="<?= base_url('uploads/articles/'.$r['image']) ?>" width="60" class="rounded" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect fill=%22%23ddd%22 width=%2260%22 height=%2260%22/%3E%3C/svg%3E'">
                                             </td>
                                             <td><strong><?= esc($r['title']) ?></strong></td>
                                             <td><span class="badge bg-danger"><?= esc($r['category']) ?></span></td>
@@ -181,6 +183,11 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <?php if($pagerRejected): ?>
+                            <div class="mt-3">
+                                <?= $pagerRejected->links('rejected') ?>
+                            </div>
+                            <?php endif; ?>
                             <?php endif; ?>
                         </div>
                     </div>

@@ -59,18 +59,182 @@ class UsersController extends BaseController
         return view('users/artikel-saya', $data);
     }
 
-    public function monitoring()
+    public function monitoring($category = 'ibu_hamil')
     {
         helper('auth');
         
         $user = current_user();
+        
+        // Load models
+        $monitoringModel = new \App\Models\Monitoring\MonitoringIbuHamilModel();
+        $identitasModel = new \App\Models\Monitoring\MonitoringIdentitasModel();
+        $riwayatPenyakitModel = new \App\Models\Monitoring\MonitoringRiwayatPenyakitModel();
+        $skriningModel = new \App\Models\Monitoring\MonitoringSkriningModel();
+        $kunjunganModel = new \App\Models\Monitoring\KunjunganModel();
+        $kunjunganAntropometriModel = new \App\Models\Monitoring\KunjunganAntropometriModel();
+        $kunjunganKeluhanModel = new \App\Models\Monitoring\KunjunganKeluhanModel();
+        $kunjunganSuplementasiModel = new \App\Models\Monitoring\KunjunganSuplementasiModel();
+        $kunjunganEtnomedisinModel = new \App\Models\Monitoring\KunjunganEtnomedisinModel();
+        
+        // Cek apakah user memiliki data monitoring
+        $monitoring = $monitoringModel->where('user_id', $user->id)
+                                      ->where('category', $category)
+                                      ->where('status', 'active')
+                                      ->first();
+        
+        if (!$monitoring) {
+            // Jika belum ada data monitoring
+            $data = [
+                'user' => $user,
+                'title' => 'Monitoring Kesehatan Ibu Hamil & Menyusui',
+                'category' => $category,
+                'hasMonitoring' => false
+            ];
+            return view('users/monitoring', $data);
+        }
+        
+        // Ambil data master
+        $identitas = $identitasModel->where('monitoring_id', $monitoring['id'])->first();
+        $riwayatPenyakit = $riwayatPenyakitModel->where('monitoring_id', $monitoring['id'])->first();
+        $skrining = $skriningModel->where('monitoring_id', $monitoring['id'])->first();
+        
+        // Ambil semua kunjungan
+        $kunjunganList = $kunjunganModel->where('monitoring_id', $monitoring['id'])
+                                        ->orderBy('kunjungan_ke', 'DESC')
+                                        ->findAll();
+        
+        // Ambil detail untuk SEMUA kunjungan
+        $allKunjungan = [];
+        $kunjunganTerakhir = null;
+        
+        foreach ($kunjunganList as $index => $kunjungan) {
+            $detail = [
+                'kunjungan' => $kunjungan,
+                'antropometri' => $kunjunganAntropometriModel->where('kunjungan_id', $kunjungan['id'])->first(),
+                'keluhan' => $kunjunganKeluhanModel->where('kunjungan_id', $kunjungan['id'])->first(),
+                'suplementasi' => $kunjunganSuplementasiModel->where('kunjungan_id', $kunjungan['id'])->first(),
+                'etnomedisin' => $kunjunganEtnomedisinModel->where('kunjungan_id', $kunjungan['id'])->first()
+            ];
+            
+            // Decode JSON fields
+            if (!empty($detail['keluhan']['keluhan'])) {
+                $detail['keluhan']['keluhan_array'] = json_decode($detail['keluhan']['keluhan'], true) ?? [];
+            }
+            if (!empty($detail['suplementasi']['efek_samping'])) {
+                $detail['suplementasi']['efek_samping_array'] = json_decode($detail['suplementasi']['efek_samping'], true) ?? [];
+            }
+            if (!empty($detail['etnomedisin']['jenis_obat'])) {
+                $detail['etnomedisin']['jenis_obat_array'] = json_decode($detail['etnomedisin']['jenis_obat'], true) ?? [];
+            }
+            if (!empty($detail['etnomedisin']['tujuan_penggunaan'])) {
+                $detail['etnomedisin']['tujuan_penggunaan_array'] = json_decode($detail['etnomedisin']['tujuan_penggunaan'], true) ?? [];
+            }
+            
+            $allKunjungan[] = $detail;
+            
+            // Kunjungan terakhir (index 0 karena sudah DESC)
+            if ($index === 0) {
+                $kunjunganTerakhir = $detail;
+            }
+        }
+        
+        // Decode JSON fields untuk riwayat penyakit
+        if ($riwayatPenyakit && !empty($riwayatPenyakit['riwayat_penyakit'])) {
+            $riwayatPenyakit['riwayat_penyakit_array'] = json_decode($riwayatPenyakit['riwayat_penyakit'], true) ?? [];
+        }
 
         $data = [
             'user' => $user,
-            'title' => 'Monitoring Kesehatan'
+            'title' => 'Monitoring Kesehatan Ibu Hamil & Menyusui',
+            'category' => $category,
+            'hasMonitoring' => true,
+            'monitoring' => $monitoring,
+            'identitas' => $identitas,
+            'riwayatPenyakit' => $riwayatPenyakit,
+            'skrining' => $skrining,
+            'kunjunganTerakhir' => $kunjunganTerakhir,
+            'allKunjungan' => $allKunjungan,
+            'totalKunjungan' => count($kunjunganList)
         ];
 
         return view('users/monitoring', $data);
+    }
+
+    public function monitoringRemaja()
+    {
+        helper('auth');
+        $user = current_user();
+        
+        $monitoringRemajaModel = new \App\Models\MonitoringRemaja\MonitoringRemajaModel();
+        $identitasModel = new \App\Models\MonitoringRemaja\MonitoringRemajaIdentitasModel();
+        $kunjunganModel = new \App\Models\MonitoringRemaja\KunjunganRemajaModel();
+        $antropometriModel = new \App\Models\MonitoringRemaja\KunjunganRemajaAntropometriModel();
+        $anemiaModel = new \App\Models\MonitoringRemaja\KunjunganRemajaAnemiaModel();
+        $haidModel = new \App\Models\MonitoringRemaja\KunjunganRemajaHaidModel();
+        $gayaHidupModel = new \App\Models\MonitoringRemaja\KunjunganRemajaGayaHidupModel();
+        $suplementasiModel = new \App\Models\MonitoringRemaja\KunjunganRemajaSuplementasiModel();
+        $swamedikasModel = new \App\Models\MonitoringRemaja\KunjunganRemajaSwamedikasModel();
+        
+        $monitoring = $monitoringRemajaModel->where('user_id', $user->id)
+                                            ->where('category', 'remaja')
+                                            ->where('status', 'active')
+                                            ->first();
+        
+        if (!$monitoring) {
+            $data = [
+                'user' => $user,
+                'title' => 'Monitoring Kesehatan Remaja',
+                'hasMonitoring' => false
+            ];
+            return view('users/monitoring-remaja', $data);
+        }
+        
+        $identitas = $identitasModel->where('monitoring_id', $monitoring['id'])->first();
+        $kunjunganList = $kunjunganModel->where('monitoring_id', $monitoring['id'])
+                                        ->orderBy('kunjungan_ke', 'DESC')
+                                        ->findAll();
+        
+        $allKunjungan = [];
+        foreach ($kunjunganList as $kunjungan) {
+            $detail = [
+                'kunjungan' => $kunjungan,
+                'antropometri' => $antropometriModel->where('kunjungan_id', $kunjungan['id'])->first(),
+                'anemia' => $anemiaModel->where('kunjungan_id', $kunjungan['id'])->first(),
+                'haid' => $haidModel->where('kunjungan_id', $kunjungan['id'])->first(),
+                'gaya_hidup' => $gayaHidupModel->where('kunjungan_id', $kunjungan['id'])->first(),
+                'suplementasi' => $suplementasiModel->where('kunjungan_id', $kunjungan['id'])->first(),
+                'swamedikasi' => $swamedikasModel->where('kunjungan_id', $kunjungan['id'])->first()
+            ];
+            $allKunjungan[] = $detail;
+        }
+        
+        $data = [
+            'user' => $user,
+            'title' => 'Monitoring Kesehatan Remaja',
+            'hasMonitoring' => true,
+            'monitoring' => $monitoring,
+            'identitas' => $identitas,
+            'allKunjungan' => $allKunjungan,
+            'totalKunjungan' => count($kunjunganList)
+        ];
+
+        return view('users/monitoring-remaja', $data);
+    }
+
+    public function monitoringBalita()
+    {
+        helper('auth');
+        $user = current_user();
+        
+        // Untuk saat ini, selalu tampilkan belum ada data
+        // Karena fitur balita belum diimplementasi
+        $data = [
+            'user' => $user,
+            'title' => 'Monitoring Kesehatan Balita & Anak',
+            'hasMonitoring' => false
+        ];
+
+        return view('users/monitoring-balita', $data);
     }
 
     // CRUD ARTIKEL PENGGUNA

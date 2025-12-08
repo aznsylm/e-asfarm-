@@ -9,24 +9,28 @@
             <form id="formPengguna">
                 <input type="hidden" id="penggunaId">
                 <div class="modal-body">
-                    <div class="mb-2">
+                    <div class="mb-3">
                         <label>Username *</label>
-                        <input type="text" class="form-control form-control-sm" name="username" required>
+                        <div class="error-message text-danger small mb-1" id="error-username" style="display:none;"></div>
+                        <input type="text" class="form-control form-control-sm" name="username" id="usernameInput" required>
                     </div>
-                    <div class="mb-2">
+                    <div class="mb-3">
                         <label>Email *</label>
-                        <input type="email" class="form-control form-control-sm" name="email" required>
+                        <div class="error-message text-danger small mb-1" id="error-email" style="display:none;"></div>
+                        <input type="email" class="form-control form-control-sm" name="email" id="emailInput" required>
                     </div>
-                    <div class="mb-2" id="passwordFieldAdd">
+                    <div class="mb-3" id="passwordFieldAdd">
                         <label>Password *</label>
+                        <div class="error-message text-danger small mb-1" id="error-password" style="display:none;"></div>
                         <div class="input-group input-group-sm">
                             <input type="password" class="form-control" name="password" id="password" required>
                             <button class="btn btn-outline-secondary" type="button" onclick="togglePassword()">
                                 <i class="bi bi-eye" id="toggleIcon"></i>
                             </button>
                         </div>
+                        <small class="text-muted"><i class="bi bi-info-circle"></i> Minimal 8 karakter</small>
                     </div>
-                    <div class="mb-2" id="passwordFieldEdit" style="display:none;">
+                    <div class="mb-3" id="passwordFieldEdit" style="display:none;">
                         <div class="form-check mb-2">
                             <input type="checkbox" id="resetPasswordCheck" class="form-check-input" onchange="togglePasswordReset()">
                             <label class="form-check-label" for="resetPasswordCheck">
@@ -35,6 +39,7 @@
                         </div>
                         <div id="passwordResetField" style="display:none;">
                             <label>Password Baru *</label>
+                            <div class="error-message text-danger small mb-1" id="error-password-edit" style="display:none;"></div>
                             <div class="input-group input-group-sm">
                                 <input type="password" class="form-control" name="password" id="password_edit">
                                 <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordEdit()">
@@ -44,8 +49,9 @@
                             <small class="text-muted"><i class="bi bi-info-circle"></i> Minimal 8 karakter</small>
                         </div>
                     </div>
-                    <div class="mb-2">
+                    <div class="mb-3">
                         <label>Nomor WhatsApp *</label>
+                        <div class="error-message text-danger small mb-1" id="error-phone_number" style="display:none;"></div>
                         <input type="text" class="form-control form-control-sm" name="phone_number" id="phone_number" 
                                placeholder="08xxxxxxxxxx" pattern="^08[0-9]{8,13}$" maxlength="15" required>
                         <small class="text-muted"><i class="bi bi-info-circle"></i> Format: 08xxxxxxxxxx (10-15 digit, dimulai dengan 08)</small>
@@ -184,27 +190,31 @@ document.addEventListener('DOMContentLoaded', function() {
             <form id="formArtikel" enctype="multipart/form-data">
                 <input type="hidden" id="artikelId">
                 <div class="modal-body">
-                    <div class="mb-2">
+                    <div class="mb-3">
                         <label>Judul *</label>
-                        <input type="text" class="form-control form-control-sm" name="title" required>
+                        <div class="error-message text-danger small mb-1" id="error-title" style="display:none;"></div>
+                        <input type="text" class="form-control form-control-sm" name="title" id="titleInput" required>
                     </div>
-                    <div class="mb-2">
+                    <div class="mb-3">
                         <label>Kategori *</label>
-                        <select class="form-select form-select-sm" name="category" required>
-                            <option value="">Pilih</option>
+                        <div class="error-message text-danger small mb-1" id="error-category" style="display:none;"></div>
+                        <select class="form-select form-select-sm" name="category" id="categoryInput" required>
+                            <option value="">Pilih Kategori</option>
                             <option value="Farmasi">Farmasi</option>
                             <option value="Gizi">Gizi</option>
                             <option value="Bidan">Bidan</option>
                         </select>
                     </div>
-                    <div class="mb-2">
+                    <div class="mb-3">
                         <label>Konten *</label>
+                        <div class="error-message text-danger small mb-1" id="error-content" style="display:none;"></div>
                         <textarea class="form-control form-control-sm" name="content" id="contentArtikel" rows="5" required></textarea>
                     </div>
-                    <div class="mb-2">
+                    <div class="mb-3">
                         <label>Gambar * 
                             <i class="bi bi-question-circle text-primary" data-bs-toggle="tooltip" data-bs-placement="right" title="Format: JPG, JPEG, PNG, WEBP | Maksimal: 2MB | Resolusi disarankan: 1200x630px"></i>
                         </label>
+                        <div class="error-message text-danger small mb-1" id="error-image" style="display:none;"></div>
                         <input type="file" class="form-control form-control-sm" name="image" id="imageArtikel" accept="image/jpeg,image/jpg,image/png,image/webp" required>
                         <small class="text-muted"><i class="bi bi-info-circle"></i> Format: JPG, PNG, WEBP | Max: 2MB</small>
                     </div>
@@ -229,10 +239,11 @@ document.addEventListener('DOMContentLoaded', function() {
             <form id="formFaq">
                 <input type="hidden" id="faqId">
                 <div class="modal-body">
-                    <div class="mb-2">
+                    <div class="mb-3">
                         <label>Kategori *</label>
-                        <select class="form-select form-select-sm" name="category" required>
-                            <option value="">Pilih</option>
+                        <div class="error-message text-danger small mb-1" id="error-faq-category" style="display:none;"></div>
+                        <select class="form-select form-select-sm" name="category" id="faqCategoryInput" required>
+                            <option value="">Pilih Kategori</option>
                             <option value="kehamilan">Kehamilan</option>
                             <option value="menyusui">Menyusui</option>
                             <option value="persalinan">Persalinan</option>
@@ -241,12 +252,14 @@ document.addEventListener('DOMContentLoaded', function() {
                             <option value="etnomedisin">Etnomedisin</option>
                         </select>
                     </div>
-                    <div class="mb-2">
+                    <div class="mb-3">
                         <label>Pertanyaan *</label>
-                        <textarea class="form-control form-control-sm" name="pertanyaan" rows="3" required></textarea>
+                        <div class="error-message text-danger small mb-1" id="error-pertanyaan" style="display:none;"></div>
+                        <textarea class="form-control form-control-sm" name="pertanyaan" id="pertanyaanInput" rows="3" required></textarea>
                     </div>
-                    <div class="mb-2">
+                    <div class="mb-3">
                         <label>Jawaban *</label>
+                        <div class="error-message text-danger small mb-1" id="error-jawaban" style="display:none;"></div>
                         <textarea class="form-control form-control-sm" name="jawaban" id="jawabanFaq" rows="5" required></textarea>
                     </div>
                 </div>
@@ -264,7 +277,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title"><i class="bi bi-eye"></i> Preview & Kelola Artikel</h5>
+                <h5 class="modal-title">Detail Artikel</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-0">
@@ -290,45 +303,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="col-lg-4 bg-light">
                         <div class="p-4">
                             <input type="hidden" id="previewArtikelId">
-                            <h6 class="fw-bold mb-3"><i class="bi bi-gear"></i> Panel Kelola</h6>
+                            <h6 class="fw-bold mb-3">Panel Kelola</h6>
                             
                             <div class="card mb-3 shadow-sm">
                                 <div class="card-header bg-white">
-                                    <h6 class="mb-0 fw-semibold"><i class="bi bi-flag"></i> Ubah Status</h6>
+                                    <h6 class="mb-0 fw-semibold">Ubah Status</h6>
                                 </div>
                                 <div class="card-body">
-                                    <label class="form-label">Pilih Status Artikel</label>
+                                    <label class="form-label">Status</label>
                                     <select class="form-select mb-3" id="previewStatus">
-                                        <option value="pending">⏳ Pending - Menunggu Review</option>
-                                        <option value="approved">✅ Approved - Publish ke Publik</option>
-                                        <option value="rejected">❌ Rejected - Tidak Disetujui</option>
+                                        <option value="pending">Menunggu Persetujuan</option>
+                                        <option value="approved">Terbitkan</option>
+                                        <option value="rejected">Tolak</option>
                                     </select>
                                     <div class="d-grid">
                                         <button class="btn btn-primary" onclick="updateStatusArtikel()">
-                                            <i class="bi bi-save"></i> Update Status
-                                        </button>
-                                    </div>
-                                    <small class="text-muted mt-2 d-block">
-                                        <i class="bi bi-info-circle"></i> Status bisa diubah kapan saja
-                                    </small>
-                                </div>
-                            </div>
-                            
-                            
-                            <div class="card mb-3 shadow-sm">
-                                <div class="card-header bg-white">
-                                    <h6 class="mb-0 fw-semibold"><i class="bi bi-lightning"></i> Quick Actions</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="d-grid gap-2">
-                                        <button class="btn btn-success btn-sm" onclick="quickApprove()">
-                                            <i class="bi bi-check-circle-fill"></i> Setujui & Publish
-                                        </button>
-                                        <button class="btn btn-warning btn-sm" onclick="quickPending()">
-                                            <i class="bi bi-clock-fill"></i> Ubah ke Pending
-                                        </button>
-                                        <button class="btn btn-danger btn-sm" onclick="quickReject()">
-                                            <i class="bi bi-x-circle-fill"></i> Tolak Artikel
+                                            Simpan
                                         </button>
                                     </div>
                                 </div>
@@ -336,15 +326,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             
                             <div class="card shadow-sm">
                                 <div class="card-header bg-white">
-                                    <h6 class="mb-0 fw-semibold"><i class="bi bi-pencil-square"></i> Aksi Lainnya</h6>
+                                    <h6 class="mb-0 fw-semibold">Lainnya</h6>
                                 </div>
                                 <div class="card-body">
                                     <div class="d-grid gap-2">
                                         <button class="btn btn-warning" onclick="editArtikelFromPreview()">
-                                            <i class="bi bi-pencil"></i> Edit Artikel
+                                            Edit Artikel
                                         </button>
                                         <button class="btn btn-outline-danger" onclick="hapusArtikelFromPreview()">
-                                            <i class="bi bi-trash"></i> Hapus Artikel
+                                            Hapus Artikel
                                         </button>
                                     </div>
                                 </div>
@@ -368,26 +358,30 @@ document.addEventListener('DOMContentLoaded', function() {
             <form id="formUnduhan" enctype="multipart/form-data">
                 <input type="hidden" id="unduhanId">
                 <div class="modal-body">
-                    <div class="mb-2">
+                    <div class="mb-3">
                         <label>Judul *</label>
-                        <input type="text" class="form-control form-control-sm" name="title" required>
+                        <div class="error-message text-danger small mb-1" id="error-unduhan-title" style="display:none;"></div>
+                        <input type="text" class="form-control form-control-sm" name="title" id="unduhanTitleInput" required>
                     </div>
-                    <div class="mb-2">
+                    <div class="mb-3">
                         <label>Kategori *</label>
-                        <select class="form-select form-select-sm" name="category" required>
-                            <option value="">Pilih</option>
+                        <div class="error-message text-danger small mb-1" id="error-unduhan-category" style="display:none;"></div>
+                        <select class="form-select form-select-sm" name="category" id="unduhanCategoryInput" required>
+                            <option value="">Pilih Kategori</option>
                             <option value="Edukasi">Edukasi</option>
                             <option value="Panduan">Panduan</option>
                         </select>
                     </div>
-                    <div class="mb-2">
+                    <div class="mb-3">
                         <label>Link Google Drive *</label>
-                        <input type="url" class="form-control form-control-sm" name="link_drive" placeholder="https://drive.google.com/..." required>
+                        <div class="error-message text-danger small mb-1" id="error-link_drive" style="display:none;"></div>
+                        <input type="url" class="form-control form-control-sm" name="link_drive" id="linkDriveInput" placeholder="https://drive.google.com/..." required>
                     </div>
-                    <div class="mb-2">
+                    <div class="mb-3">
                         <label>Thumbnail *</label>
+                        <div class="error-message text-danger small mb-1" id="error-thumbnail" style="display:none;"></div>
                         <input type="file" class="form-control form-control-sm" name="thumbnail" id="thumbnailUnduhan" accept="image/*" required>
-                        <small class="text-muted">Max 2MB</small>
+                        <small class="text-muted"><i class="bi bi-info-circle"></i> Format: JPG, PNG, WEBP | Max: 2MB</small>
                     </div>
                 </div>
                 <div class="modal-footer">

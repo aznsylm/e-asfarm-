@@ -11,6 +11,13 @@
     justify-content: space-between;
     padding-top: 20px;
     border-top: 1px solid #dee2e6;
+    position: relative;
+    z-index: 10;
+}
+
+.wizard-navigation button {
+    pointer-events: auto !important;
+    cursor: pointer !important;
 }
 
 .wizard-progress {

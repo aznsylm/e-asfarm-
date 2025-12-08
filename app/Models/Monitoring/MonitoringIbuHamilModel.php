@@ -22,15 +22,17 @@ class MonitoringIbuHamilModel extends Model
 
     public function getAllWithUserInfo($padukuhanId = null)
     {
-        $builder = $this->select('monitoring_ibu_hamil.*, users.full_name, users.username, users.padukuhan_id')
-                        ->join('users', 'users.id = monitoring_ibu_hamil.user_id')
-                        ->where('monitoring_ibu_hamil.status', 'active');
+        $this->select('monitoring_ibu_hamil.*, monitoring_identitas.nama_ibu as full_name, users.username, users.padukuhan_id, padukuhan.nama_padukuhan')
+            ->join('users', 'users.id = monitoring_ibu_hamil.user_id')
+            ->join('monitoring_identitas', 'monitoring_identitas.monitoring_id = monitoring_ibu_hamil.id', 'left')
+            ->join('padukuhan', 'padukuhan.id = users.padukuhan_id', 'left')
+            ->where('monitoring_ibu_hamil.status', 'active');
         
         if ($padukuhanId) {
-            $builder->where('users.padukuhan_id', $padukuhanId);
+            $this->where('users.padukuhan_id', $padukuhanId);
         }
         
-        return $builder->orderBy('monitoring_ibu_hamil.created_at', 'DESC')->findAll();
+        return $this->orderBy('monitoring_ibu_hamil.created_at', 'DESC');
     }
 
     public function getStatsByPadukuhan($padukuhanId = null)

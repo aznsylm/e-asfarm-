@@ -48,7 +48,7 @@
         <li class="menu-item <?= url_is('admin/kelola-faq*') ? 'active' : '' ?>">
             <a href="<?= base_url('admin/kelola-faq') ?>">
                 <i class="ti ti-help"></i>
-                <span>Kelola FAQ</span>
+                <span>Kelola Tanya Jawab</span>
             </a>
         </li>
         
@@ -59,35 +59,18 @@
             </a>
         </li>
         
-        <li class="menu-item <?= url_is('admin/monitoring*') || url_is('admin/laporan*') ? 'active' : '' ?>">
-            <a href="#" class="has-submenu" data-bs-toggle="collapse" data-bs-target="#monitoringParentMenu">
+        <li class="menu-item <?= url_is('admin/monitoring*') ? 'active' : '' ?>">
+            <a href="#" class="has-submenu" data-bs-toggle="collapse" data-bs-target="#monitoringMenu">
                 <i class="ti ti-heart-rate-monitor"></i>
                 <span>Monitoring Kesehatan</span>
                 <i class="ti ti-chevron-down ms-auto"></i>
             </a>
-            <ul class="submenu collapse" id="monitoringParentMenu">
-                <li>
-                    <a href="#" class="has-submenu" data-bs-toggle="collapse" data-bs-target="#dashboardMonitoringMenu">
-                        <span>Dashboard Monitoring</span>
-                        <i class="ti ti-chevron-down ms-auto"></i>
-                    </a>
-                    <ul class="submenu collapse" id="dashboardMonitoringMenu">
-                        <li><a href="<?= base_url('admin/monitoring/ibu-hamil') ?>">Ibu Hamil & Menyusui</a></li>
-                        <li><a href="<?= base_url('admin/monitoring/balita') ?>">Balita & Anak</a></li>
-                        <li><a href="<?= base_url('admin/monitoring/remaja') ?>">Remaja</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#" class="has-submenu" data-bs-toggle="collapse" data-bs-target="#laporanMenu">
-                        <span>Data Statistik & Laporan</span>
-                        <i class="ti ti-chevron-down ms-auto"></i>
-                    </a>
-                    <ul class="submenu collapse" id="laporanMenu">
-                        <li><a href="<?= base_url('admin/laporan/ibu-hamil') ?>">Laporan Ibu Hamil & Menyusui</a></li>
-                        <li><a href="<?= base_url('admin/laporan/balita') ?>">Laporan Balita & Anak</a></li>
-                        <li><a href="<?= base_url('admin/laporan/remaja') ?>">Laporan Remaja</a></li>
-                    </ul>
-                </li>
+            <ul class="submenu collapse" id="monitoringMenu">
+                <li><a href="<?= base_url('admin/monitoring/dashboard') ?>">Dashboard</a></li>
+                <li><a href="<?= base_url('admin/monitoring/ibu-hamil') ?>">Ibu Hamil & Menyusui</a></li>
+                <li><a href="<?= base_url('admin/monitoring/balita') ?>">Balita & Anak</a></li>
+                <li><a href="<?= base_url('admin/monitoring/remaja') ?>">Remaja</a></li>
+                <li><a href="<?= base_url('admin/monitoring/laporan') ?>">Laporan Statistik</a></li>
             </ul>
         </li>
         

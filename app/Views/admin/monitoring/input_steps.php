@@ -170,8 +170,8 @@
                     <div class="form-check"><input class="form-check-input" type="checkbox" name="jenis_obat[]" value="Daun Selasih" id="j6"><label class="form-check-label" for="j6">Daun Selasih</label></div>
                     <div class="form-check"><input class="form-check-input" type="checkbox" name="jenis_obat[]" value="Minyak Kelapa" id="j7"><label class="form-check-label" for="j7">Minyak Kelapa</label></div>
                     <div class="form-check"><input class="form-check-input" type="checkbox" name="jenis_obat[]" value="Pasak Bumi" id="j8"><label class="form-check-label" for="j8">Pasak Bumi</label></div>
-                    <div class="form-check"><input class="form-check-input" type="checkbox" value="1" id="j9" onchange="toggleLainnyaObat(this)"><label class="form-check-label" for="j9">Herbal lainnya</label></div>
-                    <input type="text" name="jenis_obat_lainnya" class="form-control mt-2" id="obatLainnya" placeholder="Sebutkan..." style="display:none;">
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" value="1" id="j9"><label class="form-check-label" for="j9">Lainnya</label></div>
+                    <input type="text" name="jenis_obat_lainnya" class="form-control" id="obatLainnya" placeholder="Sebutkan jenis obat lainnya...">
                 </div>
             </div>
         </div>
@@ -187,8 +187,8 @@
                 <div class="col-md-6">
                     <div class="form-check"><input class="form-check-input" type="checkbox" name="tujuan_penggunaan[]" value="Mengatasi keputihan" id="tu4"><label class="form-check-label" for="tu4">Mengatasi keputihan</label></div>
                     <div class="form-check"><input class="form-check-input" type="checkbox" name="tujuan_penggunaan[]" value="Menjaga stamina ibu hamil" id="tu5"><label class="form-check-label" for="tu5">Menjaga stamina ibu hamil</label></div>
-                    <div class="form-check"><input class="form-check-input" type="checkbox" value="1" id="tu6" onchange="toggleLainnyaTujuan(this)"><label class="form-check-label" for="tu6">Lainnya</label></div>
-                    <input type="text" name="tujuan_lainnya" class="form-control mt-2" id="tujuanLainnya" placeholder="Sebutkan..." style="display:none;">
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" value="1" id="tu6"><label class="form-check-label" for="tu6">Lainnya</label></div>
+                    <input type="text" name="tujuan_lainnya" class="form-control" id="tujuanLainnya" placeholder="Sebutkan tujuan lainnya...">
                 </div>
             </div>
         </div>

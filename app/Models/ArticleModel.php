@@ -11,7 +11,7 @@ class ArticleModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
-    protected $allowedFields = ['title', 'slug', 'seo_title', 'meta_description', 'content', 'category', 'image', 'author_id', 'author_name', 'status', 'views', 'approved_by', 'approved_at'];
+    protected $allowedFields = ['title', 'slug', 'seo_title', 'meta_description', 'content', 'category', 'image', 'author_id', 'author_name', 'padukuhan_id', 'status', 'views', 'approved_by', 'approved_at'];
     protected $useTimestamps = true;
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';
@@ -62,5 +62,42 @@ class ArticleModel extends Model
     public function getBySlug($slug)
     {
         return $this->where('slug', $slug)->first();
+    }
+
+    public function getArticleWithPadukuhan($articleId)
+    {
+        return $this->select('articles.*, users.padukuhan_id as author_padukuhan_id')
+                    ->join('users', 'users.id = articles.author_id', 'left')
+                    ->where('articles.id', $articleId)
+                    ->first();
+    }
+
+    public function canAdminManage($articleId, $adminPadukuhanId, $adminRole)
+    {
+        if ($adminRole === 'superadmin') {
+            return true;
+        }
+
+        $article = $this->getArticleWithPadukuhan($articleId);
+        if (!$article) {
+            return false;
+        }
+
+        // Jika artikel dibuat oleh admin/superadmin (padukuhan_id NULL), semua admin bisa manage
+        if ($article['padukuhan_id'] === null) {
+            return true;
+        }
+
+        // Jika artikel dari pengguna, cek padukuhan
+        return $article['author_padukuhan_id'] == $adminPadukuhanId;
+    }
+
+    public function getAllWithPadukuhan()
+    {
+        return $this->select('articles.*, users.padukuhan_id as author_padukuhan_id, padukuhan.nama_padukuhan')
+                    ->join('users', 'users.id = articles.author_id', 'left')
+                    ->join('padukuhan', 'padukuhan.id = users.padukuhan_id', 'left')
+                    ->orderBy('articles.created_at', 'DESC')
+                    ->findAll();
     }
 }

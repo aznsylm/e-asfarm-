@@ -1,6 +1,17 @@
 <?= $this->extend('layouts/app') ?>
 <?= $this->section('content') ?>
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<style>
+.heroSwiper .swiper-pagination-bullet {
+    background: #fff;
+    opacity: 0.5;
+}
+.heroSwiper .swiper-pagination-bullet-active {
+    opacity: 1;
+}
+</style>
+
 <!-- Hero Section -->
 <section class="py-5 py-md-14 py-lg-11 bg-primary-subtle">
     <div class="container-fluid">
@@ -14,8 +25,22 @@
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="position-relative">
-                    <img src="<?= base_url('assets/images/hero-img/hero1.jpg'); ?>" alt="Kesehatan Ibu dan Anak" class="img-fluid rounded-4 shadow-lg" style="width: 100%; height: 400px; object-fit: cover;">
+                <div class="swiper heroSwiper rounded-4 shadow-lg">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <img src="<?= base_url('assets/images/hero-img/hero1.jpg'); ?>" alt="Kesehatan Ibu dan Anak" style="width: 100%; height: 400px; object-fit: cover;">
+                        </div>
+                        <div class="swiper-slide">
+                            <img src="<?= base_url('assets/images/hero-img/hero2.jpg'); ?>" alt="Konsultasi Kesehatan" style="width: 100%; height: 400px; object-fit: cover;">
+                        </div>
+                        <div class="swiper-slide">
+                            <img src="<?= base_url('assets/images/hero-img/hero1.jpg'); ?>" alt="Layanan Profesional" style="width: 100%; height: 400px; object-fit: cover;">
+                        </div>
+                        <div class="swiper-slide">
+                            <img src="<?= base_url('assets/images/hero-img/hero2.jpg'); ?>" alt="Informasi Terpercaya" style="width: 100%; height: 400px; object-fit: cover;">
+                        </div>
+                    </div>
+                    <div class="swiper-pagination"></div>
                 </div>
             </div>
         </div>
@@ -385,6 +410,22 @@ document.addEventListener('DOMContentLoaded', function() {
             loadArtikel(kategori);
         });
     });
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+const swiper = new Swiper('.heroSwiper', {
+    loop: true,
+    autoplay: {
+        delay: 5000,
+        disableOnInteraction: false,
+    },
+    pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+    },
+    grabCursor: true,
 });
 </script>
 

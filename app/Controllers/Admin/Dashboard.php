@@ -25,55 +25,31 @@ class Dashboard extends BaseController
 
     public function index()
     {
-        $userRole = session()->get('role') ?? 'admin';
-        $padukuhanId = session()->get('padukuhan_id');
-
-        // Get statistics
-        $stats = [
-            'total_users' => $this->userModel->where('role', 'pengguna')->countAllResults(),
-            'total_articles' => $this->articleModel->where('status', 'approved')->countAllResults(),
-            'total_monitoring' => 0, // Will be implemented later
-            'total_padukuhan' => 5,
-            'pending_articles' => count($this->articleModel->getByStatus('pending') ?? [])
-        ];
-
-        // Get padukuhan name for admin
-        $padukuhanName = '-';
-        if ($userRole === 'admin' && $padukuhanId) {
-            $padukuhanModel = new \App\Models\PadukuhanModel();
-            $padukuhan = $padukuhanModel->find($padukuhanId);
-            $padukuhanName = $padukuhan['nama_padukuhan'] ?? '-';
-        }
-
         $data = [
-            'stats' => $stats,
-            'padukuhan_name' => $padukuhanName,
             'title' => 'Dashboard'
         ];
 
-        return view('admin/dashboard-welcome', $data);
+        return view('admin/dashboard', $data);
     }
 
     public function kelolaPengguna()
     {
         $user = $this->getAuthUser();
         $userRole = session()->get('role') ?? 'admin';
-
-        // Filter users by padukuhan for admin
         $padukuhanId = session()->get('padukuhan_id');
+        
+        $query = $this->userModel;
         if ($userRole === 'admin' && $padukuhanId) {
-            $users = $this->userModel->where('padukuhan_id', $padukuhanId)->findAll();
-        } else {
-            $users = $this->userModel->findAll();
+            $query = $query->where('padukuhan_id', $padukuhanId);
         }
-
+        
         $data = [
             'user' => $user,
-            'users' => $users ?? [],
-            'articles' => $this->articleModel->orderBy('created_at', 'DESC')->findAll() ?? [],
-            'pending_articles' => $this->articleModel->getByStatus('pending') ?? [],
-            'faqs' => $this->faqModel->findAll() ?? [],
-            'downloads' => $this->downloadModel->findAll() ?? [],
+            'users' => $query->paginate(10),
+            'pager' => $this->userModel->pager,
+            'articles' => [],
+            'faqs' => [],
+            'downloads' => [],
             'title' => 'Kelola Pengguna'
         ];
 
@@ -100,13 +76,65 @@ class Dashboard extends BaseController
 
     public function kelolaArtikel()
     {
+        $userRole = session()->get('role') ?? 'admin';
+        $padukuhanId = session()->get('padukuhan_id');
+        
+        if ($userRole === 'admin' && $padukuhanId) {
+            $approvedArticles = $this->articleModel->select('articles.*')
+                ->join('users', 'users.id = articles.author_id')
+                ->where('articles.status', 'approved')
+                ->where('users.padukuhan_id', $padukuhanId)
+                ->orderBy('articles.created_at', 'DESC')
+                ->paginate(10, 'approved');
+            $pagerApproved = $this->articleModel->pager;
+            
+            $pendingArticles = $this->articleModel->select('articles.*')
+                ->join('users', 'users.id = articles.author_id')
+                ->where('articles.status', 'pending')
+                ->where('users.padukuhan_id', $padukuhanId)
+                ->orderBy('articles.created_at', 'DESC')
+                ->paginate(10, 'pending');
+            $pagerPending = $this->articleModel->pager;
+            
+            $rejectedArticles = $this->articleModel->select('articles.*')
+                ->join('users', 'users.id = articles.author_id')
+                ->where('articles.status', 'rejected')
+                ->where('users.padukuhan_id', $padukuhanId)
+                ->orderBy('articles.created_at', 'DESC')
+                ->paginate(10, 'rejected');
+            $pagerRejected = $this->articleModel->pager;
+        } else {
+            $approvedArticles = $this->articleModel->where('status', 'approved')->orderBy('created_at', 'DESC')->paginate(10, 'approved');
+            $pagerApproved = $this->articleModel->pager;
+            
+            $pendingArticles = $this->articleModel->where('status', 'pending')->orderBy('created_at', 'DESC')->paginate(10, 'pending');
+            $pagerPending = $this->articleModel->pager;
+            
+            $rejectedArticles = $this->articleModel->where('status', 'rejected')->orderBy('created_at', 'DESC')->paginate(10, 'rejected');
+            $pagerRejected = $this->articleModel->pager;
+        }
+
+        // Gabungkan semua artikel untuk JavaScript
+        $allArticles = array_merge(
+            $approvedArticles,
+            $pendingArticles,
+            $rejectedArticles
+        );
+
         $data = [
-            'users' => $this->userModel->findAll() ?? [],
-            'articles' => $this->articleModel->orderBy('created_at', 'DESC')->findAll() ?? [],
-            'pending_articles' => $this->articleModel->getByStatus('pending') ?? [],
-            'faqs' => $this->faqModel->findAll() ?? [],
-            'downloads' => $this->downloadModel->findAll() ?? [],
-            'title' => 'Kelola Artikel'
+            'approvedArticles' => $approvedArticles,
+            'pagerApproved' => $pagerApproved,
+            'pendingArticles' => $pendingArticles,
+            'pagerPending' => $pagerPending,
+            'rejectedArticles' => $rejectedArticles,
+            'pagerRejected' => $pagerRejected,
+            'users' => [],
+            'articles' => $allArticles,
+            'faqs' => [],
+            'downloads' => [],
+            'title' => 'Kelola Artikel',
+            'userRole' => $userRole,
+            'adminPadukuhanId' => $padukuhanId
         ];
 
         return view('admin/kelola-artikel', $data);
@@ -115,11 +143,11 @@ class Dashboard extends BaseController
     public function kelolaFaq()
     {
         $data = [
-            'users' => $this->userModel->findAll() ?? [],
-            'articles' => $this->articleModel->findAll() ?? [],
-            'pending_articles' => $this->articleModel->getByStatus('pending') ?? [],
-            'faqs' => $this->faqModel->findAll() ?? [],
-            'downloads' => $this->downloadModel->findAll() ?? [],
+            'faqs' => $this->faqModel->orderBy('created_at', 'DESC')->paginate(10),
+            'pager' => $this->faqModel->pager,
+            'users' => [],
+            'articles' => [],
+            'downloads' => [],
             'title' => 'Kelola FAQ'
         ];
 
@@ -129,11 +157,11 @@ class Dashboard extends BaseController
     public function kelolaUnduhan()
     {
         $data = [
-            'users' => $this->userModel->findAll() ?? [],
-            'articles' => $this->articleModel->findAll() ?? [],
-            'pending_articles' => $this->articleModel->getByStatus('pending') ?? [],
-            'faqs' => $this->faqModel->findAll() ?? [],
-            'downloads' => $this->downloadModel->findAll() ?? [],
+            'downloads' => $this->downloadModel->orderBy('created_at', 'DESC')->paginate(10),
+            'pager' => $this->downloadModel->pager,
+            'users' => [],
+            'articles' => [],
+            'faqs' => [],
             'title' => 'Kelola Unduhan'
         ];
 
@@ -306,6 +334,13 @@ class Dashboard extends BaseController
         $seoTitle = $this->request->getPost('seo_title') ?: $title;
         $metaDesc = $this->request->getPost('meta_description') ?: substr(strip_tags($this->request->getPost('content')), 0, 160);
 
+        // Set padukuhan_id: NULL untuk admin/superadmin, ambil dari user untuk pengguna biasa
+        $padukuhanId = null;
+        if ($user->role === 'pengguna') {
+            $userData = $this->userModel->find($user->id);
+            $padukuhanId = $userData['padukuhan_id'] ?? null;
+        }
+
         $data = [
             'title' => $title,
             'slug' => $slug,
@@ -316,6 +351,7 @@ class Dashboard extends BaseController
             'image' => $imageName,
             'author_id' => $user->id,
             'author_name' => $user->username,
+            'padukuhan_id' => $padukuhanId,
             'status' => $status
         ];
 
@@ -330,6 +366,17 @@ class Dashboard extends BaseController
     public function ubahArtikel($id)
     {
         $this->response->setContentType('application/json');
+
+        // Validasi akses
+        $userRole = session()->get('role') ?? 'admin';
+        $padukuhanId = session()->get('padukuhan_id');
+        
+        if (!$this->articleModel->canAdminManage($id, $padukuhanId, $userRole)) {
+            return $this->response->setJSON([
+                'success' => false, 
+                'message' => 'Anda hanya bisa mengedit artikel dari pengguna di padukuhan Anda'
+            ]);
+        }
 
         if (!$this->validate([
             'title' => 'required|min_length[5]',
@@ -373,6 +420,17 @@ class Dashboard extends BaseController
     {
         $this->response->setContentType('application/json');
 
+        // Validasi akses
+        $userRole = session()->get('role') ?? 'admin';
+        $padukuhanId = session()->get('padukuhan_id');
+        
+        if (!$this->articleModel->canAdminManage($id, $padukuhanId, $userRole)) {
+            return $this->response->setJSON([
+                'success' => false, 
+                'message' => 'Anda hanya bisa menghapus artikel dari pengguna di padukuhan Anda'
+            ]);
+        }
+
         $article = $this->articleModel->find($id);
         if ($article && file_exists(FCPATH . 'uploads/articles/' . $article['image'])) {
             unlink(FCPATH . 'uploads/articles/' . $article['image']);
@@ -389,6 +447,16 @@ class Dashboard extends BaseController
     {
         $this->response->setContentType('application/json');
         $user = $this->getAuthUser();
+        $userRole = session()->get('role') ?? 'admin';
+        $padukuhanId = session()->get('padukuhan_id');
+
+        // Validasi akses approve
+        if (!$this->articleModel->canAdminManage($id, $padukuhanId, $userRole)) {
+            return $this->response->setJSON([
+                'success' => false, 
+                'message' => 'Anda hanya bisa approve artikel dari pengguna di padukuhan Anda'
+            ]);
+        }
 
         if ($this->articleModel->approveArticle($id, $user->id)) {
             return $this->response->setJSON(['success' => true, 'message' => 'Artikel berhasil disetujui']);
@@ -400,6 +468,16 @@ class Dashboard extends BaseController
     public function tolakArtikel($id)
     {
         $this->response->setContentType('application/json');
+        $userRole = session()->get('role') ?? 'admin';
+        $padukuhanId = session()->get('padukuhan_id');
+
+        // Validasi akses reject
+        if (!$this->articleModel->canAdminManage($id, $padukuhanId, $userRole)) {
+            return $this->response->setJSON([
+                'success' => false, 
+                'message' => 'Anda hanya bisa reject artikel dari pengguna di padukuhan Anda'
+            ]);
+        }
 
         if ($this->articleModel->rejectArticle($id)) {
             return $this->response->setJSON(['success' => true, 'message' => 'Artikel berhasil ditolak']);
@@ -411,7 +489,17 @@ class Dashboard extends BaseController
     public function updateStatusArtikel($id)
     {
         $this->response->setContentType('application/json');
+        $userRole = session()->get('role') ?? 'admin';
+        $padukuhanId = session()->get('padukuhan_id');
         $status = $this->request->getPost('status');
+
+        // Validasi akses update status
+        if (!$this->articleModel->canAdminManage($id, $padukuhanId, $userRole)) {
+            return $this->response->setJSON([
+                'success' => false, 
+                'message' => 'Anda hanya bisa mengubah status artikel dari pengguna di padukuhan Anda'
+            ]);
+        }
 
         if (!in_array($status, ['pending', 'approved', 'rejected'])) {
             return $this->response->setJSON(['success' => false, 'message' => 'Status tidak valid']);
@@ -518,7 +606,7 @@ class Dashboard extends BaseController
 
         $thumbnail = $this->request->getFile('thumbnail');
         $thumbnailName = $thumbnail->getRandomName();
-        $thumbnail->move(FCPATH . 'uploads/thumbnails', $thumbnailName);
+        $thumbnail->move(FCPATH . 'uploads/downloads', $thumbnailName);
 
         $data = [
             'title' => $this->request->getPost('title'),
@@ -554,13 +642,13 @@ class Dashboard extends BaseController
 
         if ($this->request->getFile('thumbnail')->isValid()) {
             $download = $this->downloadModel->find($id);
-            if ($download && file_exists(FCPATH . 'uploads/thumbnails/' . $download['thumbnail'])) {
-                unlink(FCPATH . 'uploads/thumbnails/' . $download['thumbnail']);
+            if ($download && file_exists(FCPATH . 'uploads/downloads/' . $download['thumbnail'])) {
+                unlink(FCPATH . 'uploads/downloads/' . $download['thumbnail']);
             }
 
             $thumbnail = $this->request->getFile('thumbnail');
             $thumbnailName = $thumbnail->getRandomName();
-            $thumbnail->move(FCPATH . 'uploads/thumbnails', $thumbnailName);
+            $thumbnail->move(FCPATH . 'uploads/downloads', $thumbnailName);
             $data['thumbnail'] = $thumbnailName;
         }
 
@@ -576,8 +664,8 @@ class Dashboard extends BaseController
         $this->response->setContentType('application/json');
 
         $download = $this->downloadModel->find($id);
-        if ($download && file_exists(FCPATH . 'uploads/thumbnails/' . $download['thumbnail'])) {
-            unlink(FCPATH . 'uploads/thumbnails/' . $download['thumbnail']);
+        if ($download && file_exists(FCPATH . 'uploads/downloads/' . $download['thumbnail'])) {
+            unlink(FCPATH . 'uploads/downloads/' . $download['thumbnail']);
         }
 
         if ($this->downloadModel->delete($id)) {

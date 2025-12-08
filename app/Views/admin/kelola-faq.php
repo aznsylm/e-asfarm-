@@ -6,14 +6,14 @@
 <div class="container-fluid">
     <div class="row mb-4">
         <div class="col-12">
-            <h2>Kelola FAQ</h2>
+            <h2>Kelola Tanya Jawab</h2>
             <p class="text-muted">Manajemen pertanyaan dan jawaban</p>
         </div>
     </div>
 
     <div class="card">
         <div class="card-header d-flex justify-content-between">
-            <h5>Data FAQ</h5>
+            <h5>Data Tanya Jawab</h5>
             <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalFaq">
                 <i class="bi bi-plus"></i> Tambah
             </button>
@@ -29,7 +29,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php $no=1; foreach($faqs as $f): ?>
+                    <?php 
+                    $no = 1 + (10 * ((isset($_GET['page']) ? $_GET['page'] : 1) - 1));
+                    foreach($faqs as $f): 
+                    ?>
                     <tr>
                         <td><?= $no++ ?></td>
                         <td><?= esc(substr($f['pertanyaan'], 0, 50)) ?>...</td>
@@ -42,6 +45,11 @@
                     <?php endforeach; ?>
                 </tbody>
             </table>
+            <?php if($pager): ?>
+            <div class="mt-3">
+                <?= $pager->links() ?>
+            </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>

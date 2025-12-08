@@ -31,10 +31,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php $no=1; foreach($downloads as $d): ?>
+                    <?php 
+                    $no = 1 + (10 * ((isset($_GET['page']) ? $_GET['page'] : 1) - 1));
+                    foreach($downloads as $d): 
+                    ?>
                     <tr>
                         <td><?= $no++ ?></td>
-                        <td><img src="<?= base_url('uploads/thumbnails/'.$d['thumbnail']) ?>" width="50" class="rounded" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2250%22 height=%2250%22%3E%3Crect fill=%22%23ddd%22 width=%2250%22 height=%2250%22/%3E%3C/svg%3E'"></td>
+                        <td><img src="<?= base_url('uploads/downloads/'.$d['thumbnail']) ?>" width="50" class="rounded" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2250%22 height=%2250%22%3E%3Crect fill=%22%23ddd%22 width=%2250%22 height=%2250%22/%3E%3C/svg%3E'"></td>
                         <td><?= esc($d['title']) ?></td>
                         <td><span class="badge bg-secondary"><?= esc($d['category']) ?></span></td>
                         <td><a href="<?= esc($d['link_drive']) ?>" target="_blank" class="btn btn-sm btn-info"><i class="bi bi-link"></i></a></td>
@@ -46,6 +49,11 @@
                     <?php endforeach; ?>
                 </tbody>
             </table>
+            <?php if($pager): ?>
+            <div class="mt-3">
+                <?= $pager->links() ?>
+            </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>

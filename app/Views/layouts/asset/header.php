@@ -5,7 +5,7 @@
         <nav class="navbar navbar-expand-lg py-10">
             <div class="container-fluid d-flex justify-content-between">
                 <a href="<?= base_url('/'); ?>" class="text-nowrap logo-img">
-                    <img src="<?= base_url('assets/images/logos/logo.svg'); ?>" alt="Logo" />
+                    <img src="<?= base_url('assets/images/logos/E-Asfarm-Logo.png'); ?>" alt="Logo" style="height: 50px; width: auto;" />
                 </a>
                 <button class="navbar-toggler border-0 p-0 shadow-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
                     <i class="ti ti-menu-2 fs-8"></i>
@@ -89,7 +89,7 @@
                             <i class="fas fa-question-circle text-muted" 
                                data-bs-toggle="tooltip" 
                                data-bs-placement="bottom" 
-                               data-bs-title="Pencarian ini dapat menemukan artikel kesehatan, FAQ seputar kehamilan & persalinan, serta file unduhan modul dan flayer. Ketik kata kunci apapun untuk mencari di seluruh website."
+                               data-bs-title="Pencarian ini dapat menemukan artikel kesehatan, tanya jawab, serta file unduhan. Ketik kata kunci apapun untuk mencari di seluruh website."
                                style="cursor: help; font-size: 16px;"></i>
                             <?php if (!session()->get('logged_in')): ?>
                                 <a href="<?= base_url('login'); ?>" class="btn btn-primary btn-sm px-3 py-2">
@@ -130,11 +130,11 @@
     <!-- Responsive Header Start -->
     <!-- ------------------------------------- -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-        <div class="offcanvas-header">
-            <a href="<?= base_url('/'); ?>" class="text-nowrap logo-img">
-                <img src="<?= base_url('assets/images/logos/logo.svg'); ?>" alt="Logo" />
+        <div class="offcanvas-header py-3 px-3 border-bottom">
+            <a href="<?= base_url('/'); ?>" class="text-nowrap logo-img d-flex align-items-center">
+                <img src="<?= base_url('assets/images/logos/E-Asfarm-Logo.png'); ?>" alt="Logo" style="height: 100px; width: auto; max-width: 180px; object-fit: contain;" />
             </a>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         
             <?php if (!session()->get('logged_in')): ?>
@@ -145,7 +145,7 @@
                 </div>
             <?php endif; ?>
             
-            <div class="d-flex align-items-center d-lg-none w-100 px-3 gap-2">
+            <div class="d-flex align-items-center d-lg-none w-100 px-3 gap-2 py-2">
                 <form action="<?= base_url('cari'); ?>" method="get" class="search-form flex-grow-1">
                     <input name="q" type="text" class="form-control" placeholder="Cari artikel, FAQ, unduhan..." />
                     <span class="bi-search"></span>
@@ -153,7 +153,7 @@
                 <i class="fas fa-question-circle text-muted" 
                    data-bs-toggle="tooltip" 
                    data-bs-placement="bottom" 
-                   data-bs-title="Pencarian ini dapat menemukan artikel kesehatan, FAQ seputar kehamilan & persalinan, serta file unduhan modul dan flayer. Ketik kata kunci apapun untuk mencari di seluruh website."
+                   data-bs-title="Pencarian ini dapat menemukan artikel kesehatan, tanya jawab, serta file unduhan. Ketik kata kunci apapun untuk mencari di seluruh website."
                    style="cursor: help; font-size: 16px;"></i>
                 <?php if (!session()->get('logged_in')): ?>
                     <a href="<?= base_url('login'); ?>" class="btn btn-primary btn-sm px-2 py-1">

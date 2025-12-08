@@ -92,7 +92,7 @@
           <div class="card h-100 border-0 shadow-sm hover-shadow transition">
             <div class="card-body text-center p-5">
               <div class="mb-4">
-                <img src="<?= base_url('assets/images/frontend-pages/user.png'); ?>" alt="Apoteker" class="rounded-circle" style="width: 180px; height: 180px; object-fit: cover; border: 5px solid #f8f9fa;">
+                <img src="<?= base_url('assets/images/frontend-pages/apt.Nurul Kusumawardani.jpg'); ?>" alt="Apoteker" class="rounded-circle" style="width: 180px; height: 180px; object-fit: cover; border: 5px solid #f8f9fa;">
               </div>
               <h4 class="fs-5 fw-bold mb-2">apt. Nurul Kusumawardani, M. Farm</h4>
               <p class="fs-4 text-primary fw-semibold mb-0">Apoteker</p>

@@ -30,7 +30,7 @@ class KunjunganModel extends Model
     public function getWithDetails($monitoringId)
     {
         $kunjunganList = $this->where('monitoring_id', $monitoringId)
-                              ->orderBy('kunjungan_ke', 'DESC')
+                              ->orderBy('kunjungan_ke', 'ASC')
                               ->findAll();
         
         if (empty($kunjunganList)) {

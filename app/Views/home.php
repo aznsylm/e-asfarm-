@@ -161,7 +161,6 @@
 .artikel-card {
     background: #fff;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -192,7 +191,6 @@
     background: #fff;
     border-radius: 8px;
     padding: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     min-height: 350px;
     display: flex;
     flex-direction: column;
@@ -224,9 +222,6 @@
 }
 .artikelSwiper {
     flex: 1;
-}
-.mitra-section {
-    background: #f5f5f5;
 }
 @media (min-width: 992px) {
     .mitra-section .container-fluid {
@@ -380,7 +375,7 @@
                 </div>
                 
                 <!-- List Artikel -->
-                <div class="artikel-list-container">
+                <div class="artikel-list-container shadow-sm">
                     <div id="artikel-list">
                         <!-- List artikel akan dimuat via JS -->
                     </div>
@@ -436,6 +431,8 @@
     </div>
 </section>
 
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script>
 let artikelSwiper;
 document.addEventListener('DOMContentLoaded', function() {
@@ -454,7 +451,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const slug = post.slug || post.id;
                 sliderContainer.innerHTML += `
                     <div class="swiper-slide">
-                        <div class="artikel-card">
+                        <div class="artikel-card shadow-sm">
                             <img src="${img}" alt="${post.title}" onerror="this.src='<?= base_url('assets/images/blog/default.jpg'); ?>'">
                             <div class="p-3">
                                 <h4 style="color: #047d78; margin-bottom: 10px;">${post.title}</h4>

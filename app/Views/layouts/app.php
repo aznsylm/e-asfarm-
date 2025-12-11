@@ -248,6 +248,14 @@
             width: 250px;
             max-width: 250px;
         }
+
+        /* Global Section & Container Styling */
+        @media (min-width: 992px) {
+            section .container-fluid {
+                max-width: 1320px;
+                margin: 0 auto;
+            }
+        }
     </style>
 </head>
 

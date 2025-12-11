@@ -27,6 +27,9 @@
     <!-- Font Awesome untuk icon WhatsApp -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
 
     <style>
         .nav-item.dropdown:hover .dropdown-menu {
@@ -239,13 +242,19 @@
                 font-size: 20px;
             }
         }
+
+        /* Preloader Image Size */
+        .preloader img {
+            width: 250px;
+            max-width: 250px;
+        }
     </style>
 </head>
 
-<body>
+<body style="background-color: #f5f5f5;">
     <!-- Preloader -->
     <div class="preloader">
-        <img src="<?= base_url('assets/images/logos/favicon.png'); ?>" alt="loader" class="lds-ripple img-fluid" />
+        <img src="<?= base_url('assets/images/logos/E-Asfarm-Logo.png'); ?>" alt="loader" class="lds-ripple img-fluid" />
     </div>
 
     <!-- Header -->
@@ -402,6 +411,9 @@
     <script src="<?= base_url('assets/libs/owl.carousel/dist/owl.carousel.min.js'); ?>"></script>
     <script src="<?= base_url('assets/js/frontend-landingpage/homepage.js'); ?>"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/iconfont/tabler-icons.min.js"></script>
+    
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     <!-- WhatsApp Button Script -->
     <script>

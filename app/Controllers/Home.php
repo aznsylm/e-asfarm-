@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\ArticleModel;
+use App\Models\DownloadModel;
 
 class Home extends BaseController
 {
@@ -14,6 +15,7 @@ class Home extends BaseController
     public function beranda(): string
     {
         $articles = new ArticleModel();
+        $downloadModel = new DownloadModel();
         $title = 'Home';
 
         $data = $articles->where('status', 'approved')->orderBy('id', 'DESC')->limit(6)->findAll();
@@ -45,8 +47,11 @@ class Home extends BaseController
 
         $categories = [['name' => 'Farmasi'], ['name' => 'Gizi'], ['name' => 'Bidan']];
         $totalArtikel = $articles->where('status', 'approved')->countAllResults();
+        
+        // Get latest downloads for running text
+        $latestDownloads = $downloadModel->orderBy('created_at', 'DESC')->limit(10)->findAll();
 
-        return view('home', compact('title', 'data', 'data1', 'data3', 'farmasiPosts', 'farmasiPostsRecomendasi', 'dataFourPosts', 'giziPosts', 'giziPostsRecomendasi', 'bidanPosts', 'categories', 'totalArtikel'));
+        return view('home', compact('title', 'data', 'data1', 'data3', 'farmasiPosts', 'farmasiPostsRecomendasi', 'dataFourPosts', 'giziPosts', 'giziPostsRecomendasi', 'bidanPosts', 'categories', 'totalArtikel', 'latestDownloads'));
     }
 
     public function tentangKami()
@@ -86,9 +91,11 @@ class Home extends BaseController
         $kategori = $this->request->getPost('kategori');
         
         if ($kategori === 'semua') {
-            $data = $articles->where('status', 'approved')->orderBy('id', 'DESC')->findAll(6);
+            $data = $articles->where('status', 'approved')->orderBy('id', 'DESC')->limit(5)->findAll();
+        } elseif ($kategori === 'kebidanan') {
+            $data = $articles->where(['category' => 'Bidan', 'status' => 'approved'])->orderBy('id', 'DESC')->limit(5)->findAll();
         } else {
-            $data = $articles->where(['category' => ucfirst($kategori), 'status' => 'approved'])->orderBy('id', 'DESC')->findAll(3);
+            $data = $articles->where(['category' => ucfirst($kategori), 'status' => 'approved'])->orderBy('id', 'DESC')->limit(5)->findAll();
         }
         
         return $this->response->setJSON($data ?: []);

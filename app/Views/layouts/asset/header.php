@@ -1,98 +1,61 @@
-    <!-- -------------------------------------------- -->
+
     <!-- Header start -->
-    <!-- -------------------------------------------- -->
-    <header class="header-fp p-0 w-100 bg-light-gray">
-        <nav class="navbar navbar-expand-lg py-10">
-            <div class="container-fluid d-flex justify-content-between">
-                <a href="<?= base_url('/'); ?>" class="text-nowrap logo-img">
-                    <img src="<?= base_url('assets/images/logos/E-Asfarm-Logo.png'); ?>" alt="Logo" style="height: 50px; width: auto;" />
-                </a>
-                <button class="navbar-toggler border-0 p-0 shadow-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
-                    <i class="ti ti-menu-2 fs-8"></i>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav mx-auto mb-2 gap-xl-7 gap-8 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link fs-4 fw-bold text-dark link-primary" href="<?= url_to('beranda'); ?>">Beranda</a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle fs-4 fw-bold text-dark link-primary" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Info
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="<?= url_to('tentang.kami'); ?>" class="dropdown-item">Tentang Kami</a></li>
-                                <li><a href="<?= url_to('layanan'); ?>" class="dropdown-item">Layanan</a></li>
-                                <li><a href="<?= url_to('kontak'); ?>" class="dropdown-item">Kontak</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle fs-4 fw-bold text-dark link-primary" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Artikel
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="<?= base_url('artikel/farmasi'); ?>" class="dropdown-item">Farmasi</a></li>
-                                <li><a href="<?= base_url('artikel/kebidanan'); ?>" class="dropdown-item">Kebidanan</a></li>
-                                <li><a href="<?= base_url('artikel/gizi'); ?>" class="dropdown-item">Gizi</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle fs-4 fw-bold text-dark link-primary" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Tanya Jawab
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="<?= base_url('tanya-jawab/kehamilan'); ?>" class="dropdown-item">Kehamilan</a></li>
-                                <li><a href="<?= base_url('tanya-jawab/menyusui'); ?>" class="dropdown-item">Menyusui</a></li>
-                                <li><a href="<?= base_url('tanya-jawab/persalinan'); ?>" class="dropdown-item">Persalinan</a></li>
-                                <li><a href="<?= base_url('tanya-jawab/vaksin'); ?>" class="dropdown-item">Vaksin</a></li>
-                                <li><a href="<?= base_url('tanya-jawab/nutrisi'); ?>" class="dropdown-item">Nutrisi</a></li>
-                                <li><a href="<?= base_url('tanya-jawab/etnomedisin'); ?>" class="dropdown-item">Etnomedisin</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link fs-4 fw-bold text-dark link-primary" href="<?= base_url('unduhan'); ?>">
-                                Unduhan
-                            </a>
-                        </li>
-                        <?php if (isset(auth()->user()->id)) : ?>
-                            <li><a href="<?= base_url('artikel/buat'); ?>" class="nav-link fs-4 fw-bold text-dark link-primary">Buat Artikel</a></li>
-                        <?php endif; ?>
+    <style>
+    .header-top {
+        background-color: #047d78;
+    }
+    .header-bottom {
+        background-color: #f5f5f5;
+    }
+    .search-modal-btn {
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.3);
+        color: white;
+        transition: all 0.3s;
+    }
+    .search-modal-btn:hover {
+        background: rgba(255,255,255,0.2);
+        border-color: rgba(255,255,255,0.5);
+    }
+    .btn-teal {
+        background-color: #047d78;
+        border-color: #047d78;
+        color: white;
+    }
+    .btn-teal:hover {
+        background-color: #036661;
+        border-color: #036661;
+        color: white;
+    }
+    .nav-link:focus,
+    .nav-link:active {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+    </style>
 
-                        <?php if (!isset(auth()->user()->username)) : ?>
-                            <!-- <li><a href="<?= base_url('login'); ?>" class="btn btn-dark btn-sm py-2 px-9">Login</a></li>
-                            <li><a href="<?= base_url('register'); ?>" class="btn btn-primary btn-sm py-2 px-9">Register</a></li> -->
-                        <?php else : ?>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <?= esc(auth()->user()->username); ?>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#">Action</a></li>
-                                    <li><a class="dropdown-item" href="<?= url_to('pengguna.artikel'); ?>">Artikel Saya</a></li>
-                                    <li>
-                                        <hr class="dropdown-divider" />
-                                    </li>
-                                    <li><a class="dropdown-item" href="<?= base_url('logout'); ?>">Log Out</a></li>
-                                </ul>
-                            </li>
-                        <?php endif; ?>
-
-                    </ul>
-
-
-                    <div class="col-4 text-end">
-                        <a href="<?= base_url('cari'); ?>" class="burger ms-auto float-end site-menu-toggle js-menu-toggle d-inline-block d-lg-none light"><span></span></a>
-                        <div class="d-flex align-items-center justify-content-end d-none d-lg-flex gap-2">
-                            <form action="<?= base_url('cari'); ?>" method="get" class="search-form">
-                                <input name="q" type="text" class="form-control" placeholder="Cari artikel, FAQ, unduhan..." />
-                                <span class="bi-search"></span>
-                            </form>
-                            <i class="fas fa-question-circle text-muted" 
+    <header class="header-fp p-0 w-100">
+        <!-- Header Top -->
+        <div class="header-top py-2">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col-6 col-lg-3">
+                        <a href="<?= base_url('/'); ?>" class="text-nowrap logo-img">
+                            <img src="<?= base_url('assets/images/logos/E-Asfarm-Logo.png'); ?>" alt="Logo" style="height: 45px; width: auto;" />
+                        </a>
+                    </div>
+                    <div class="col-6 col-lg-9 text-end">
+                        <div class="d-flex align-items-center justify-content-end gap-2">
+                            <button class="btn search-modal-btn btn-sm d-none d-lg-inline-flex align-items-center" data-bs-toggle="modal" data-bs-target="#searchModal">
+                                <i class="fas fa-search me-2"></i> Cari
+                            </button>
+                            <i class="fas fa-question-circle text-white d-none d-lg-inline" 
                                data-bs-toggle="tooltip" 
                                data-bs-placement="bottom" 
-                               data-bs-title="Pencarian ini dapat menemukan artikel kesehatan, tanya jawab, serta file unduhan. Ketik kata kunci apapun untuk mencari di seluruh website."
-                               style="cursor: help; font-size: 16px;"></i>
+                               data-bs-title="Cari artikel kesehatan, tanya jawab, dan file unduhan"
+                               style="cursor: help; opacity: 0.8;"></i>
                             <?php if (!session()->get('logged_in')): ?>
-                                <a href="<?= base_url('login'); ?>" class="btn btn-primary btn-sm px-3 py-2">
+                                <a href="<?= base_url('login'); ?>" class="btn btn-light btn-sm d-none d-lg-inline-flex align-items-center">
                                     <i class="fas fa-sign-in-alt me-1"></i> Login
                                 </a>
                             <?php else: ?>
@@ -100,9 +63,9 @@
                                     $userRole = session()->get('role') ?? 'pengguna';
                                     $isAdmin = in_array($userRole, ['admin', 'superadmin']);
                                 ?>
-                                <div class="dropdown">
-                                    <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                        <i class="fas fa-user-circle me-1"></i><?= esc(session()->get('username') ?? 'User') ?> <span class="badge bg-secondary"><?= ucfirst($userRole) ?></span>
+                                <div class="dropdown d-none d-lg-block">
+                                    <button class="btn btn-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-user-circle me-1"></i><?= esc(session()->get('username') ?? 'User') ?>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <?php if($isAdmin): ?>
@@ -115,174 +78,203 @@
                                     </ul>
                                 </div>
                             <?php endif; ?>
+                            <button class="btn btn-light d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight">
+                                <i class="fas fa-bars"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-        </nav>
+        </div>
+
+        <!-- Header Bottom -->
+        <div class="header-bottom d-none d-lg-block">
+            <div class="container-fluid">
+                <nav class="navbar navbar-expand-lg py-0">
+                    <ul class="navbar-nav gap-4">
+                        <li class="nav-item">
+                            <a class="nav-link fw-semibold text-dark py-3" href="<?= url_to('beranda'); ?>">Beranda</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle fw-semibold text-dark py-3" href="#" data-bs-toggle="dropdown">Informasi</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="<?= url_to('tentang.kami'); ?>" class="dropdown-item">Tentang Kami</a></li>
+                                <li><a href="<?= url_to('layanan'); ?>" class="dropdown-item">Layanan</a></li>
+                                <li><a href="<?= url_to('kontak'); ?>" class="dropdown-item">Kontak</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle fw-semibold text-dark py-3" href="#" data-bs-toggle="dropdown">Artikel</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="<?= base_url('artikel/farmasi'); ?>" class="dropdown-item">Farmasi</a></li>
+                                <li><a href="<?= base_url('artikel/kebidanan'); ?>" class="dropdown-item">Kebidanan</a></li>
+                                <li><a href="<?= base_url('artikel/gizi'); ?>" class="dropdown-item">Gizi</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle fw-semibold text-dark py-3" href="#" data-bs-toggle="dropdown">Tanya Jawab</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="<?= base_url('tanya-jawab/kehamilan'); ?>" class="dropdown-item">Kehamilan</a></li>
+                                <li><a href="<?= base_url('tanya-jawab/menyusui'); ?>" class="dropdown-item">Menyusui</a></li>
+                                <li><a href="<?= base_url('tanya-jawab/persalinan'); ?>" class="dropdown-item">Persalinan</a></li>
+                                <li><a href="<?= base_url('tanya-jawab/vaksin'); ?>" class="dropdown-item">Vaksin</a></li>
+                                <li><a href="<?= base_url('tanya-jawab/nutrisi'); ?>" class="dropdown-item">Nutrisi</a></li>
+                                <li><a href="<?= base_url('tanya-jawab/etnomedisin'); ?>" class="dropdown-item">Etnomedisin</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-semibold text-dark py-3" href="<?= base_url('unduhan'); ?>">Unduhan</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
     </header>
 
-    <!-- -------------------------------------------- -->
+    <!-- Search Modal -->
+    <div class="modal fade" id="searchModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body p-4">
+                    <form action="<?= base_url('cari'); ?>" method="get">
+                        <div class="input-group input-group-lg">
+                            <input name="q" type="text" class="form-control" placeholder="Cari artikel, tanya jawab, unduhan..." autofocus />
+                            <button class="btn btn-teal" type="submit"><i class="fas fa-search"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Header End -->
-    <!-- -------------------------------------------- -->
 
-    <!-- ------------------------------------- -->
     <!-- Responsive Header Start -->
-    <!-- ------------------------------------- -->
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-        <div class="offcanvas-header py-3 px-3 border-bottom">
-            <a href="<?= base_url('/'); ?>" class="text-nowrap logo-img d-flex align-items-center">
-                <img src="<?= base_url('assets/images/logos/E-Asfarm-Logo.png'); ?>" alt="Logo" style="height: 100px; width: auto; max-width: 180px; object-fit: contain;" />
+    <style>
+    #offcanvasRight {
+        background-color: #f5f5f5;
+    }
+    .btn-teal {
+        background-color: #047d78;
+        border-color: #047d78;
+        color: white;
+    }
+    .btn-teal:hover {
+        background-color: #036661;
+        border-color: #036661;
+        color: white;
+    }
+    .btn-outline-teal {
+        border-color: #047d78;
+        color: #047d78;
+    }
+    .btn-outline-teal:hover {
+        background-color: #047d78;
+        border-color: #047d78;
+        color: white;
+    }
+    .btn-toggle:focus,
+    .btn-toggle:active,
+    .btn-toggle:focus-visible {
+        outline: none !important;
+        box-shadow: none !important;
+        background-color: transparent !important;
+    }
+    </style>
+    
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight">
+        <div class="offcanvas-header py-3 px-3" style="background-color: #047d78;">
+            <a href="<?= base_url('/'); ?>" class="text-nowrap logo-img">
+                <img src="<?= base_url('assets/images/logos/E-Asfarm-Logo.png'); ?>" alt="Logo" style="height: 45px; width: auto;" />
             </a>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
         </div>
         
-            <?php if (!session()->get('logged_in')): ?>
-                <div class="d-lg-none px-3 mb-2">
-                    <a href="<?= base_url('login'); ?>" class="btn btn-primary w-100">
-                        <i class="fas fa-sign-in-alt me-1"></i> Login
-                    </a>
+        <div class="px-3 py-3 border-bottom bg-white">
+            <form action="<?= base_url('cari'); ?>" method="get">
+                <div class="input-group">
+                    <input name="q" type="text" class="form-control" placeholder="Cari ..." />
+                    <button class="btn btn-teal" type="submit"><i class="fas fa-search"></i></button>
                 </div>
-            <?php endif; ?>
-            
-            <div class="d-flex align-items-center d-lg-none w-100 px-3 gap-2 py-2">
-                <form action="<?= base_url('cari'); ?>" method="get" class="search-form flex-grow-1">
-                    <input name="q" type="text" class="form-control" placeholder="Cari artikel, FAQ, unduhan..." />
-                    <span class="bi-search"></span>
-                </form>
-                <i class="fas fa-question-circle text-muted" 
-                   data-bs-toggle="tooltip" 
-                   data-bs-placement="bottom" 
-                   data-bs-title="Pencarian ini dapat menemukan artikel kesehatan, tanya jawab, serta file unduhan. Ketik kata kunci apapun untuk mencari di seluruh website."
-                   style="cursor: help; font-size: 16px;"></i>
-                <?php if (!session()->get('logged_in')): ?>
-                    <a href="<?= base_url('login'); ?>" class="btn btn-primary btn-sm px-2 py-1">
-                        <i class="fas fa-sign-in-alt"></i>
-                    </a>
-                <?php endif; ?>
+            </form>
+        </div>
+        
+        <?php if (!session()->get('logged_in')): ?>
+            <div class="px-3 py-3 bg-white border-bottom">
+                <a href="<?= base_url('login'); ?>" class="btn btn-teal w-100">
+                    <i class="fas fa-sign-in-alt me-1"></i> Login
+                </a>
             </div>
-            
-            <div class="d-flex align-items-center d-lg-none mt-2 w-100 px-3" style="display:none; font-size: 16px;"></i>
+        <?php else: ?>
+            <?php 
+                $userRole = session()->get('role') ?? 'pengguna';
+                $isAdmin = in_array($userRole, ['admin', 'superadmin']);
+            ?>
+            <div class="px-3 py-3 border-bottom bg-white">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <i class="fas fa-user-circle fs-4" style="color: #047d78;"></i>
+                    <div>
+                        <div class="fw-semibold"><?= esc(session()->get('username') ?? 'User') ?></div>
+                        <small class="text-muted"><?= ucfirst($userRole) ?></small>
+                    </div>
+                </div>
+                <a href="<?= $isAdmin ? base_url('admin/dashboard') : base_url('pengguna/dashboard') ?>" class="btn btn-sm btn-outline-teal w-100 mb-2">
+                    <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+                </a>
+                <a href="<?= base_url('logout') ?>" class="btn btn-sm btn-outline-danger w-100">
+                    <i class="fas fa-sign-out-alt me-1"></i> Keluar
+                </a>
             </div>
+        <?php endif; ?>
         
         <div class="offcanvas-body">
             <ul class="list-unstyled ps-0">
-                <li class="mb-1">
-                    <a href="<?= url_to('beranda'); ?>" class="px-0 fs-4 d-block text-dark link-primary w-100 py-2">
-                        Beranda
-                    </a>
+                <li class="mb-2">
+                    <a href="<?= url_to('beranda'); ?>" class="d-block text-dark py-2 text-decoration-none fw-semibold">Beranda</a>
                 </li>
-
-                <li class="mb-1">
-                    <button class="btn btn-toggle align-items-center rounded px-0 fs-4 d-block w-100 py-2 text-dark link-primary text-start"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#info-collapse"
-                        aria-expanded="false">
-                        Info <i class="fas fa-chevron-down float-end mt-1 fs-5"></i>
+                <li class="mb-2">
+                    <button class="btn btn-toggle w-100 text-start py-2 text-dark fw-semibold border-0 bg-transparent" data-bs-toggle="collapse" data-bs-target="#info-collapse">
+                        Informasi
                     </button>
                     <div class="collapse" id="info-collapse">
-                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 ps-3">
-                            <li class="my-2">
-                                <a href="<?= url_to('tentang.kami'); ?>" class="link-dark rounded">
-                                    Tentang Kami
-                                </a>
-                            </li>
-                            <li class="my-2">
-                                <a href="<?= url_to('layanan'); ?>" class="link-dark rounded">
-                                    Layanan
-                                </a>
-                            </li>
-                            <li class="my-2">
-                                <a href="<?= url_to('kontak'); ?>" class="link-dark rounded">
-                                    Kontak
-                                </a>
-                            </li>
+                        <ul class="list-unstyled ps-3">
+                            <li class="my-2"><a href="<?= url_to('tentang.kami'); ?>" class="text-dark text-decoration-none">Tentang Kami</a></li>
+                            <li class="my-2"><a href="<?= url_to('layanan'); ?>" class="text-dark text-decoration-none">Layanan</a></li>
+                            <li class="my-2"><a href="<?= url_to('kontak'); ?>" class="text-dark text-decoration-none">Kontak</a></li>
                         </ul>
                     </div>
                 </li>
-
-                <li class="mb-1">
-                    <button class="btn btn-toggle align-items-center rounded px-0 fs-4 d-block w-100 py-2 text-dark link-primary text-start"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#artikel-collapse"
-                        aria-expanded="false">
-                        Artikel <i class="fas fa-chevron-down float-end mt-1 fs-5"></i>
+                <li class="mb-2">
+                    <button class="btn btn-toggle w-100 text-start py-2 text-dark fw-semibold border-0 bg-transparent" data-bs-toggle="collapse" data-bs-target="#artikel-collapse">
+                        Artikel
                     </button>
                     <div class="collapse" id="artikel-collapse">
-                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 ps-3">
-                            <li class="my-2">
-                                <a href="<?= base_url('artikel/farmasi'); ?>" class="link-dark rounded">
-                                    Farmasi
-                                </a>
-                            </li>
-                            <li class="my-2">
-                                <a href="<?= base_url('artikel/kebidanan'); ?>" class="link-dark rounded">
-                                    Kebidanan
-                                </a>
-                            </li>
-                            <li class="my-2">
-                                <a href="<?= base_url('artikel/gizi'); ?>" class="link-dark rounded">
-                                    Gizi
-                                </a>
-                            </li>
+                        <ul class="list-unstyled ps-3">
+                            <li class="my-2"><a href="<?= base_url('artikel/farmasi'); ?>" class="text-dark text-decoration-none">Farmasi</a></li>
+                            <li class="my-2"><a href="<?= base_url('artikel/kebidanan'); ?>" class="text-dark text-decoration-none">Kebidanan</a></li>
+                            <li class="my-2"><a href="<?= base_url('artikel/gizi'); ?>" class="text-dark text-decoration-none">Gizi</a></li>
                         </ul>
                     </div>
                 </li>
-
-                <li class="mb-1">
-                    <button class="btn btn-toggle align-items-center rounded px-0 fs-4 d-block w-100 py-2 text-dark link-primary text-start"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#tanya-collapse"
-                        aria-expanded="false">
-                        Tanya <i class="fas fa-chevron-down float-end mt-1 fs-5"></i>
+                <li class="mb-2">
+                    <button class="btn btn-toggle w-100 text-start py-2 text-dark fw-semibold border-0 bg-transparent" data-bs-toggle="collapse" data-bs-target="#tanya-collapse">
+                        Tanya Jawab
                     </button>
                     <div class="collapse" id="tanya-collapse">
-                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 ps-3">
-                            <li class="my-2">
-                                <a href="<?= base_url('tanya-jawab/kehamilan'); ?>" class="link-dark rounded">
-                                    Kehamilan
-                                </a>
-                            </li>
-                            <li class="my-2">
-                                <a href="<?= base_url('tanya-jawab/menyusui'); ?>" class="link-dark rounded">
-                                    Menyusui
-                                </a>
-                            </li>
-                            <li class="my-2">
-                                <a href="<?= base_url('tanya-jawab/persalinan'); ?>" class="link-dark rounded">
-                                    Persalinan
-                                </a>
-                            </li>
-                            <li class="my-2">
-                                <a href="<?= base_url('tanya-jawab/vaksin'); ?>" class="link-dark rounded">
-                                    Vaksin
-                                </a>
-                            </li>
-                            <li class="my-2">
-                                <a href="<?= base_url('tanya-jawab/nutrisi'); ?>" class="link-dark rounded">
-                                    Nutrisi
-                                </a>
-                            </li>
-                            <li class="my-2">
-                                <a href="<?= base_url('tanya-jawab/etnomedisin'); ?>" class="link-dark rounded">
-                                    Etnomedisin
-                                </a>
-                            </li>
+                        <ul class="list-unstyled ps-3">
+                            <li class="my-2"><a href="<?= base_url('tanya-jawab/kehamilan'); ?>" class="text-dark text-decoration-none">Kehamilan</a></li>
+                            <li class="my-2"><a href="<?= base_url('tanya-jawab/menyusui'); ?>" class="text-dark text-decoration-none">Menyusui</a></li>
+                            <li class="my-2"><a href="<?= base_url('tanya-jawab/persalinan'); ?>" class="text-dark text-decoration-none">Persalinan</a></li>
+                            <li class="my-2"><a href="<?= base_url('tanya-jawab/vaksin'); ?>" class="text-dark text-decoration-none">Vaksin</a></li>
+                            <li class="my-2"><a href="<?= base_url('tanya-jawab/nutrisi'); ?>" class="text-dark text-decoration-none">Nutrisi</a></li>
+                            <li class="my-2"><a href="<?= base_url('tanya-jawab/etnomedisin'); ?>" class="text-dark text-decoration-none">Etnomedisin</a></li>
                         </ul>
                     </div>
                 </li>
-
-                <li class="mb-1">
-                    <a href="<?= base_url('unduhan'); ?>" class="px-0 fs-4 d-block text-dark link-primary w-100 py-2">
-                        Unduhan
-                    </a>
+                <li class="mb-2">
+                    <a href="<?= base_url('unduhan'); ?>" class="d-block text-dark py-2 text-decoration-none fw-semibold">Unduhan</a>
                 </li>
- 
             </ul>
-
         </div>
-
     </div>
-    <!-- ------------------------------------- -->
     <!-- Responsive Header End -->
-    <!-- ------------------------------------- -->

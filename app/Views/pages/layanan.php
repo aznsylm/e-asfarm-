@@ -61,21 +61,14 @@
     }
 </style>
 
-<!-- Hero Section -->
-<section class="py-4">
-    <div class="container-fluid">
-        <div class="row mb-3">
-            <div class="col-12 text-center">
-                <h3 class="fw-bold" style="color: #047d78;">Layanan E-Asfarm</h3>
-                <p style="color: #666666; line-height: 1.8;">Platform kesehatan digital yang menyediakan berbagai layanan untuk mendukung kesehatan ibu dan anak</p>
-            </div>
-        </div>
-    </div>
-</section>
-
 <!-- Layanan Overview -->
 <section class="py-4">
     <div class="container-fluid">
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h3 class="fw-bold text-teal">Layanan E-Asfarm</h3>
+            </div>
+        </div>
         <div class="row g-4">
             <div class="col-md-6 col-lg-3">
                 <a href="#" class="layanan-link">
@@ -129,8 +122,8 @@
 <section class="py-4">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-12">
-                <h3 class="text-center fw-bold mb-4" style="color: #047d78;">Pertanyaan Umum</h3>
+            <div class="col-12 text-center">
+                <h3 class="fw-bold text-teal">Pertanyaan Umum</h3>
             </div>
         </div>
         <div class="row">

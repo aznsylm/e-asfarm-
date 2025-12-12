@@ -38,7 +38,7 @@
   <div class="container-fluid">
     <div class="row mb-4">
       <div class="col-12 text-center">
-        <h3 class="fw-bold" style="color: #047d78;">Informasi E-Asfarm</h3>
+        <h3 class="fw-bold text-teal">Informasi E-Asfarm</h3>
       </div>
     </div>
     <div class="row g-4">
@@ -50,44 +50,44 @@
         <button class="info-tab" onclick="showInfo('fokus')">Fokus Kerja Kami</button>
       </div>
       <div class="col-lg-9">
-        <div class="card border-0 shadow-sm" style="border-radius: 8px;">
+        <div class="card border-0 shadow-sm rounded-8">
           <div class="card-body p-4">
             <div id="tentang" class="info-content active">
-              <h4 class="fw-bold mb-3" style="color: #047d78;">Tentang E-Asfarm</h4>
-              <p style="color: #666666; line-height: 1.8; text-align: justify;">E-Asfarm (Elektronik Asuhan Kefarmasian) adalah platform digital hasil hilirisasi riset yang dirancang untuk memutus rantai masalah kesehatan ibu dan anak melalui solusi elektronik dan pendampingan kefarmasian yang rasional. E-Asfarm menggabungkan teknologi digital untuk mengatasi disparitas akses layanan kesehatan dengan prinsip asuhan kefarmasian yang memastikan penggunaan obat dan praktik swamedikasi yang aman. Platform ini lahir dari penelitian yang dipimpin oleh apt. Nurul Kusumawardani, M.Farm, dan berfokus pada kolaborasi interprofesional, integrasi kearifan lokal, serta pemberdayaan kader kesehatan desa sebagai garda terdepan pendampingan ibu dan anak.</p>
+              <h4 class="fw-bold mb-3 text-teal">Tentang E-Asfarm</h4>
+              <p class="text-gray text-justify">E-Asfarm (Elektronik Asuhan Kefarmasian) adalah platform digital hasil hilirisasi riset yang dirancang untuk memutus rantai masalah kesehatan ibu dan anak melalui solusi elektronik dan pendampingan kefarmasian yang rasional. E-Asfarm menggabungkan teknologi digital untuk mengatasi disparitas akses layanan kesehatan dengan prinsip asuhan kefarmasian yang memastikan penggunaan obat dan praktik swamedikasi yang aman. Platform ini lahir dari penelitian yang dipimpin oleh apt. Nurul Kusumawardani, M.Farm, dan berfokus pada kolaborasi interprofesional, integrasi kearifan lokal, serta pemberdayaan kader kesehatan desa sebagai garda terdepan pendampingan ibu dan anak.</p>
             </div>
             <div id="latar" class="info-content">
-              <h4 class="fw-bold mb-3" style="color: #047d78;">Latar Belakang</h4>
-              <p style="color: #666666; line-height: 1.8; text-align: justify;">E-Asfarm hadir sebagai sebuah inisiatif untuk memutus rantai masalah kesehatan ibu dan anak yang masih sering terjadi di berbagai wilayah. Permasalahan ini bermula sejak masa remaja putri, kemudian berlanjut saat menjadi ibu hamil, ibu menyusui, hingga berdampak pada anak balita. Remaja putri rentan mengalami anemia, ibu hamil memiliki risiko tinggi mengalami anemia dan hipertensi, ibu menyusui menghadapi tantangan pemenuhan gizi serta swamedikasi, dan akhirnya kondisi tersebut dapat berujung pada stunting pada anak.</p>
-              <p style="color: #666666; line-height: 1.8; text-align: justify;">Rangkaian persoalan ini semakin kompleks karena adanya kesenjangan akses layanan kesehatan serta praktik swamedikasi yang kurang rasional di masyarakat.</p>
+              <h4 class="fw-bold mb-3 text-teal">Latar Belakang</h4>
+              <p class="text-gray text-justify">E-Asfarm hadir sebagai sebuah inisiatif untuk memutus rantai masalah kesehatan ibu dan anak yang masih sering terjadi di berbagai wilayah. Permasalahan ini bermula sejak masa remaja putri, kemudian berlanjut saat menjadi ibu hamil, ibu menyusui, hingga berdampak pada anak balita. Remaja putri rentan mengalami anemia, ibu hamil memiliki risiko tinggi mengalami anemia dan hipertensi, ibu menyusui menghadapi tantangan pemenuhan gizi serta swamedikasi, dan akhirnya kondisi tersebut dapat berujung pada stunting pada anak.</p>
+              <p class="text-gray text-justify">Rangkaian persoalan ini semakin kompleks karena adanya kesenjangan akses layanan kesehatan serta praktik swamedikasi yang kurang rasional di masyarakat.</p>
             </div>
             <div id="sejarah" class="info-content">
-              <h4 class="fw-bold mb-3" style="color: #047d78;">Sejarah E-Asfarm</h4>
-              <p style="color: #666666; line-height: 1.8; text-align: justify;">E-Asfarm merupakan hasil hilirisasi riset yang dipimpin oleh apt. Nurul Kusumawardani, M.Farm. Platform ini dikembangkan berdasarkan temuan penting yang juga diulas dalam buku <em>"Strategi Konseling Kefarmasian Ibu Hamil: Tatap Muka dan Digital."</em></p>
-              <p style="color: #666666; line-height: 1.8; text-align: justify;">Melalui riset tersebut, lahir kebutuhan untuk menghadirkan solusi berkelanjutan yang mampu menjembatani layanan profesional dengan kondisi nyata di lapangan.</p>
+              <h4 class="fw-bold mb-3 text-teal">Sejarah E-Asfarm</h4>
+              <p class="text-gray text-justify">E-Asfarm merupakan hasil hilirisasi riset yang dipimpin oleh apt. Nurul Kusumawardani, M.Farm. Platform ini dikembangkan berdasarkan temuan penting yang juga diulas dalam buku <em>"Strategi Konseling Kefarmasian Ibu Hamil: Tatap Muka dan Digital."</em></p>
+              <p class="text-gray text-justify">Melalui riset tersebut, lahir kebutuhan untuk menghadirkan solusi berkelanjutan yang mampu menjembatani layanan profesional dengan kondisi nyata di lapangan.</p>
             </div>
             <div id="filosofi" class="info-content">
-              <h4 class="fw-bold mb-3" style="color: #047d78;">Filosofi Solusi</h4>
-              <p style="color: #666666; line-height: 1.8; text-align: justify;">Permasalahan kesehatan ibu dan anak adalah persoalan multifaktor, sehingga tidak dapat diselesaikan oleh satu pihak saja. Karena itulah E-Asfarm menggabungkan dua pendekatan utama:</p>
+              <h4 class="fw-bold mb-3 text-teal">Filosofi Solusi</h4>
+              <p class="text-gray text-justify">Permasalahan kesehatan ibu dan anak adalah persoalan multifaktor, sehingga tidak dapat diselesaikan oleh satu pihak saja. Karena itulah E-Asfarm menggabungkan dua pendekatan utama:</p>
               <div class="mb-3">
-                <h5 class="fw-bold mt-3 mb-2" style="color: #047d78;">1. E (Elektronik)</h5>
-                <p style="color: #666666; line-height: 1.8; text-align: justify;">Solusi digital digunakan untuk menjawab tantangan disparitas akses, sehingga informasi dan layanan dapat menjangkau masyarakat lebih luas.</p>
+                <h5 class="fw-bold mt-3 mb-2 text-teal">1. E (Elektronik)</h5>
+                <p class="text-gray text-justify">Solusi digital digunakan untuk menjawab tantangan disparitas akses, sehingga informasi dan layanan dapat menjangkau masyarakat lebih luas.</p>
               </div>
               <div class="mb-3">
-                <h5 class="fw-bold mb-2" style="color: #047d78;">2. Asfarm (Asuhan Kefarmasian)</h5>
-                <p style="color: #666666; line-height: 1.8; text-align: justify;">Pendekatan asuhan kefarmasian menjadi dasar untuk memastikan bahwa swamedikasi dilakukan secara rasional, aman, dan sesuai rekomendasi tenaga kesehatan.</p>
+                <h5 class="fw-bold mb-2 text-teal">2. Asfarm (Asuhan Kefarmasian)</h5>
+                <p class="text-gray text-justify">Pendekatan asuhan kefarmasian menjadi dasar untuk memastikan bahwa swamedikasi dilakukan secara rasional, aman, dan sesuai rekomendasi tenaga kesehatan.</p>
               </div>
-              <p style="color: #666666; line-height: 1.8; text-align: justify;">Dengan memadukan dua pilar ini, E-Asfarm menekankan pentingnya kolaborasi interprofesional, di mana berbagai tenaga kesehatan bekerja bersama untuk memberikan dampak terbaik bagi ibu dan anak.</p>
+              <p class="text-gray text-justify">Dengan memadukan dua pilar ini, E-Asfarm menekankan pentingnya kolaborasi interprofesional, di mana berbagai tenaga kesehatan bekerja bersama untuk memberikan dampak terbaik bagi ibu dan anak.</p>
             </div>
             <div id="fokus" class="info-content">
-              <h4 class="fw-bold mb-3" style="color: #047d78;">Fokus Kerja Kami</h4>
+              <h4 class="fw-bold mb-3 text-teal">Fokus Kerja Kami</h4>
               <div class="mb-3">
-                <h5 class="fw-bold mt-3 mb-2" style="color: #047d78;">Integrasi Kearifan Lokal</h5>
-                <p style="color: #666666; line-height: 1.8; text-align: justify;">E-Asfarm menggabungkan pengetahuan berbasis budaya lokal (etnomedisin) dengan pengobatan modern berbasis bukti ilmiah. Tujuannya adalah menghadirkan layanan yang relevan, diterima masyarakat, namun tetap aman dan teruji.</p>
+                <h5 class="fw-bold mt-3 mb-2 text-teal">Integrasi Kearifan Lokal</h5>
+                <p class="text-gray text-justify">E-Asfarm menggabungkan pengetahuan berbasis budaya lokal (etnomedisin) dengan pengobatan modern berbasis bukti ilmiah. Tujuannya adalah menghadirkan layanan yang relevan, diterima masyarakat, namun tetap aman dan teruji.</p>
               </div>
               <div class="mb-3">
-                <h5 class="fw-bold mb-2" style="color: #047d78;">Pemberdayaan Garda Depan</h5>
-                <p style="color: #666666; line-height: 1.8; text-align: justify;">Kami memberdayakan Kader Kesehatan Desa sebagai ujung tombak penghubung antara layanan kesehatan dan masyarakat. Kader bertugas dalam pemantauan, edukasi, hingga menjadi jembatan bagi ibu hamil dan menyusui untuk mendapatkan pendampingan kesehatan yang tepat.</p>
+                <h5 class="fw-bold mb-2 text-teal">Pemberdayaan Garda Depan</h5>
+                <p class="text-gray text-justify">Kami memberdayakan Kader Kesehatan Desa sebagai ujung tombak penghubung antara layanan kesehatan dan masyarakat. Kader bertugas dalam pemantauan, edukasi, hingga menjadi jembatan bagi ibu hamil dan menyusui untuk mendapatkan pendampingan kesehatan yang tepat.</p>
               </div>
             </div>
           </div>
@@ -102,22 +102,22 @@
   <div class="container-fluid">
     <div class="row g-4">
       <div class="col-lg-6">
-        <div class="card h-100 border-0 shadow-sm" style="background: #fff; border-radius: 8px;">
+        <div class="card h-100 border-0 shadow-sm rounded-8">
           <div class="card-body p-4">
-            <h3 class="fw-bold mb-3" style="color: #047d78;">Visi Kami</h3>
-            <p class="mb-0" style="color: #666666;">Menjadi platform layanan kesehatan digital terdepan yang memberikan akses mudah dan berkualitas untuk monitoring kesehatan ibu dan anak melalui kolaborasi interprofesional tenaga kesehatan.</p>
+            <h3 class="fw-bold mb-3 text-teal">Visi Kami</h3>
+            <p class="mb-0 text-gray">Menjadi platform layanan kesehatan digital terdepan yang memberikan akses mudah dan berkualitas untuk monitoring kesehatan ibu dan anak melalui kolaborasi interprofesional tenaga kesehatan.</p>
           </div>
         </div>
       </div>
       <div class="col-lg-6">
-        <div class="card h-100 border-0 shadow-sm" style="background: #fff; border-radius: 8px;">
+        <div class="card h-100 border-0 shadow-sm rounded-8">
           <div class="card-body p-4">
-            <h3 class="fw-bold mb-3" style="color: #047d78;">Misi Kami</h3>
-            <ol class="mb-0">
-              <li class="mb-2" style="color: #666666;">Menyediakan informasi kesehatan yang akurat dan terpercaya</li>
-              <li class="mb-2" style="color: #666666;">Memfasilitasi konsultasi kesehatan dengan tenaga ahli</li>
-              <li class="mb-2" style="color: #666666;">Mendukung kesehatan ibu dari persiapan hingga pasca-persalinan</li>
-              <li class="mb-0" style="color: #666666;">Meningkatkan literasi kesehatan masyarakat</li>
+            <h3 class="fw-bold mb-3 text-teal">Misi Kami</h3>
+            <ol class="mb-0 text-gray">
+              <li class="mb-2">Menyediakan informasi kesehatan yang akurat dan terpercaya</li>
+              <li class="mb-2">Memfasilitasi konsultasi kesehatan dengan tenaga ahli</li>
+              <li class="mb-2">Mendukung kesehatan ibu dari persiapan hingga pasca-persalinan</li>
+              <li class="mb-0">Meningkatkan literasi kesehatan masyarakat</li>
             </ol>
           </div>
         </div>
@@ -131,7 +131,7 @@
   <div class="container-fluid">
     <div class="row mb-4">
       <div class="col-12 text-center">
-        <h2 class="fw-bold" style="color: #047d78;">Tim Kami</h2>
+        <h2 class="fw-bold text-teal">Tim Kami</h2>
       </div>
     </div>
     <div class="row justify-content-center g-4">

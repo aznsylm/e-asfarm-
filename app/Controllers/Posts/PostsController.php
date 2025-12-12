@@ -4,6 +4,7 @@ namespace App\Controllers\Posts;
 
 use App\Controllers\BaseController;
 use App\Models\ArticleModel;
+use App\Models\DownloadModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class PostsController extends BaseController
@@ -94,8 +95,15 @@ class PostsController extends BaseController
 
         $popPosts = $articleModel->where('status', 'approved')->orderBy('id', 'DESC')->limit(3)->findAll();
         $moreBlogPosts = $articleModel->where(['id !=' => $artikel['id'], 'status' => 'approved'])->orderBy('id', 'DESC')->limit(4)->findAll();
+        
+        // Artikel terkait (kategori sama, exclude artikel saat ini)
+        $relatedArticles = $articleModel->where(['category' => $artikel['category'], 'id !=' => $artikel['id'], 'status' => 'approved'])->orderBy('id', 'DESC')->limit(5)->findAll();
+        
+        // Download terbaru
+        $downloadModel = new DownloadModel();
+        $latestDownload = $downloadModel->orderBy('id', 'DESC')->first();
 
-        return view('post/single',  compact('title', 'artikel', 'numCategories', 'popPosts', 'moreBlogPosts'));
+        return view('post/single',  compact('title', 'artikel', 'numCategories', 'popPosts', 'moreBlogPosts', 'relatedArticles', 'latestDownload'));
     }
 
     // menulis komentar pada artikel

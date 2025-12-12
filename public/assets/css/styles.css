@@ -42273,3 +42273,15 @@ h6 {
     font-size: 13px;
   }
 }
+
+/* Custom Reusable Classes */
+.text-teal { color: #047d78 !important; }
+.text-gray { color: #666666 !important; }
+.bg-teal { background-color: #047d78 !important; }
+.btn-teal { background-color: #047d78; color: white; border-color: #047d78; }
+.btn-teal:hover { background-color: #036661; color: white; border-color: #036661; }
+.rounded-8 { border-radius: 8px !important; }
+.rounded-20 { border-radius: 20px !important; }
+.img-profile { width: 150px; height: 150px; object-fit: cover; }
+.text-justify { line-height: 1.8; text-align: justify; }
+.card-custom { border: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-radius: 8px; }

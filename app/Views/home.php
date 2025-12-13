@@ -1,4 +1,5 @@
 <?= $this->extend('layouts/app') ?>
+<?= $this->section('title') ?>Beranda<?= $this->endSection() ?>
 <?= $this->section('content') ?>
 
 <style>
@@ -39,7 +40,7 @@
 }
 .running-text-marquee {
     display: flex;
-    animation: scroll-left 15s linear infinite;
+    animation: scroll-left 5s linear infinite;
     padding: 12px 0;
 }
 .running-text-marquee:hover {
@@ -72,6 +73,9 @@
     }
     .running-text-item {
         font-size: 13px;
+    }
+    .running-text-marquee {
+        animation-duration: 10s;
     }
 }
 .hero-banner {
@@ -146,6 +150,11 @@
     }
     .service-card h5 {
         font-size: 0.9rem !important;
+    }
+}
+@media (max-width: 991px) {
+    .row.g-4.justify-content-center > div[style*="width: 20%"] {
+        width: 50% !important;
     }
 }
 .artikelSwiper {
@@ -235,7 +244,7 @@
 }
 .mitra-track {
     display: flex;
-    animation: slide-mitra 10s linear infinite;
+    animation: slide-mitra 15s linear infinite;
     gap: 80px;
 }
 .mitra-track:hover {
@@ -251,6 +260,12 @@
     0% { transform: translateX(0); }
     100% { transform: translateX(-50%); }
 }
+@media (max-width: 768px) {
+    .mitra-track {
+        animation-duration: 10s;
+        gap: 50px;
+    }
+}
 </style>
 
 <!-- Running Text -->
@@ -264,16 +279,23 @@
             <?php if(!empty($latestDownloads)): ?>
                 <?php 
                 $downloadItems = '';
-                foreach($latestDownloads as $download): 
-                    $downloadItems .= '<a href="'.base_url('unduhan/download/'.$download['id']).'" class="running-text-item">'.esc($download['title']).'</a><span class="running-text-separator">•</span>';
+                foreach($latestDownloads as $item): 
+                    if ($item['item_type'] == 'poster') {
+                        $link = esc($item['poster_link']);
+                        $title = esc($item['poster_title']);
+                    } else {
+                        $link = esc($item['modul_link']);
+                        $title = esc($item['modul_title']);
+                    }
+                    $downloadItems .= '<a href="'.$link.'" target="_blank" class="running-text-item">'.$title.'</a><span class="running-text-separator">•</span>';
                 endforeach;
                 // Duplicate untuk seamless loop
                 echo $downloadItems . $downloadItems;
                 ?>
             <?php else: ?>
-                <span class="running-text-item">Belum ada unduhan tersedia</span>
+                <span class="running-text-item">Belum ada konten tersedia</span>
                 <span class="running-text-separator">•</span>
-                <span class="running-text-item">Belum ada unduhan tersedia</span>
+                <span class="running-text-item">Belum ada konten tersedia</span>
             <?php endif; ?>
             </div>
         </div>
@@ -314,7 +336,7 @@
             </div>
         </div>
         <div class="row g-4 justify-content-center">
-            <div class="col-6 col-md-4 col-lg-3">
+            <div class="col-6 col-md-4" style="flex: 0 0 auto; width: 20%;">
                 <a href="#" class="text-decoration-none">
                     <div class="card service-card h-100 border-0 shadow-sm text-center p-4">
                         <i class="fas fa-user-md mb-3" style="font-size: 3rem; color: #047d78;"></i>
@@ -322,7 +344,7 @@
                     </div>
                 </a>
             </div>
-            <div class="col-6 col-md-4 col-lg-3">
+            <div class="col-6 col-md-4" style="flex: 0 0 auto; width: 20%;">
                 <a href="#" class="text-decoration-none">
                     <div class="card service-card h-100 border-0 shadow-sm text-center p-4">
                         <i class="fas fa-newspaper mb-3" style="font-size: 3rem; color: #047d78;"></i>
@@ -330,7 +352,7 @@
                     </div>
                 </a>
             </div>
-            <div class="col-6 col-md-4 col-lg-3">
+            <div class="col-6 col-md-4" style="flex: 0 0 auto; width: 20%;">
                 <a href="#" class="text-decoration-none">
                     <div class="card service-card h-100 border-0 shadow-sm text-center p-4">
                         <i class="fas fa-comments mb-3" style="font-size: 3rem; color: #047d78;"></i>
@@ -338,11 +360,19 @@
                     </div>
                 </a>
             </div>
-            <div class="col-6 col-md-4 col-lg-3">
-                <a href="#" class="text-decoration-none">
+            <div class="col-6 col-md-4" style="flex: 0 0 auto; width: 20%;">
+                <a href="<?= base_url('poster'); ?>" class="text-decoration-none">
                     <div class="card service-card h-100 border-0 shadow-sm text-center p-4">
-                        <i class="fas fa-download mb-3" style="font-size: 3rem; color: #047d78;"></i>
+                        <i class="fas fa-image mb-3" style="font-size: 3rem; color: #047d78;"></i>
                         <h5 class="fw-semibold" style="color: #047d78;">Poster Kesehatan</h5>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4" style="flex: 0 0 auto; width: 20%;">
+                <a href="<?= base_url('modul'); ?>" class="text-decoration-none">
+                    <div class="card service-card h-100 border-0 shadow-sm text-center p-4">
+                        <i class="fas fa-book mb-3" style="font-size: 3rem; color: #047d78;"></i>
+                        <h5 class="fw-semibold" style="color: #047d78;">Modul Edukasi</h5>
                     </div>
                 </a>
             </div>
@@ -369,9 +399,9 @@
                 <!-- Tab Kategori -->
                 <div class="d-flex  mb-4 border-bottom">
                     <button class="artikel-tab active" data-tab="semua">Semua</button>
-                    <button class="artikel-tab" data-tab="farmasi">Farmasi</button>
-                    <button class="artikel-tab" data-tab="kebidanan">Kebidanan</button>
-                    <button class="artikel-tab" data-tab="gizi">Gizi</button>
+                    <?php foreach($artikelCategories as $cat): ?>
+                    <button class="artikel-tab" data-tab="<?= esc($cat['slug']) ?>"><?= esc($cat['name']) ?></button>
+                    <?php endforeach; ?>
                 </div>
                 
                 <!-- List Artikel -->
@@ -379,7 +409,7 @@
                     <div id="artikel-list">
                         <!-- List artikel akan dimuat via JS -->
                     </div>
-                    <a href="#" class="d-block text-center mt-3" style="color: #047d78; font-weight: 600; text-decoration: none;">Artikel Lainnya →</a>
+                    <a href="<?= base_url('artikel/farmasi'); ?>" id="artikel-lainnya-link" class="d-block text-center mt-3" style="color: #047d78; font-weight: 600; text-decoration: none;">Artikel Lainnya →</a>
                 </div>
             </div>
         </div>
@@ -490,7 +520,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     `;
                 });
             } else {
-                listContainer.innerHTML = '<p class="text-muted">Belum ada artikel</p>';
+                listContainer.innerHTML = '<p class="text-muted">Belum ada artikel untuk kategori ini</p>';
             }
         });
     }
@@ -502,7 +532,16 @@ document.addEventListener('DOMContentLoaded', function() {
         tab.addEventListener('click', function() {
             document.querySelectorAll('.artikel-tab').forEach(t => t.classList.remove('active'));
             this.classList.add('active');
-            loadArtikelList(this.getAttribute('data-tab'));
+            const kategori = this.getAttribute('data-tab');
+            loadArtikelList(kategori);
+            
+            // Update link Artikel Lainnya
+            const link = document.getElementById('artikel-lainnya-link');
+            if (kategori === 'semua') {
+                link.href = '<?= base_url('artikel/farmasi'); ?>';
+            } else {
+                link.href = '<?= base_url('artikel/'); ?>' + kategori;
+            }
         });
     });
 });

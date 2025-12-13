@@ -1,43 +1,33 @@
-<?= $this->extend('layouts/dashboard_layout') ?>
+<?= $this->extend('layouts/adminlte_layout') ?>
 <?= $this->section('content') ?>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
-<div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h2>Kelola Artikel</h2>
-            <p class="text-muted mb-0">Manajemen artikel</p>
+<div class="card">
+    <div class="card-header bg-white">
+        <div class="d-flex justify-content-between align-items-center">
+            <ul class="nav nav-tabs card-header-tabs mb-0" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="approved-tab" data-toggle="tab" data-target="#approved" type="button" role="tab">
+                        Diterbitkan
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pending-tab" data-toggle="tab" data-target="#pending" type="button" role="tab">
+                        Menunggu Persetujuan
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="rejected-tab" data-toggle="tab" data-target="#rejected" type="button" role="tab">
+                        Ditolak
+                    </button>
+                </li>
+            </ul>
+            <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalArtikel">
+                <i class="fas fa-plus"></i> Tambah
+            </button>
         </div>
     </div>
-
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header bg-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <ul class="nav nav-tabs card-header-tabs mb-0" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="approved-tab" data-bs-toggle="tab" data-bs-target="#approved" type="button" role="tab">
-                                    <i class="bi bi-check-circle"></i> Diterbitkan
-                                </button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab">
-                                    <i class="bi bi-clock"></i> Menunggu Persetujuan
-                                </button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="rejected-tab" data-bs-toggle="tab" data-bs-target="#rejected" type="button" role="tab">
-                                    <i class="bi bi-x-circle"></i> Ditolak
-                                </button>
-                            </li>
-                        </ul>
-                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalArtikel">
-                            <i class="bi bi-plus-circle"></i> Tambah Artikel
-                        </button>
-                    </div>
-                </div>
                 <div class="card-body">
                     <div class="tab-content">
                         <!-- Tab Published -->
@@ -72,7 +62,15 @@
                                                 <strong><?= esc($a['title']) ?></strong>
                                                 <br><small class="text-muted"><i class="bi bi-eye"></i> <?= number_format($a['views'] ?? 0) ?> views</small>
                                             </td>
-                                            <td><span class="badge bg-info"><?= esc($a['category']) ?></span></td>
+                                            <td>
+                                                <?php if(!empty($a['categories'])): ?>
+                                                    <?php foreach($a['categories'] as $cat): ?>
+                                                        <span class="badge bg-info"><?= esc($cat['name']) ?></span>
+                                                    <?php endforeach; ?>
+                                                <?php else: ?>
+                                                    <span class="badge bg-info"><?= esc($a['category']) ?></span>
+                                                <?php endif; ?>
+                                            </td>
                                             <td><?= esc($a['author_name']) ?></td>
                                             <td><small><?= date('d/m/Y', strtotime($a['created_at'] ?? 'now')) ?></small></td>
                                             <td>
@@ -120,7 +118,15 @@
                                             <td><?= $no++ ?></td>
                                             <td><img src="<?= base_url('uploads/articles/'.$p['image']) ?>" width="60" class="rounded" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect fill=%22%23ddd%22 width=%2260%22 height=%2260%22/%3E%3C/svg%3E'"></td>
                                             <td><strong><?= esc($p['title']) ?></strong></td>
-                                            <td><span class="badge bg-warning text-dark"><?= esc($p['category']) ?></span></td>
+                                            <td>
+                                                <?php if(!empty($p['categories'])): ?>
+                                                    <?php foreach($p['categories'] as $cat): ?>
+                                                        <span class="badge bg-warning text-dark"><?= esc($cat['name']) ?></span>
+                                                    <?php endforeach; ?>
+                                                <?php else: ?>
+                                                    <span class="badge bg-warning text-dark"><?= esc($p['category']) ?></span>
+                                                <?php endif; ?>
+                                            </td>
                                             <td><?= esc($p['author_name']) ?></td>
                                             <td><small><?= date('d/m/Y', strtotime($p['created_at'] ?? 'now')) ?></small></td>
                                             <td>
@@ -170,7 +176,15 @@
                                                 <img src="<?= base_url('uploads/articles/'.$r['image']) ?>" width="60" class="rounded" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect fill=%22%23ddd%22 width=%2260%22 height=%2260%22/%3E%3C/svg%3E'">
                                             </td>
                                             <td><strong><?= esc($r['title']) ?></strong></td>
-                                            <td><span class="badge bg-danger"><?= esc($r['category']) ?></span></td>
+                                            <td>
+                                                <?php if(!empty($r['categories'])): ?>
+                                                    <?php foreach($r['categories'] as $cat): ?>
+                                                        <span class="badge bg-danger"><?= esc($cat['name']) ?></span>
+                                                    <?php endforeach; ?>
+                                                <?php else: ?>
+                                                    <span class="badge bg-danger"><?= esc($r['category']) ?></span>
+                                                <?php endif; ?>
+                                            </td>
                                             <td><?= esc($r['author_name']) ?></td>
                                             <td><small><?= date('d/m/Y', strtotime($r['created_at'] ?? 'now')) ?></small></td>
                                             <td>
@@ -191,8 +205,6 @@
                             <?php endif; ?>
                         </div>
                     </div>
-                </div>
-            </div>
         </div>
     </div>
 </div>

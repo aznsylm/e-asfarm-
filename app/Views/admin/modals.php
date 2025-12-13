@@ -4,7 +4,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="titlePengguna">Tambah Pengguna</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <form id="formPengguna">
                 <input type="hidden" id="penggunaId">
@@ -92,7 +92,7 @@
                     <?php endif; ?>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
                     <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
                 </div>
             </form>
@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="titleArtikel">Tambah Artikel</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <form id="formArtikel" enctype="multipart/form-data">
                 <input type="hidden" id="artikelId">
@@ -196,14 +196,20 @@ document.addEventListener('DOMContentLoaded', function() {
                         <input type="text" class="form-control form-control-sm" name="title" id="titleInput" required>
                     </div>
                     <div class="mb-3">
-                        <label>Kategori *</label>
+                        <label>Kategori * <small class="text-muted">(Pilih minimal 1)</small></label>
                         <div class="error-message text-danger small mb-1" id="error-category" style="display:none;"></div>
-                        <select class="form-select form-select-sm" name="category" id="categoryInput" required>
-                            <option value="">Pilih Kategori</option>
-                            <option value="Farmasi">Farmasi</option>
-                            <option value="Gizi">Gizi</option>
-                            <option value="Bidan">Bidan</option>
-                        </select>
+                        <div class="border rounded p-2" style="max-height: 150px; overflow-y: auto;">
+                            <?php 
+                            $categoryModel = new \App\Models\CategoryModel();
+                            $artikelCategories = $categoryModel->getByType('artikel');
+                            foreach($artikelCategories as $cat): 
+                            ?>
+                            <div class="form-check">
+                                <input class="form-check-input artikel-category-checkbox" type="checkbox" name="categories[]" value="<?= $cat['id'] ?>" id="artCat<?= $cat['id'] ?>">
+                                <label class="form-check-label" for="artCat<?= $cat['id'] ?>"><?= esc($cat['name']) ?></label>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label>Konten *</label>
@@ -212,7 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <div class="mb-3">
                         <label>Gambar * 
-                            <i class="bi bi-question-circle text-primary" data-bs-toggle="tooltip" data-bs-placement="right" title="Format: JPG, JPEG, PNG, WEBP | Maksimal: 2MB | Resolusi disarankan: 1200x630px"></i>
+                            <i class="bi bi-question-circle text-primary" data-toggle="tooltip" data-placement="right" title="Format: JPG, JPEG, PNG, WEBP | Maksimal: 2MB | Resolusi disarankan: 1200x630px"></i>
                         </label>
                         <div class="error-message text-danger small mb-1" id="error-image" style="display:none;"></div>
                         <input type="file" class="form-control form-control-sm" name="image" id="imageArtikel" accept="image/jpeg,image/jpg,image/png,image/webp" required>
@@ -220,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
                     <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
                 </div>
             </form>
@@ -234,23 +240,26 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="titleFaq">Tambah FAQ</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <form id="formFaq">
                 <input type="hidden" id="faqId">
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label>Kategori *</label>
+                        <label>Kategori * <small class="text-muted">(Pilih minimal 1)</small></label>
                         <div class="error-message text-danger small mb-1" id="error-faq-category" style="display:none;"></div>
-                        <select class="form-select form-select-sm" name="category" id="faqCategoryInput" required>
-                            <option value="">Pilih Kategori</option>
-                            <option value="kehamilan">Kehamilan</option>
-                            <option value="menyusui">Menyusui</option>
-                            <option value="persalinan">Persalinan</option>
-                            <option value="vaksin">Vaksin</option>
-                            <option value="nutrisi">Nutrisi</option>
-                            <option value="etnomedisin">Etnomedisin</option>
-                        </select>
+                        <div class="border rounded p-2" style="max-height: 150px; overflow-y: auto;">
+                            <?php 
+                            $categoryModel = new \App\Models\CategoryModel();
+                            $faqCategories = $categoryModel->getByType('tanya_jawab');
+                            foreach($faqCategories as $cat): 
+                            ?>
+                            <div class="form-check">
+                                <input class="form-check-input faq-category-checkbox" type="checkbox" name="categories[]" value="<?= $cat['id'] ?>" id="faqCat<?= $cat['id'] ?>">
+                                <label class="form-check-label" for="faqCat<?= $cat['id'] ?>"><?= esc($cat['name']) ?></label>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label>Pertanyaan *</label>
@@ -264,7 +273,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
                     <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
                 </div>
             </form>
@@ -278,7 +287,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title">Detail Artikel</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <button type="button" class="close text-white" data-dismiss="modal"></button>
             </div>
             <div class="modal-body p-0">
                 <div class="row g-0">
@@ -347,30 +356,37 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 </div>
 
-<!-- Modal Unduhan -->
-<div class="modal fade" id="modalUnduhan" tabindex="-1">
+<!-- Modal Poster -->
+<div class="modal fade" id="modalPoster" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="titleUnduhan">Tambah Unduhan</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title" id="titlePoster">Tambah Poster</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
-            <form id="formUnduhan" enctype="multipart/form-data">
-                <input type="hidden" id="unduhanId">
+            <form id="formPoster" enctype="multipart/form-data">
+                <input type="hidden" id="posterId">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label>Judul *</label>
-                        <div class="error-message text-danger small mb-1" id="error-unduhan-title" style="display:none;"></div>
-                        <input type="text" class="form-control form-control-sm" name="title" id="unduhanTitleInput" required>
+                        <div class="error-message text-danger small mb-1" id="error-poster-title" style="display:none;"></div>
+                        <input type="text" class="form-control form-control-sm" name="title" id="posterTitleInput" required>
                     </div>
                     <div class="mb-3">
-                        <label>Kategori *</label>
-                        <div class="error-message text-danger small mb-1" id="error-unduhan-category" style="display:none;"></div>
-                        <select class="form-select form-select-sm" name="category" id="unduhanCategoryInput" required>
-                            <option value="">Pilih Kategori</option>
-                            <option value="Edukasi">Edukasi</option>
-                            <option value="Panduan">Panduan</option>
-                        </select>
+                        <label>Kategori * <small class="text-muted">(Pilih minimal 1)</small></label>
+                        <div class="error-message text-danger small mb-1" id="error-poster-category" style="display:none;"></div>
+                        <div class="border rounded p-2" style="max-height: 150px; overflow-y: auto;">
+                            <?php 
+                            $categoryModel = new \App\Models\CategoryModel();
+                            $posterCategories = $categoryModel->getByType('poster');
+                            foreach($posterCategories as $cat): 
+                            ?>
+                            <div class="form-check">
+                                <input class="form-check-input poster-category-checkbox" type="checkbox" name="categories[]" value="<?= $cat['id'] ?>" id="postCat<?= $cat['id'] ?>">
+                                <label class="form-check-label" for="postCat<?= $cat['id'] ?>"><?= esc($cat['name']) ?></label>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label>Link Google Drive *</label>
@@ -380,12 +396,65 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="mb-3">
                         <label>Thumbnail *</label>
                         <div class="error-message text-danger small mb-1" id="error-thumbnail" style="display:none;"></div>
-                        <input type="file" class="form-control form-control-sm" name="thumbnail" id="thumbnailUnduhan" accept="image/*" required>
+                        <input type="file" class="form-control form-control-sm" name="thumbnail" id="thumbnailPoster" accept="image/*" required>
                         <small class="text-muted"><i class="bi bi-info-circle"></i> Format: JPG, PNG, WEBP | Max: 2MB</small>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Modul -->
+<div class="modal fade" id="modalModul" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="titleModul">Tambah Modul</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form id="formModul" enctype="multipart/form-data">
+                <input type="hidden" id="modulId">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label>Judul *</label>
+                        <div class="error-message text-danger small mb-1" id="error-modul-title" style="display:none;"></div>
+                        <input type="text" class="form-control form-control-sm" name="title" id="modulTitleInput" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Kategori * <small class="text-muted">(Pilih minimal 1)</small></label>
+                        <div class="error-message text-danger small mb-1" id="error-modul-category" style="display:none;"></div>
+                        <div class="border rounded p-2" style="max-height: 150px; overflow-y: auto;">
+                            <?php 
+                            $categoryModel = new \App\Models\CategoryModel();
+                            $modulCategories = $categoryModel->getByType('modul');
+                            foreach($modulCategories as $cat): 
+                            ?>
+                            <div class="form-check">
+                                <input class="form-check-input modul-category-checkbox" type="checkbox" name="categories[]" value="<?= $cat['id'] ?>" id="modCat<?= $cat['id'] ?>">
+                                <label class="form-check-label" for="modCat<?= $cat['id'] ?>"><?= esc($cat['name']) ?></label>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label>Link Google Drive *</label>
+                        <div class="error-message text-danger small mb-1" id="error-modul-link_drive" style="display:none;"></div>
+                        <input type="url" class="form-control form-control-sm" name="link_drive" id="modulLinkDriveInput" placeholder="https://drive.google.com/..." required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Thumbnail *</label>
+                        <div class="error-message text-danger small mb-1" id="error-modul-thumbnail" style="display:none;"></div>
+                        <input type="file" class="form-control form-control-sm" name="thumbnail" id="thumbnailModul" accept="image/*" required>
+                        <small class="text-muted"><i class="bi bi-info-circle"></i> Format: JPG, PNG, WEBP | Max: 2MB</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
                     <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
                 </div>
             </form>
@@ -400,7 +469,7 @@ document.addEventListener('DOMContentLoaded', function() {
 const dataUsers = <?= json_encode($users) ?>;
 const dataArticles = <?= json_encode($articles) ?>;
 const dataFaqs = <?= json_encode($faqs) ?>;
-const dataDownloads = <?= json_encode($downloads) ?>;
+const dataPosters = <?= json_encode($posters) ?>;
 
 // Initialize CKEditor
 if (document.getElementById('contentArtikel')) {
@@ -418,8 +487,9 @@ if (document.getElementById('jawabanFaq')) {
 }
 
 // Initialize tooltips
-var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-toggle="tooltip"]'));
 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl);
 });
 </script>
+

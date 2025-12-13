@@ -1,23 +1,15 @@
-<?= $this->extend('layouts/dashboard_layout') ?>
+<?= $this->extend('layouts/adminlte_layout') ?>
 <?= $this->section('content') ?>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
-<div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h2>Kelola Pengguna</h2>
-            <p class="text-muted">Manajemen data pengguna sistem</p>
-        </div>
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="card-title">Data Pengguna</h3>
+        <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalPengguna" onclick="setModalTitle('Tambah Pengguna')">
+            <i class="fas fa-plus"></i> Tambah
+        </button>
     </div>
-
-    <div class="card">
-        <div class="card-header d-flex justify-content-between">
-            <h5>Data Pengguna</h5>
-            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalPengguna" onclick="setModalTitle('Tambah Pengguna')">
-                <i class="bi bi-plus"></i> Tambah
-            </button>
-        </div>
         <div class="card-body">
             <table class="table table-sm">
                 <thead>
@@ -61,14 +53,13 @@
                     <?php endif; endforeach; ?>
                 </tbody>
             </table>
-            <?php if($pager): ?>
-            <div class="mt-3">
-                <?= $pager->links() ?>
-            </div>
-            <?php endif; ?>
         </div>
+        <?php if($pager): ?>
+        <div class="card-footer">
+            <?= $pager->links() ?>
+        </div>
+        <?php endif; ?>
     </div>
-</div>
 
 <!-- MODALS -->
 <?php include 'modals.php'; ?>

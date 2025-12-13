@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Kategori</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Test Tambah Kategori</h1>
+    <button onclick="testTambah()">Test Tambah</button>
+    <pre id="result"></pre>
+
+    <script>
+    function testTambah() {
+        $.ajax({
+            url: 'http://localhost/e-asfarm/admin/kategori/tambah',
+            type: 'POST',
+            data: {
+                name: 'Test Modul ' + Date.now(),
+                type: 'modul'
+            },
+            success: function(res) {
+                $('#result').text('SUCCESS:\n' + JSON.stringify(res, null, 2));
+            },
+            error: function(xhr) {
+                $('#result').text('ERROR:\n' + xhr.responseText);
+            }
+        });
+    }
+    </script>
+</body>
+</html>

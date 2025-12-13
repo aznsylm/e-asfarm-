@@ -1,16 +1,12 @@
-<?= $this->extend('layouts/dashboard_layout') ?>
+<?= $this->extend('layouts/adminlte_layout') ?>
 <?= $this->section('content') ?>
 
-<div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-12">
-            <a href="<?= base_url('admin/monitoring/remaja/riwayat/'.$monitoring['id']) ?>" class="btn btn-outline-secondary btn-sm mb-2">
-                <i class="ti ti-arrow-left"></i> Kembali
-            </a>
-            <h2>Edit Kunjungan Remaja</h2>
-            <p class="text-muted">Edit data kunjungan ke-<?= $kunjunganData['kunjungan']['kunjungan_ke'] ?></p>
-        </div>
-    </div>
+<div class="mb-3">
+    <a href="<?= base_url('admin/monitoring/remaja/riwayat/'.$monitoring['id']) ?>" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left"></i> Kembali
+    </a>
+</div>
+<p class="mb-3">Edit data kunjungan ke-<?= $kunjunganData['kunjungan']['kunjungan_ke'] ?></p>
 
     <div class="row">
         <div class="col-12">
@@ -128,10 +124,10 @@
                     </div>
                 </div>
 
-                <div class="text-end">
+                <div class="text-right">
                     <a href="<?= base_url('admin/monitoring/remaja/riwayat/'.$monitoring['id']) ?>" class="btn btn-secondary">Batal</a>
                     <button type="submit" class="btn btn-primary">
-                        <i class="ti ti-check"></i> Simpan Perubahan
+                        <i class="fas fa-check"></i> Simpan Perubahan
                     </button>
                 </div>
             </form>

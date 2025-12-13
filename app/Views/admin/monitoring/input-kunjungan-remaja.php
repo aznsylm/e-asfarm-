@@ -1,21 +1,14 @@
-<?= $this->extend('layouts/dashboard_layout') ?>
+<?= $this->extend('layouts/adminlte_layout') ?>
 <?= $this->section('content') ?>
 
 <link rel="stylesheet" href="<?= base_url('assets/css/monitoring.css') ?>">
 
-<div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-12">
-            <a href="<?= base_url('admin/monitoring/remaja/riwayat/'.$monitoring['id']) ?>" class="btn btn-outline-secondary btn-sm mb-2">
-                <i class="ti ti-arrow-left"></i> Kembali
-            </a>
-            <h2>Input Kunjungan Rutin Remaja</h2>
-            <p class="text-muted">
-                Pasien: <strong><?= esc($identitas['nama_lengkap']) ?></strong> | 
-                Kunjungan ke-<strong><?= $kunjunganKe ?></strong>
-            </p>
-        </div>
-    </div>
+<div class="mb-3">
+    <a href="<?= base_url('admin/monitoring/remaja/riwayat/'.$monitoring['id']) ?>" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left"></i> Kembali
+    </a>
+</div>
+<p class="mb-3">Pasien: <strong><?= esc($identitas['nama_lengkap']) ?></strong> | Kunjungan ke-<strong><?= $kunjunganKe ?></strong></p>
 
     <div class="row">
         <div class="col-12">
@@ -35,7 +28,7 @@
                         <hr>
 
                         <!-- Antropometri -->
-                        <h5 class="mb-3"><i class="ti ti-ruler"></i> Data Antropometri</h5>
+                        <h5 class="mb-3"><i class="fas fa-ruler"></i> Data Antropometri</h5>
                         <div class="row mb-4">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Berat Badan (kg) *</label>
@@ -58,7 +51,7 @@
                         <hr>
 
                         <!-- Skrining Anemia -->
-                        <h5 class="mb-3"><i class="ti ti-heart-rate-monitor"></i> Skrining Anemia</h5>
+                        <h5 class="mb-3"><i class="fas fa-heartbeat"></i> Skrining Anemia</h5>
                         <div class="row mb-4">
                             <div class="col-12">
                                 <p class="text-muted">Pilih gejala anemia yang dialami</p>
@@ -101,7 +94,7 @@
 
                         <!-- Riwayat Haid (Conditional) -->
                         <?php if($identitas['jenis_kelamin'] === 'P'): ?>
-                        <h5 class="mb-3"><i class="ti ti-calendar-event"></i> Riwayat Haid</h5>
+                        <h5 class="mb-3"><i class="fas fa-calendar"></i> Riwayat Haid</h5>
                         <div class="row mb-4">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Sudah Menstruasi? *</label>
@@ -130,7 +123,7 @@
                         <?php endif; ?>
 
                         <!-- Gaya Hidup -->
-                        <h5 class="mb-3"><i class="ti ti-activity"></i> Gaya Hidup & Risiko PTM</h5>
+                        <h5 class="mb-3"><i class="fas fa-running"></i> Gaya Hidup & Risiko PTM</h5>
                         <div class="row mb-4">
                             <div class="col-12">
                                 <p class="text-muted">Pilih perilaku berisiko yang dilakukan</p>
@@ -178,7 +171,7 @@
                         <hr>
 
                         <!-- Suplementasi -->
-                        <h5 class="mb-3"><i class="ti ti-pill"></i> Suplementasi & Gizi</h5>
+                        <h5 class="mb-3"><i class="fas fa-pills"></i> Suplementasi & Gizi</h5>
                         <div class="row mb-4">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Dapat TTD (Tablet Tambah Darah)?</label>
@@ -210,7 +203,7 @@
                         <hr>
 
                         <!-- Swamedikasi -->
-                        <h5 class="mb-3"><i class="ti ti-first-aid-kit"></i> Perilaku Swamedikasi</h5>
+                        <h5 class="mb-3"><i class="fas fa-first-aid"></i> Perilaku Swamedikasi</h5>
                         <div class="row mb-4">
                             <div class="col-12">
                                 <p class="text-muted">Jika sakit, biasanya melakukan apa?</p>
@@ -260,12 +253,12 @@
                         </div>
 
                         <!-- Submit Button -->
-                        <div class="text-end">
+                        <div class="text-right">
                             <a href="<?= base_url('admin/monitoring/remaja/riwayat/'.$monitoring['id']) ?>" class="btn btn-secondary">
-                                <i class="ti ti-x"></i> Batal
+                                <i class="fas fa-times"></i> Batal
                             </a>
                             <button type="submit" class="btn btn-success">
-                                <i class="ti ti-check"></i> Simpan Kunjungan
+                                <i class="fas fa-check"></i> Simpan Kunjungan
                             </button>
                         </div>
                     </form>

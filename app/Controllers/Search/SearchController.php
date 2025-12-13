@@ -3,9 +3,10 @@
 namespace App\Controllers\Search;
 
 use App\Controllers\BaseController;
-use App\Models\Post\PostModel;
+use App\Models\ArticleModel;
 use App\Models\Faq\FaqModel;
-use App\Models\Upload\FileModel;
+use App\Models\PosterModel;
+use App\Models\ModulModel;
 
 class SearchController extends BaseController
 {
@@ -62,20 +63,21 @@ class SearchController extends BaseController
         }
         
         // Cari artikel
-        $postModel = new PostModel();
-        $articles = $postModel->where('status', 'approved')
+        $articleModel = new ArticleModel();
+        $articles = $articleModel->where('status', 'approved')
                              ->groupStart()
                              ->like('title', $keyword)
-                             ->orLike('body', $keyword)
+                             ->orLike('content', $keyword)
                              ->groupEnd()
                              ->findAll();
         
         foreach ($articles as $article) {
+            $slug = $article['slug'] ?: $article['id'];
             $results[] = [
                 'type' => 'Artikel',
                 'title' => $article['title'],
-                'excerpt' => substr(strip_tags($article['body']), 0, 150) . '...',
-                'url' => base_url('artikel/baca/' . $article['id']),
+                'excerpt' => substr(strip_tags($article['content']), 0, 150) . '...',
+                'url' => base_url('artikel/baca/' . $slug),
                 'category' => ucfirst($article['category'])
             ];
         }
@@ -98,18 +100,33 @@ class SearchController extends BaseController
             ];
         }
         
-        // Cari Unduhan
-        $fileModel = new FileModel();
-        $files = $fileModel->like('title', $keyword)
+        // Cari Poster
+        $posterModel = new PosterModel();
+        $posters = $posterModel->like('title', $keyword)
                            ->findAll();
         
-        foreach ($files as $file) {
+        foreach ($posters as $poster) {
             $results[] = [
-                'type' => 'Unduhan',
-                'title' => $file['title'],
-                'excerpt' => 'File unduhan: ' . $file['title'],
-                'url' => base_url('unduhan/modul'),
-                'category' => 'File'
+                'type' => 'Poster',
+                'title' => $poster['title'],
+                'excerpt' => 'Poster kesehatan: ' . $poster['title'],
+                'url' => base_url('poster'),
+                'category' => ucfirst($poster['category'])
+            ];
+        }
+        
+        // Cari Modul
+        $modulModel = new ModulModel();
+        $moduls = $modulModel->like('title', $keyword)
+                           ->findAll();
+        
+        foreach ($moduls as $modul) {
+            $results[] = [
+                'type' => 'Modul',
+                'title' => $modul['title'],
+                'excerpt' => 'Modul edukasi: ' . $modul['title'],
+                'url' => base_url('modul'),
+                'category' => ucfirst($modul['category'])
             ];
         }
         

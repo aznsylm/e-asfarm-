@@ -1,7 +1,7 @@
 <?= $this->extend('layouts/app'); ?>
 
 <?= $this->section('head'); ?>
-<title><?= esc($artikel['seo_title'] ?: $artikel['title']); ?> - E-Asfarm</title>
+<title><?= esc($artikel['seo_title'] ?: $artikel['title']); ?></title>
 <meta name="description" content="<?= esc($artikel['meta_description'] ?: substr(strip_tags($artikel['content']), 0, 160)); ?>">
 <meta name="keywords" content="<?= esc($artikel['category']); ?>, kesehatan, E-Asfarm">
 <meta name="author" content="<?= esc($artikel['author_name']); ?>">
@@ -18,11 +18,14 @@ $imgPath = file_exists(FCPATH.'uploads/articles/'.$artikel['image']) ? 'uploads/
 <?= $this->section('content'); ?>
 
 <style>
+    .card {
+    border-radius: 0 !important;
+}
 .artikel-list-item{display:block;padding:12px 15px;border-bottom:1px solid #e9ecef;color:#333;text-decoration:none;transition:all .3s;}
 .artikel-list-item:hover{background:#f8f9fa;color:#047d78;padding-left:20px;}
 .btn-teal{background-color:#047d78;color:#fff;border:none;}
 .btn-teal:hover{background-color:#036663;color:#fff;}
-.article-content{text-align:justify;line-height:1.7;font-size:1rem;}
+.article-content{text-align:justify;line-height:1.7;font-size:0.9rem;}
 @media (max-width:767.98px){
     .article-content{padding:1rem !important;font-size:1rem;line-height:1.8;}
 }
@@ -39,8 +42,8 @@ $imgPath = file_exists(FCPATH.'uploads/articles/'.$artikel['image']) ? 'uploads/
                 <!-- Main Content 70% -->
                 <div class="col-lg-8">
                     <!-- Gambar Artikel -->
-                    <div class="mb-4 text-center">
-                        <img src="<?= base_url($imgPath); ?>" alt="<?= esc($artikel['title']); ?>" style="max-width: 80%; max-height: 500px; object-fit: contain; background: #f8f9fa;">
+                    <div class="mb-4">
+                        <img src="<?= base_url($imgPath); ?>" alt="<?= esc($artikel['title']); ?>" class="w-100" style="max-height: 500px; object-fit: contain; background: #f8f9fa;">
                     </div>
                     
                     <!-- Judul Artikel -->
@@ -96,18 +99,22 @@ $imgPath = file_exists(FCPATH.'uploads/articles/'.$artikel['image']) ? 'uploads/
                         </div>
                     </div>
                     
-                    <!-- Unduhan -->
+                    <!-- Poster -->
                     <div class="card border-0 shadow-sm">
                         <div class="card-body p-3">
-                            <h5 class="fw-bold text-teal mb-3">Unduhan</h5>
-                            <?php if (!empty($latestDownload) && isset($latestDownload['thumbnail'])) : ?>
+                            <h5 class="fw-bold text-teal mb-3">Poster</h5>
+                            <?php if (!empty($latestPosters)) : ?>
+                                <?php foreach (array_slice($latestPosters, 0, 2) as $index => $poster) : ?>
+                                    <div class="text-center mb-3 <?= $index === 0 ? 'pb-3 border-bottom' : '' ?> <?= $index === 1 ? 'd-none d-lg-block' : '' ?>">
+                                        <img src="<?= base_url('uploads/posters/' . $poster['thumbnail']); ?>" alt="<?= esc($poster['title']); ?>" class="w-100 mb-2" style="max-height: 250px; object-fit: contain; background: #f8f9fa;">
+                                        <p class="fw-semibold text-dark mb-2"><?= esc($poster['title']); ?></p>
+                                    </div>
+                                <?php endforeach; ?>
                                 <div class="text-center">
-                                    <img src="<?= base_url('uploads/downloads/' . $latestDownload['thumbnail']); ?>" alt="<?= esc($latestDownload['title']); ?>" class="w-100 mb-2" style="max-height: 300px; object-fit: contain; background: #f8f9fa;">
-                                    <p class="fw-semibold text-dark mb-2"><?= esc($latestDownload['title']); ?></p>
-                                    <a href="<?= base_url('unduhan'); ?>" class="text-teal" style="text-decoration: none; font-weight: 600;">Lihat Semua →</a>
+                                    <a href="<?= base_url('poster'); ?>" class="text-teal" style="text-decoration: none; font-weight: 600;">Lihat Semua →</a>
                                 </div>
                             <?php else : ?>
-                                <p class="text-muted">Belum ada unduhan</p>
+                                <p class="text-muted">Belum ada poster</p>
                             <?php endif; ?>
                         </div>
                     </div>

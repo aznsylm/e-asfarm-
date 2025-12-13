@@ -13,13 +13,10 @@
     <!-- Core Css -->
     <link rel="stylesheet" href="<?= base_url('assets/css/styles.css'); ?>" />
 
-    <title>E-Asfarm</title>
+    <title><?= $this->renderSection('title') ?: ' - Platform Kesehatan Ibu dan Anak' ?></title>
     
     <!-- Custom Head Section -->
     <?= $this->renderSection('head') ?>
-    
-    <!-- Owl Carousel  -->
-    <link rel="stylesheet" href="<?= base_url('assets/libs/owl.carousel/dist/assets/owl.carousel.min.css'); ?>" />
 
     <!-- Tabler Icons -->
     <link rel="stylesheet" href="<?= base_url('assets/fonts/tabler-icon/tabler-icons.min.css'); ?>" />
@@ -225,24 +222,6 @@
             }
         }
 
-        /* Scroll Top Button - Position above WhatsApp */
-        .top-btn {
-            position: fixed;
-            bottom: 200px;
-            right: 30px;
-            z-index: 99;
-        }
-
-        @media (max-width: 768px) {
-            .top-btn {
-                bottom: 190px;
-                right: 20px;
-                width: 56px !important;
-                height: 56px !important;
-                font-size: 20px;
-            }
-        }
-
         /* Preloader Image Size */
         .preloader img {
             width: 250px;
@@ -274,11 +253,6 @@
 
     <!-- Footer -->
     <?php include('asset/footer.php') ?>
-
-    <!-- Scroll Top -->
-    <a href="javascript:void(0)" class="top-btn btn btn-primary d-flex align-items-center justify-content-center round-54 p-0 rounded-circle">
-        <i class="ti ti-arrow-up fs-7"></i>
-    </a>
 
     <!-- WhatsApp Floating Button -->
     <div class="whatsapp-float">
@@ -416,7 +390,6 @@
 
     <!-- solar icons -->
     <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
-    <script src="<?= base_url('assets/libs/owl.carousel/dist/owl.carousel.min.js'); ?>"></script>
     <script src="<?= base_url('assets/js/frontend-landingpage/homepage.js'); ?>"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/iconfont/tabler-icons.min.js"></script>
     

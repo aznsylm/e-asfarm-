@@ -1,46 +1,44 @@
-<?= $this->extend('layouts/dashboard_layout') ?>
+<?= $this->extend('layouts/adminlte_layout') ?>
 <?= $this->section('content') ?>
 
-<div class="container-fluid">
-    <?php if(session()->getFlashdata('success')): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <?= session()->getFlashdata('success') ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php endif; ?>
+<?php if(session()->getFlashdata('success')): ?>
+<div class="alert alert-success alert-dismissible">
+    <?= session()->getFlashdata('success') ?>
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+</div>
+<?php endif; ?>
 
-    <div class="row mb-4">
-        <div class="col-12">
-            <a href="<?= base_url('admin/monitoring/remaja') ?>" class="btn btn-outline-secondary btn-sm mb-2">
-                <i class="ti ti-arrow-left"></i> Kembali
-            </a>
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h2>Detail Monitoring Remaja</h2>
-                    <p class="text-muted">Pasien: <strong><?= esc($identitas['nama_lengkap'] ?? 'N/A') ?></strong></p>
-                    <p class="mb-0">
-                        <span class="badge bg-info fs-6">
-                            Total Kunjungan: <?= $totalKunjungan ?>
-                        </span>
-                    </p>
-                </div>
-                <div>
-                    <a href="<?= base_url('admin/monitoring/remaja/edit-master/'.$monitoring['id']) ?>" class="btn btn-warning">
-                        <i class="ti ti-edit"></i> Edit Data Identitas
-                    </a>
-                    <a href="<?= base_url('admin/monitoring/remaja/input-kunjungan/'.$monitoring['id']) ?>" class="btn btn-primary">
-                        <i class="ti ti-plus"></i> Tambah Kunjungan
-                    </a>
-                </div>
-            </div>
-        </div>
+<div class="mb-3">
+    <a href="<?= base_url('admin/monitoring/remaja') ?>" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left"></i> Kembali
+    </a>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <p class="mb-1">Pasien: <strong><?= esc($identitas['nama_lengkap'] ?? 'N/A') ?></strong></p>
+        <span class="badge badge-info">Total Kunjungan: <?= $totalKunjungan ?></span>
     </div>
+    <div class="col-md-6 text-right">
+        <a href="<?= base_url('admin/monitoring/laporan/export-detail-excel/remaja/'.$monitoring['id']) ?>" class="btn btn-success btn-sm">
+            <i class="fas fa-file-excel"></i> Export Excel
+        </a>
+        <a href="<?= base_url('admin/monitoring/laporan/export-detail-pdf/remaja/'.$monitoring['id']) ?>" class="btn btn-danger btn-sm">
+            <i class="fas fa-file-pdf"></i> Export PDF
+        </a>
+        <a href="<?= base_url('admin/monitoring/remaja/edit-master/'.$monitoring['id']) ?>" class="btn btn-warning btn-sm">
+            <i class="fas fa-edit"></i> Edit Data Identitas
+        </a>
+        <a href="<?= base_url('admin/monitoring/remaja/input-kunjungan/'.$monitoring['id']) ?>" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus"></i> Tambah Kunjungan
+        </a>
+    </div>
+</div>
 
-    <!-- Data Identitas Remaja -->
-    <div class="card mb-3">
-        <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">Data Identitas Remaja</h5>
-        </div>
+<div class="card mb-3">
+    <div class="card-header">
+        <h3 class="card-title">Data Identitas Remaja</h3>
+    </div>
         <div class="card-body">
             <?php if($identitas): ?>
             <div class="row">
@@ -63,25 +61,26 @@
         </div>
     </div>
 
-    <!-- Riwayat Kunjungan -->
-    <div class="card">
-        <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">Riwayat Kunjungan (<?= $totalKunjungan ?> kunjungan)</h5>
-        </div>
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Riwayat Kunjungan (<?= $totalKunjungan ?> kunjungan)</h3>
+    </div>
         <div class="card-body">
             <?php if(empty($kunjunganList)): ?>
                 <p class="text-muted">Belum ada data kunjungan</p>
             <?php else: ?>
                 <div class="accordion" id="accordionRemaja">
                 <?php foreach($kunjunganList as $index => $kunjungan): ?>
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button<?= $kunjungan['kunjungan_ke'] > 1 ? ' collapsed' : '' ?>" type="button" data-bs-toggle="collapse" data-bs-target="#kunjungan<?= $kunjungan['id'] ?>">
-                            Kunjungan ke-<?= $kunjungan['kunjungan_ke'] ?> <small class="text-muted ms-2">(<?= date('d-m-Y', strtotime($kunjungan['tanggal_kunjungan'])) ?>)</small>
-                        </button>
-                    </h2>
-                    <div id="kunjungan<?= $kunjungan['id'] ?>" class="accordion-collapse collapse<?= $kunjungan['kunjungan_ke'] === 1 ? ' show' : '' ?>" data-bs-parent="#accordionRemaja">
-                        <div class="accordion-body">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">
+                            <a data-toggle="collapse" href="#kunjungan<?= $kunjungan['id'] ?>" class="<?= $kunjungan['kunjungan_ke'] > 1 ? 'collapsed' : '' ?>">
+                                Kunjungan ke-<?= $kunjungan['kunjungan_ke'] ?> <small class="text-muted">(<?= date('d-m-Y', strtotime($kunjungan['tanggal_kunjungan'])) ?>)</small>
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="kunjungan<?= $kunjungan['id'] ?>" class="collapse<?= $kunjungan['kunjungan_ke'] === 1 ? ' show' : '' ?>" data-parent="#accordionRemaja">
+                        <div class="card-body">
                             <?php if($kunjungan['antropometri']): ?>
                             <div class="mb-2">
                                 <strong>Antropometri:</strong>
@@ -208,12 +207,12 @@
                             </div>
                             <?php endif; ?>
 
-                            <div class="text-end mt-3">
+                            <div class="text-right mt-3">
                                 <a href="<?= base_url('admin/monitoring/remaja/edit-kunjungan/'.$monitoring['id'].'/'.$kunjungan['id']) ?>" class="btn btn-sm btn-warning">
-                                    <i class="ti ti-edit"></i> Edit
+                                    <i class="fas fa-edit"></i> Edit
                                 </a>
                                 <a href="<?= base_url('admin/monitoring/remaja/delete-kunjungan/'.$kunjungan['id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus?')">
-                                    <i class="ti ti-trash"></i> Hapus
+                                    <i class="fas fa-trash"></i> Hapus
                                 </a>
                             </div>
                         </div>

@@ -1,20 +1,17 @@
-<?= $this->extend('layouts/dashboard_layout') ?>
+<?= $this->extend('layouts/adminlte_layout') ?>
 <?= $this->section('content') ?>
 
 <div class="container-fluid">
-    <div class="row mb-3">
-        <div class="col-12">
-            <a href="<?= base_url('admin/kelola-pengguna') ?>" class="btn btn-secondary btn-sm">
-                <i class="bi bi-arrow-left"></i> Kembali
-            </a>
-        </div>
-    </div>
+<div class="mb-3">
+    <a href="<?= base_url('admin/kelola-pengguna') ?>" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left"></i> Kembali
+    </a>
+</div>
 
-    <!-- Profil Pengguna -->
-    <div class="card mb-3">
-        <div class="card-header bg-primary text-white">
-            <h5 class="mb-0"><i class="bi bi-person-circle"></i> Profil Pengguna</h5>
-        </div>
+<div class="card mb-3">
+    <div class="card-header">
+        <h3 class="card-title"><i class="fas fa-user-circle"></i> Profil Pengguna</h3>
+    </div>
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
@@ -41,7 +38,7 @@
                         </tr>
                         <tr>
                             <th>Role</th>
-                            <td>: <span class="badge bg-<?= $user['role'] === 'admin' ? 'warning' : 'info' ?>"><?= ucfirst($user['role']) ?></span></td>
+                            <td>: <span class="badge badge-<?= $user['role'] === 'admin' ? 'warning' : 'info' ?>"><?= ucfirst($user['role']) ?></span></td>
                         </tr>
                     </table>
                 </div>
@@ -49,24 +46,23 @@
         </div>
     </div>
 
-    <!-- Tab Navigation -->
-    <ul class="nav nav-tabs" role="tablist">
-        <?php if ($monitoring): ?>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#ibu-hamil" type="button">Data Ibu Hamil</button>
-        </li>
-        <?php endif; ?>
-        <?php if ($monitoringBalita): ?>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link<?= !$monitoring ? ' active' : '' ?>" data-bs-toggle="tab" data-bs-target="#balita" type="button">Data Balita & Anak</button>
-        </li>
-        <?php endif; ?>
-        <?php if ($monitoringRemaja): ?>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link<?= !$monitoring && !$monitoringBalita ? ' active' : '' ?>" data-bs-toggle="tab" data-bs-target="#remaja" type="button">Data Remaja</button>
-        </li>
-        <?php endif; ?>
-    </ul>
+<ul class="nav nav-tabs" role="tablist">
+    <?php if ($monitoring): ?>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link active" data-toggle="tab" href="#ibu-hamil">Data Ibu Hamil</a>
+    </li>
+    <?php endif; ?>
+    <?php if ($monitoringBalita): ?>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link<?= !$monitoring ? ' active' : '' ?>" data-toggle="tab" href="#balita">Data Balita & Anak</a>
+    </li>
+    <?php endif; ?>
+    <?php if ($monitoringRemaja): ?>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link<?= !$monitoring && !$monitoringBalita ? ' active' : '' ?>" data-toggle="tab" href="#remaja">Data Remaja</a>
+    </li>
+    <?php endif; ?>
+</ul>
 
     <!-- Tab Content -->
     <div class="tab-content mt-3">
@@ -74,8 +70,8 @@
         <!-- Tab Ibu Hamil -->
         <div class="tab-pane fade show active" id="ibu-hamil" role="tabpanel">
             <div class="card mb-3">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Data Identitas Ibu Hamil</h5>
+                <div class="card-header">
+                    <h3 class="card-title">Data Identitas Ibu Hamil</h3>
                 </div>
                 <div class="card-body">
                     <?php if ($identitas): ?>
@@ -119,8 +115,8 @@
             
 
     <div class="card">
-        <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">Riwayat Kunjungan (<?= count($kunjunganList) ?> kunjungan)</h5>
+        <div class="card-header">
+            <h3 class="card-title">Riwayat Kunjungan (<?= count($kunjunganList) ?> kunjungan)</h3>
         </div>
         <div class="card-body">
             <?php if (empty($kunjunganList)): ?>
@@ -128,14 +124,16 @@
             <?php else: ?>
                 <div class="accordion" id="accordionIbuHamil">
                 <?php foreach ($kunjunganList as $idx => $k): ?>
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button<?= $k['kunjungan_ke'] > 1 ? ' collapsed' : '' ?>" type="button" data-bs-toggle="collapse" data-bs-target="#kunjungan-<?= $k['id'] ?>">
-                            Kunjungan ke-<?= $k['kunjungan_ke'] ?> <small class="text-muted ms-2">(<?= date('d-m-Y', strtotime($k['tanggal_kunjungan'])) ?>)</small>
-                        </button>
-                    </h2>
-                    <div id="kunjungan-<?= $k['id'] ?>" class="accordion-collapse collapse<?= $k['kunjungan_ke'] === 1 ? ' show' : '' ?>" data-bs-parent="#accordionIbuHamil">
-                        <div class="accordion-body">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">
+                            <a data-toggle="collapse" href="#kunjungan-<?= $k['id'] ?>" class="<?= $k['kunjungan_ke'] > 1 ? 'collapsed' : '' ?>">
+                                Kunjungan ke-<?= $k['kunjungan_ke'] ?> <small class="text-muted">(<?= date('d-m-Y', strtotime($k['tanggal_kunjungan'])) ?>)</small>
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="kunjungan-<?= $k['id'] ?>" class="collapse<?= $k['kunjungan_ke'] === 1 ? ' show' : '' ?>" data-parent="#accordionIbuHamil">
+                        <div class="card-body">
                     
                     <?php if ($k['antropometri']): ?>
                     <div class="mt-2">
@@ -218,8 +216,8 @@
         <!-- Tab Balita -->
         <div class="tab-pane fade<?= !$monitoring ? ' show active' : '' ?>" id="balita" role="tabpanel">
             <div class="card mb-3">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Data Identitas Balita</h5>
+                <div class="card-header">
+                    <h3 class="card-title">Data Identitas Balita</h3>
                 </div>
                 <div class="card-body">
                     <?php if ($identitasBalita): ?>
@@ -244,8 +242,8 @@
             </div>
             
             <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Riwayat Kunjungan (<?= count($kunjunganBalita) ?> kunjungan)</h5>
+                <div class="card-header">
+                    <h3 class="card-title">Riwayat Kunjungan (<?= count($kunjunganBalita) ?> kunjungan)</h3>
                 </div>
                 <div class="card-body">
                     <?php if (empty($kunjunganBalita)): ?>
@@ -253,14 +251,16 @@
                     <?php else: ?>
                         <div class="accordion" id="accordionBalita">
                         <?php foreach ($kunjunganBalita as $idx => $kb): ?>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button<?= $kb['kunjungan_ke'] > 1 ? ' collapsed' : '' ?>" type="button" data-bs-toggle="collapse" data-bs-target="#kunjungan-balita-<?= $kb['id'] ?>">
-                                    Kunjungan ke-<?= $kb['kunjungan_ke'] ?> <small class="text-muted ms-2">(<?= date('d-m-Y', strtotime($kb['tanggal_kunjungan'])) ?>)</small>
-                                </button>
-                            </h2>
-                            <div id="kunjungan-balita-<?= $kb['id'] ?>" class="accordion-collapse collapse<?= $kb['kunjungan_ke'] === 1 ? ' show' : '' ?>" data-bs-parent="#accordionBalita">
-                                <div class="accordion-body">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">
+                                    <a data-toggle="collapse" href="#kunjungan-balita-<?= $kb['id'] ?>" class="<?= $kb['kunjungan_ke'] > 1 ? 'collapsed' : '' ?>">
+                                        Kunjungan ke-<?= $kb['kunjungan_ke'] ?> <small class="text-muted">(<?= date('d-m-Y', strtotime($kb['tanggal_kunjungan'])) ?>)</small>
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="kunjungan-balita-<?= $kb['id'] ?>" class="collapse<?= $kb['kunjungan_ke'] === 1 ? ' show' : '' ?>" data-parent="#accordionBalita">
+                                <div class="card-body">
                                     <?php if ($kb['antropometri']): ?>
                                     <div class="mb-2">
                                         <strong>Antropometri:</strong>
@@ -371,8 +371,8 @@
         <!-- Tab Remaja -->
         <div class="tab-pane fade<?= !$monitoring && !$monitoringBalita ? ' show active' : '' ?>" id="remaja" role="tabpanel">
             <div class="card mb-3">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Data Identitas Remaja</h5>
+                <div class="card-header">
+                    <h3 class="card-title">Data Identitas Remaja</h3>
                 </div>
                 <div class="card-body">
                     <?php if ($identitasRemaja): ?>
@@ -399,8 +399,8 @@
             </div>
             
             <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Riwayat Kunjungan (<?= count($kunjunganRemaja) ?> kunjungan)</h5>
+                <div class="card-header">
+                    <h3 class="card-title">Riwayat Kunjungan (<?= count($kunjunganRemaja) ?> kunjungan)</h3>
                 </div>
                 <div class="card-body">
                     <?php if (empty($kunjunganRemaja)): ?>
@@ -408,14 +408,16 @@
                     <?php else: ?>
                         <div class="accordion" id="accordionRemaja">
                         <?php foreach ($kunjunganRemaja as $idx => $kr): ?>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button<?= $kr['kunjungan_ke'] > 1 ? ' collapsed' : '' ?>" type="button" data-bs-toggle="collapse" data-bs-target="#kunjungan-remaja-<?= $kr['id'] ?>">
-                                    Kunjungan ke-<?= $kr['kunjungan_ke'] ?> <small class="text-muted ms-2">(<?= date('d-m-Y', strtotime($kr['tanggal_kunjungan'])) ?>)</small>
-                                </button>
-                            </h2>
-                            <div id="kunjungan-remaja-<?= $kr['id'] ?>" class="accordion-collapse collapse<?= $kr['kunjungan_ke'] === 1 ? ' show' : '' ?>" data-bs-parent="#accordionRemaja">
-                                <div class="accordion-body">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">
+                                    <a data-toggle="collapse" href="#kunjungan-remaja-<?= $kr['id'] ?>" class="<?= $kr['kunjungan_ke'] > 1 ? 'collapsed' : '' ?>">
+                                        Kunjungan ke-<?= $kr['kunjungan_ke'] ?> <small class="text-muted">(<?= date('d-m-Y', strtotime($kr['tanggal_kunjungan'])) ?>)</small>
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="kunjungan-remaja-<?= $kr['id'] ?>" class="collapse<?= $kr['kunjungan_ke'] === 1 ? ' show' : '' ?>" data-parent="#accordionRemaja">
+                                <div class="card-body">
                                     <?php if ($kr['antropometri']): ?>
                                     <div class="mb-2">
                                         <strong>Antropometri:</strong>

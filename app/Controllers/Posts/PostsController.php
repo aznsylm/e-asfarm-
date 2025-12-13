@@ -4,7 +4,7 @@ namespace App\Controllers\Posts;
 
 use App\Controllers\BaseController;
 use App\Models\ArticleModel;
-use App\Models\DownloadModel;
+use App\Models\PosterModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class PostsController extends BaseController
@@ -30,13 +30,33 @@ class PostsController extends BaseController
 
         return view('post/category', compact('cArtikel', 'name', 'numCategories', 'popPosts', 'title', 'pager'));
     }
-    public function category($name)
+    public function category($slug)
     {
+        $categoryModel = new \App\Models\CategoryModel();
+        $category = $categoryModel->where('slug', $slug)->first();
+        
+        if (!$category) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+        
         $articles = new ArticleModel();
         $title = 'Kategori';
-        $categoryName = ucfirst($name);
+        $categoryName = $category['name'];
 
-        $cArtikel = $articles->where(['category' => $categoryName, 'status' => 'approved'])->orderBy('id', 'DESC')->paginate(9);
+        $cArtikel = $articles
+            ->distinct()
+            ->select('articles.*')
+            ->join('article_categories', 'article_categories.article_id = articles.id')
+            ->where('article_categories.category_id', $category['id'])
+            ->where('articles.status', 'approved')
+            ->groupBy('articles.id')
+            ->orderBy('articles.created_at', 'DESC')
+            ->paginate(9);
+        
+        // Load categories untuk setiap artikel
+        foreach($cArtikel as &$artikel) {
+            $artikel['categories'] = $articles->getCategories($artikel['id']);
+        }
 
         $numCategories = [
             ['name' => 'Farmasi', 'id' => 1, 'count_posts' => $articles->where(['category' => 'Farmasi', 'status' => 'approved'])->countAllResults(false)],
@@ -44,10 +64,18 @@ class PostsController extends BaseController
             ['name' => 'Bidan', 'id' => 3, 'count_posts' => $articles->where(['category' => 'Bidan', 'status' => 'approved'])->countAllResults(false)]
         ];
 
-        $popPosts = $articles->where(['category' => $categoryName, 'status' => 'approved'])->orderBy('id', 'DESC')->limit(1)->findAll();
+        $popPosts = $articles
+            ->select('articles.*')
+            ->join('article_categories', 'article_categories.article_id = articles.id')
+            ->where('article_categories.category_id', $category['id'])
+            ->where('articles.status', 'approved')
+            ->orderBy('articles.id', 'DESC')
+            ->limit(1)
+            ->findAll();
         $popPosts = array_map(fn($item) => (object)$item, $popPosts);
 
         $pager = $articles->pager;
+        $name = $categoryName;
 
         return view('post/category', compact('cArtikel', 'name', 'numCategories', 'popPosts', 'title', 'pager'));
     }
@@ -99,40 +127,11 @@ class PostsController extends BaseController
         // Artikel terkait (kategori sama, exclude artikel saat ini)
         $relatedArticles = $articleModel->where(['category' => $artikel['category'], 'id !=' => $artikel['id'], 'status' => 'approved'])->orderBy('id', 'DESC')->limit(5)->findAll();
         
-        // Download terbaru
-        $downloadModel = new DownloadModel();
-        $latestDownload = $downloadModel->orderBy('id', 'DESC')->first();
+        // 2 Poster terbaru
+        $posterModel = new PosterModel();
+        $latestPosters = $posterModel->orderBy('id', 'DESC')->limit(2)->findAll();
 
-        return view('post/single',  compact('title', 'artikel', 'numCategories', 'popPosts', 'moreBlogPosts', 'relatedArticles', 'latestDownload'));
-    }
-
-    // menulis komentar pada artikel
-    public function storeComment($id)
-    {
-        // cek login
-        // if (!service('auth')->isLoggedIn()) {
-        //     return redirect()->to(base_url('login'))->with('error','Anda harus login terlebih dahulu untuk menambahkan komentar');
-        // }
-
-        $commments = new CommentModel();
-
-        // validasi
-        $data = [
-            "user_name" => auth()->user()->username,
-            "comment" => $this->request->getPost('comment'),
-            "post_id" => $id,
-        ];
-
-        // simpan ke database
-        $commments->save($data);
-
-        // cek apakah berhasil
-        if ($commments->affectedRows() > 0) {
-            return redirect()->to(base_url('posts/single/' . $id))->with('create', 'Comment saved successfully');
-        } else {
-            // Penanganan jika terjadi kesalahan
-            return redirect()->back()->withInput()->with('error', 'Failed to save comment');
-        }
+        return view('post/single',  compact('title', 'artikel', 'numCategories', 'popPosts', 'moreBlogPosts', 'relatedArticles', 'latestPosters'));
     }
 
     // create artikel

@@ -1,11 +1,22 @@
 
     <!-- Header start -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
     .header-top {
         background-color: #047d78;
     }
     .header-bottom {
         background-color: #f5f5f5;
+    }
+    .header-bottom .navbar-nav .nav-link {
+        font-family: 'Poppins', sans-serif;
+        letter-spacing: 0.3px;
+    }
+    .navbar .dropdown-item {
+        font-family: 'Poppins', sans-serif;
     }
     .search-modal-btn {
         background: rgba(255,255,255,0.1);
@@ -32,6 +43,29 @@
         outline: none !important;
         box-shadow: none !important;
     }
+    .navbar .dropdown-menu {
+        border-radius: 0;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        padding: 0;
+        margin-top: 0;
+        min-width: 200px;
+    }
+    .navbar .dropdown-item {
+        padding: 12px 20px;
+        color: #333;
+        font-weight: 500;
+        border-bottom: 1px solid #f0f0f0;
+        transition: all 0.3s;
+    }
+    .navbar .dropdown-item:last-child {
+        border-bottom: none;
+    }
+    .navbar .dropdown-item:hover {
+        background-color: #f8f9fa;
+        color: #047d78;
+        padding-left: 25px;
+    }
     </style>
 
     <header class="header-fp p-0 w-100">
@@ -45,14 +79,16 @@
                         </a>
                     </div>
                     <div class="col-6 col-lg-9 text-end">
-                        <div class="d-flex align-items-center justify-content-end gap-2">
+                        <div class="d-flex align-items-center justify-content-end gap-2 gap-lg-3">
+                            <span class="text-white fw-semibold d-lg-none" style="font-size: 0.7rem; font-style: italic; font-family: 'Georgia', serif; line-height: 1.2; max-width: 110px; text-align: right;">Pendampingan Tepat, Generasi Hebat</span>
+                            <span class="text-white fw-semibold d-none d-lg-inline" style="font-size: 0.95rem; font-style: italic; font-family: 'Georgia', serif;">Pendampingan Tepat, Generasi Hebat</span>
                             <button class="btn search-modal-btn btn-sm d-none d-lg-inline-flex align-items-center" data-bs-toggle="modal" data-bs-target="#searchModal">
                                 <i class="fas fa-search me-2"></i> Cari
                             </button>
                             <i class="fas fa-question-circle text-white d-none d-lg-inline" 
                                data-bs-toggle="tooltip" 
                                data-bs-placement="bottom" 
-                               data-bs-title="Cari artikel kesehatan, tanya jawab, dan file unduhan"
+                               data-bs-title="Cari artikel kesehatan, tanya jawab, poster, dan modul edukasi"
                                style="cursor: help; opacity: 0.8;"></i>
                             <?php if (!session()->get('logged_in')): ?>
                                 <a href="<?= base_url('login'); ?>" class="btn btn-light btn-sm d-none d-lg-inline-flex align-items-center">
@@ -100,30 +136,37 @@
                             <ul class="dropdown-menu">
                                 <li><a href="<?= url_to('tentang.kami'); ?>" class="dropdown-item">Tentang Kami</a></li>
                                 <li><a href="<?= url_to('layanan'); ?>" class="dropdown-item">Layanan</a></li>
-                                <li><a href="<?= url_to('kontak'); ?>" class="dropdown-item">Kontak</a></li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle fw-semibold text-dark py-3" href="#" data-bs-toggle="dropdown">Artikel</a>
                             <ul class="dropdown-menu">
-                                <li><a href="<?= base_url('artikel/farmasi'); ?>" class="dropdown-item">Farmasi</a></li>
-                                <li><a href="<?= base_url('artikel/kebidanan'); ?>" class="dropdown-item">Kebidanan</a></li>
-                                <li><a href="<?= base_url('artikel/gizi'); ?>" class="dropdown-item">Gizi</a></li>
+                                <?php 
+                                $categoryModel = new \App\Models\CategoryModel();
+                                $artikelCategories = $categoryModel->where(['type' => 'artikel', 'is_active' => 1])->findAll();
+                                foreach($artikelCategories as $cat): 
+                                ?>
+                                <li><a href="<?= base_url('artikel/' . strtolower($cat['slug'])); ?>" class="dropdown-item"><?= esc($cat['name']) ?></a></li>
+                                <?php endforeach; ?>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle fw-semibold text-dark py-3" href="#" data-bs-toggle="dropdown">Tanya Jawab</a>
                             <ul class="dropdown-menu">
-                                <li><a href="<?= base_url('tanya-jawab/kehamilan'); ?>" class="dropdown-item">Kehamilan</a></li>
-                                <li><a href="<?= base_url('tanya-jawab/menyusui'); ?>" class="dropdown-item">Menyusui</a></li>
-                                <li><a href="<?= base_url('tanya-jawab/persalinan'); ?>" class="dropdown-item">Persalinan</a></li>
-                                <li><a href="<?= base_url('tanya-jawab/vaksin'); ?>" class="dropdown-item">Vaksin</a></li>
-                                <li><a href="<?= base_url('tanya-jawab/nutrisi'); ?>" class="dropdown-item">Nutrisi</a></li>
-                                <li><a href="<?= base_url('tanya-jawab/etnomedisin'); ?>" class="dropdown-item">Etnomedisin</a></li>
+                                <?php 
+                                $categoryModel = new \App\Models\CategoryModel();
+                                $faqCategories = $categoryModel->where(['type' => 'tanya_jawab', 'is_active' => 1])->findAll();
+                                foreach($faqCategories as $cat): 
+                                ?>
+                                <li><a href="<?= base_url('tanya-jawab/' . strtolower($cat['slug'])); ?>" class="dropdown-item"><?= esc($cat['name']) ?></a></li>
+                                <?php endforeach; ?>
                             </ul>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link fw-semibold text-dark py-3" href="<?= base_url('unduhan'); ?>">Unduhan</a>
+                            <a class="nav-link fw-semibold text-dark py-3" href="<?= base_url('poster'); ?>">Poster</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-semibold text-dark py-3" href="<?= base_url('modul'); ?>">Modul</a>
                         </li>
                     </ul>
                 </nav>
@@ -138,7 +181,7 @@
                 <div class="modal-body p-4">
                     <form action="<?= base_url('cari'); ?>" method="get">
                         <div class="input-group input-group-lg">
-                            <input name="q" type="text" class="form-control" placeholder="Cari artikel, tanya jawab, unduhan..." autofocus />
+                            <input name="q" type="text" class="form-control" placeholder="Cari artikel, tanya jawab, poster, modul..." autofocus />
                             <button class="btn btn-teal" type="submit"><i class="fas fa-search"></i></button>
                         </div>
                     </form>
@@ -180,6 +223,29 @@
         box-shadow: none !important;
         background-color: transparent !important;
     }
+    .offcanvas-body ul li a,
+    .offcanvas-body ul li button {
+        font-size: 0.95rem;
+    }
+    .offcanvas-body > ul > li > a,
+    .offcanvas-body > ul > li > button {
+        padding-left: 0;
+    }
+    .offcanvas-body .collapse ul {
+        background-color: #fff;
+        border-left: 3px solid #047d78;
+        margin-left: 10px;
+    }
+    .offcanvas-body .collapse ul li a {
+        padding: 10px 15px;
+        display: block;
+        transition: all 0.3s;
+    }
+    .offcanvas-body .collapse ul li a:hover {
+        background-color: #f8f9fa;
+        color: #047d78;
+        padding-left: 20px;
+    }
     </style>
     
     <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight">
@@ -193,7 +259,7 @@
         <div class="px-3 py-3 border-bottom bg-white">
             <form action="<?= base_url('cari'); ?>" method="get">
                 <div class="input-group">
-                    <input name="q" type="text" class="form-control" placeholder="Cari ..." />
+                    <input name="q" type="text" class="form-control" placeholder="Cari artikel, tanya jawab, poster, modul..." />
                     <button class="btn btn-teal" type="submit"><i class="fas fa-search"></i></button>
                 </div>
             </form>
@@ -240,7 +306,6 @@
                         <ul class="list-unstyled ps-3">
                             <li class="my-2"><a href="<?= url_to('tentang.kami'); ?>" class="text-dark text-decoration-none">Tentang Kami</a></li>
                             <li class="my-2"><a href="<?= url_to('layanan'); ?>" class="text-dark text-decoration-none">Layanan</a></li>
-                            <li class="my-2"><a href="<?= url_to('kontak'); ?>" class="text-dark text-decoration-none">Kontak</a></li>
                         </ul>
                     </div>
                 </li>
@@ -250,9 +315,13 @@
                     </button>
                     <div class="collapse" id="artikel-collapse">
                         <ul class="list-unstyled ps-3">
-                            <li class="my-2"><a href="<?= base_url('artikel/farmasi'); ?>" class="text-dark text-decoration-none">Farmasi</a></li>
-                            <li class="my-2"><a href="<?= base_url('artikel/kebidanan'); ?>" class="text-dark text-decoration-none">Kebidanan</a></li>
-                            <li class="my-2"><a href="<?= base_url('artikel/gizi'); ?>" class="text-dark text-decoration-none">Gizi</a></li>
+                            <?php 
+                            $categoryModel = new \App\Models\CategoryModel();
+                            $artikelCategories = $categoryModel->where(['type' => 'artikel', 'is_active' => 1])->findAll();
+                            foreach($artikelCategories as $cat): 
+                            ?>
+                            <li class="my-2"><a href="<?= base_url('artikel/' . strtolower($cat['slug'])); ?>" class="text-dark text-decoration-none"><?= esc($cat['name']) ?></a></li>
+                            <?php endforeach; ?>
                         </ul>
                     </div>
                 </li>
@@ -262,17 +331,21 @@
                     </button>
                     <div class="collapse" id="tanya-collapse">
                         <ul class="list-unstyled ps-3">
-                            <li class="my-2"><a href="<?= base_url('tanya-jawab/kehamilan'); ?>" class="text-dark text-decoration-none">Kehamilan</a></li>
-                            <li class="my-2"><a href="<?= base_url('tanya-jawab/menyusui'); ?>" class="text-dark text-decoration-none">Menyusui</a></li>
-                            <li class="my-2"><a href="<?= base_url('tanya-jawab/persalinan'); ?>" class="text-dark text-decoration-none">Persalinan</a></li>
-                            <li class="my-2"><a href="<?= base_url('tanya-jawab/vaksin'); ?>" class="text-dark text-decoration-none">Vaksin</a></li>
-                            <li class="my-2"><a href="<?= base_url('tanya-jawab/nutrisi'); ?>" class="text-dark text-decoration-none">Nutrisi</a></li>
-                            <li class="my-2"><a href="<?= base_url('tanya-jawab/etnomedisin'); ?>" class="text-dark text-decoration-none">Etnomedisin</a></li>
+                            <?php 
+                            $categoryModel = new \App\Models\CategoryModel();
+                            $faqCategories = $categoryModel->where(['type' => 'tanya_jawab', 'is_active' => 1])->findAll();
+                            foreach($faqCategories as $cat): 
+                            ?>
+                            <li class="my-2"><a href="<?= base_url('tanya-jawab/' . strtolower($cat['slug'])); ?>" class="text-dark text-decoration-none"><?= esc($cat['name']) ?></a></li>
+                            <?php endforeach; ?>
                         </ul>
                     </div>
                 </li>
                 <li class="mb-2">
-                    <a href="<?= base_url('unduhan'); ?>" class="d-block text-dark py-2 text-decoration-none fw-semibold">Unduhan</a>
+                    <a href="<?= base_url('poster'); ?>" class="d-block text-dark py-2 text-decoration-none fw-semibold">Poster</a>
+                </li>
+                <li class="mb-2">
+                    <a href="<?= base_url('modul'); ?>" class="d-block text-dark py-2 text-decoration-none fw-semibold">Modul</a>
                 </li>
             </ul>
         </div>

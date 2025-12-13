@@ -3,7 +3,9 @@
 namespace App\Controllers;
 
 use App\Models\ArticleModel;
-use App\Models\DownloadModel;
+use App\Models\PosterModel;
+use App\Models\CategoryModel;
+use App\Models\RunningTextModel;
 
 class Home extends BaseController
 {
@@ -15,7 +17,7 @@ class Home extends BaseController
     public function beranda(): string
     {
         $articles = new ArticleModel();
-        $downloadModel = new DownloadModel();
+        $posterModel = new PosterModel();
         $title = 'Home';
 
         $data = $articles->where('status', 'approved')->orderBy('id', 'DESC')->limit(6)->findAll();
@@ -48,10 +50,28 @@ class Home extends BaseController
         $categories = [['name' => 'Farmasi'], ['name' => 'Gizi'], ['name' => 'Bidan']];
         $totalArtikel = $articles->where('status', 'approved')->countAllResults();
         
-        // Get latest downloads for running text
-        $latestDownloads = $downloadModel->orderBy('created_at', 'DESC')->limit(10)->findAll();
+        // Get running text items (poster/modul yang dipilih superadmin)
+        $runningTextModel = new RunningTextModel();
+        $latestDownloads = $runningTextModel->getRunningTextItems();
+        
+        // Fallback: jika belum ada setting, ambil 5 poster terbaru
+        if (empty($latestDownloads)) {
+            $latestDownloads = $posterModel->orderBy('created_at', 'DESC')->limit(5)->findAll();
+            // Format agar konsisten dengan running text items
+            $latestDownloads = array_map(function($item) {
+                return [
+                    'item_type' => 'poster',
+                    'poster_title' => $item['title'],
+                    'poster_link' => $item['link_drive']
+                ];
+            }, $latestDownloads);
+        }
+        
+        // Get artikel categories for dynamic tabs
+        $categoryModel = new CategoryModel();
+        $artikelCategories = $categoryModel->where(['type' => 'artikel', 'is_active' => 1])->findAll();
 
-        return view('home', compact('title', 'data', 'data1', 'data3', 'farmasiPosts', 'farmasiPostsRecomendasi', 'dataFourPosts', 'giziPosts', 'giziPostsRecomendasi', 'bidanPosts', 'categories', 'totalArtikel', 'latestDownloads'));
+        return view('home', compact('title', 'data', 'data1', 'data3', 'farmasiPosts', 'farmasiPostsRecomendasi', 'dataFourPosts', 'giziPosts', 'giziPostsRecomendasi', 'bidanPosts', 'categories', 'totalArtikel', 'latestDownloads', 'artikelCategories'));
     }
 
     public function tentangKami()
@@ -92,10 +112,25 @@ class Home extends BaseController
         
         if ($kategori === 'semua') {
             $data = $articles->where('status', 'approved')->orderBy('id', 'DESC')->limit(5)->findAll();
-        } elseif ($kategori === 'kebidanan') {
-            $data = $articles->where(['category' => 'Bidan', 'status' => 'approved'])->orderBy('id', 'DESC')->limit(5)->findAll();
         } else {
-            $data = $articles->where(['category' => ucfirst($kategori), 'status' => 'approved'])->orderBy('id', 'DESC')->limit(5)->findAll();
+            // Find category by slug
+            $categoryModel = new CategoryModel();
+            $cat = $categoryModel->where(['slug' => $kategori, 'type' => 'artikel'])->first();
+            
+            if ($cat) {
+                $data = $articles
+                    ->distinct()
+                    ->select('articles.*')
+                    ->join('article_categories', 'article_categories.article_id = articles.id')
+                    ->where('article_categories.category_id', $cat['id'])
+                    ->where('articles.status', 'approved')
+                    ->groupBy('articles.id')
+                    ->orderBy('articles.created_at', 'DESC')
+                    ->limit(5)
+                    ->findAll();
+            } else {
+                $data = [];
+            }
         }
         
         return $this->response->setJSON($data ?: []);

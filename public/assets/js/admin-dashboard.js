@@ -175,11 +175,10 @@ $('#formArtikel').on('submit', function(e) {
         hasError = true;
     }
     
-    // Validate category
-    const category = $('#categoryInput').val();
-    if (!category) {
-        $('#error-category').text('Kategori wajib dipilih').show();
-        $('#categoryInput').addClass('is-invalid');
+    // Validate category (checkbox)
+    const selectedCategories = $('.artikel-category-checkbox:checked').length;
+    if (selectedCategories === 0) {
+        $('#error-category').text('Kategori wajib dipilih (minimal 1)').show();
         hasError = true;
     }
     
@@ -392,11 +391,10 @@ $('#formFaq').on('submit', function(e) {
     
     let hasError = false;
     
-    // Validate category
-    const category = $('#faqCategoryInput').val();
-    if (!category) {
-        $('#error-faq-category').text('Kategori wajib dipilih').show();
-        $('#faqCategoryInput').addClass('is-invalid');
+    // Validate category (checkbox)
+    const selectedCategories = $('.faq-category-checkbox:checked').length;
+    if (selectedCategories === 0) {
+        $('#error-faq-category').text('Kategori wajib dipilih (minimal 1)').show();
         hasError = true;
     }
     
@@ -475,8 +473,8 @@ function hapusFaq(id) {
     }
 }
 
-// UNDUHAN
-$('#formUnduhan').on('submit', function(e) {
+// POSTER
+$('#formPoster').on('submit', function(e) {
     e.preventDefault();
     
     // Clear previous errors
@@ -484,25 +482,24 @@ $('#formUnduhan').on('submit', function(e) {
     $('.form-control, .form-select').removeClass('is-invalid');
     
     let hasError = false;
-    const id = $('#unduhanId').val();
+    const id = $('#posterId').val();
     
     // Validate title
-    const title = $('#unduhanTitleInput').val().trim();
+    const title = $('#posterTitleInput').val().trim();
     if (!title) {
-        $('#error-unduhan-title').text('Judul wajib diisi').show();
-        $('#unduhanTitleInput').addClass('is-invalid');
+        $('#error-poster-title').text('Judul wajib diisi').show();
+        $('#posterTitleInput').addClass('is-invalid');
         hasError = true;
     } else if (title.length < 5) {
-        $('#error-unduhan-title').text('Judul minimal 5 karakter').show();
-        $('#unduhanTitleInput').addClass('is-invalid');
+        $('#error-poster-title').text('Judul minimal 5 karakter').show();
+        $('#posterTitleInput').addClass('is-invalid');
         hasError = true;
     }
     
-    // Validate category
-    const category = $('#unduhanCategoryInput').val();
-    if (!category) {
-        $('#error-unduhan-category').text('Kategori wajib dipilih').show();
-        $('#unduhanCategoryInput').addClass('is-invalid');
+    // Validate category (checkbox)
+    const selectedCategories = $('.poster-category-checkbox:checked').length;
+    if (selectedCategories === 0) {
+        $('#error-poster-category').text('Kategori wajib dipilih (minimal 1)').show();
         hasError = true;
     }
     
@@ -519,20 +516,20 @@ $('#formUnduhan').on('submit', function(e) {
     }
     
     // Validate thumbnail (only for new upload)
-    const thumbnailFile = $('#thumbnailUnduhan')[0].files[0];
+    const thumbnailFile = $('#thumbnailPoster')[0].files[0];
     if (!id && !thumbnailFile) {
         $('#error-thumbnail').text('Thumbnail wajib diupload').show();
-        $('#thumbnailUnduhan').addClass('is-invalid');
+        $('#thumbnailPoster').addClass('is-invalid');
         hasError = true;
     } else if (thumbnailFile) {
         const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
         if (!allowedTypes.includes(thumbnailFile.type)) {
             $('#error-thumbnail').text('Format gambar harus JPG, PNG, atau WEBP').show();
-            $('#thumbnailUnduhan').addClass('is-invalid');
+            $('#thumbnailPoster').addClass('is-invalid');
             hasError = true;
         } else if (thumbnailFile.size > 2 * 1024 * 1024) {
             $('#error-thumbnail').text('Ukuran gambar maksimal 2MB').show();
-            $('#thumbnailUnduhan').addClass('is-invalid');
+            $('#thumbnailPoster').addClass('is-invalid');
             hasError = true;
         }
     }
@@ -541,7 +538,7 @@ $('#formUnduhan').on('submit', function(e) {
         return false;
     }
     
-    const url = id ? `${baseUrl}/admin/unduhan/ubah/${id}` : `${baseUrl}/admin/unduhan/tambah`;
+    const url = id ? `${baseUrl}/admin/poster/ubah/${id}` : `${baseUrl}/admin/poster/tambah`;
     
     $.ajax({
         url: url,
@@ -556,8 +553,8 @@ $('#formUnduhan').on('submit', function(e) {
             } else {
                 if (res.errors) {
                     Object.keys(res.errors).forEach(field => {
-                        const errorDiv = field === 'title' ? $('#error-unduhan-title') : 
-                                       field === 'category' ? $('#error-unduhan-category') : 
+                        const errorDiv = field === 'title' ? $('#error-poster-title') : 
+                                       field === 'category' ? $('#error-poster-category') : 
                                        $(`#error-${field}`);
                         if (errorDiv.length) {
                             errorDiv.text('' + res.errors[field]).show();
@@ -575,20 +572,20 @@ $('#formUnduhan').on('submit', function(e) {
     });
 });
 
-function editUnduhan(id) {
-    const download = dataDownloads.find(d => d.id == id);
-    $('#titleUnduhan').text('Edit Unduhan');
-    $('#unduhanId').val(download.id);
-    $('[name="title"]').val(download.title);
-    $('[name="category"]').val(download.category);
-    $('[name="link_drive"]').val(download.link_drive);
-    $('#thumbnailUnduhan').removeAttr('required');
-    $('#modalUnduhan').modal('show');
+function editPoster(id) {
+    const poster = dataPosters.find(p => p.id == id);
+    $('#titlePoster').text('Edit Poster');
+    $('#posterId').val(poster.id);
+    $('#posterTitleInput').val(poster.title);
+    $('#posterCategoryInput').val(poster.category);
+    $('#linkDriveInput').val(poster.link_drive);
+    $('#thumbnailPoster').removeAttr('required');
+    $('#modalPoster').modal('show');
 }
 
-function hapusUnduhan(id) {
-    if(confirm('Yakin hapus unduhan ini?')) {
-        $.post(`${baseUrl}/admin/unduhan/hapus/${id}`, function(res) {
+function hapusPoster(id) {
+    if(confirm('Yakin hapus poster ini?')) {
+        $.post(`${baseUrl}/admin/poster/hapus/${id}`, function(res) {
             alert(res.message);
             if(res.success) location.reload();
         });
@@ -625,10 +622,14 @@ $('.modal').on('hidden.bs.modal', function() {
 });
 
 // Clear error on input change - Artikel
-$('#titleInput, #categoryInput, #imageArtikel').on('change input', function() {
+$('#titleInput, #imageArtikel').on('change input', function() {
     const fieldName = $(this).attr('name');
     $(`#error-${fieldName}`).hide().text('');
     $(this).removeClass('is-invalid');
+});
+
+$('.artikel-category-checkbox').on('change', function() {
+    $('#error-category').hide().text('');
 });
 
 // Clear error on input change - Pengguna
@@ -640,19 +641,24 @@ $('#usernameInput, #emailInput, #password, #password_edit, #phone_number').on('c
 });
 
 // Clear error on input change - FAQ
-$('#faqCategoryInput, #pertanyaanInput').on('change input', function() {
+$('#pertanyaanInput').on('change input', function() {
     const fieldName = $(this).attr('name');
-    const errorId = fieldName === 'category' ? 'error-faq-category' : `error-${fieldName}`;
+    $(`#error-${fieldName}`).hide().text('');
+    $(this).removeClass('is-invalid');
+});
+
+$('.faq-category-checkbox').on('change', function() {
+    $('#error-faq-category').hide().text('');
+});
+
+// Clear error on input change - Poster
+$('#posterTitleInput, #linkDriveInput, #thumbnailPoster').on('change input', function() {
+    const fieldName = $(this).attr('name');
+    const errorId = fieldName === 'title' ? 'error-poster-title' : `error-${fieldName}`;
     $(`#${errorId}`).hide().text('');
     $(this).removeClass('is-invalid');
 });
 
-// Clear error on input change - Unduhan
-$('#unduhanTitleInput, #unduhanCategoryInput, #linkDriveInput, #thumbnailUnduhan').on('change input', function() {
-    const fieldName = $(this).attr('name');
-    const errorId = fieldName === 'title' ? 'error-unduhan-title' : 
-                   fieldName === 'category' ? 'error-unduhan-category' : 
-                   `error-${fieldName}`;
-    $(`#${errorId}`).hide().text('');
-    $(this).removeClass('is-invalid');
+$('.poster-category-checkbox').on('change', function() {
+    $('#error-poster-category').hide().text('');
 });

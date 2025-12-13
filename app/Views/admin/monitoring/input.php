@@ -1,18 +1,13 @@
-<?= $this->extend('layouts/dashboard_layout') ?>
+<?= $this->extend('layouts/adminlte_layout') ?>
 <?= $this->section('content') ?>
 
 <link rel="stylesheet" href="<?= base_url('assets/css/monitoring.css') ?>">
 
-<div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-12">
-            <a href="<?= base_url('admin/monitoring/ibu-hamil') ?>" class="btn btn-outline-secondary btn-sm mb-2">
-                <i class="ti ti-arrow-left"></i> Kembali
-            </a>
-            <h2>Input Data Monitoring Ibu Hamil</h2>
-            <p class="text-muted">Form Input 7 Tahap - Kesehatan Ibu Hamil dan Menyusui</p>
-        </div>
-    </div>
+<div class="mb-3">
+    <a href="<?= base_url('admin/monitoring/ibu-hamil') ?>" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left"></i> Kembali
+    </a>
+</div>
 
     <div class="row">
         <div class="col-12">
@@ -187,13 +182,13 @@
                         <!-- Navigation Buttons -->
                         <div class="wizard-navigation mt-4">
                             <button type="button" class="btn btn-secondary" id="prevBtn" onclick="changeStep(-1)" style="display:none;">
-                                <i class="ti ti-arrow-left"></i> Kembali
+                                <i class="fas fa-arrow-left"></i> Kembali
                             </button>
                             <button type="button" class="btn btn-primary" id="nextBtn" onclick="changeStep(1)">
-                                Lanjut <i class="ti ti-arrow-right"></i>
+                                Lanjut <i class="fas fa-arrow-right"></i>
                             </button>
                             <button type="submit" class="btn btn-success" id="submitBtn" style="display:none;">
-                                <i class="ti ti-check"></i> Simpan Data
+                                <i class="fas fa-check"></i> Simpan Data
                             </button>
                         </div>
                     </form>

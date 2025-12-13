@@ -21,7 +21,7 @@ class MonitoringRemajaModel extends Model
 
     public function getAllWithUserInfo($padukuhanId = null)
     {
-        $this->select('monitoring_remaja.*, monitoring_remaja_identitas.nama_lengkap as full_name, users.username, padukuhan.nama_padukuhan')
+        $this->select('monitoring_remaja.*, monitoring_remaja_identitas.nama_lengkap, monitoring_remaja_identitas.tanggal_lahir, monitoring_remaja_identitas.jenis_kelamin, users.username, padukuhan.nama_padukuhan')
             ->join('users', 'users.id = monitoring_remaja.user_id')
             ->join('monitoring_remaja_identitas', 'monitoring_remaja_identitas.monitoring_id = monitoring_remaja.id', 'left')
             ->join('padukuhan', 'padukuhan.id = users.padukuhan_id', 'left')

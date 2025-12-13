@@ -24,17 +24,18 @@ $routes->get('login', 'Auth\AuthController::login', ['as' => 'login']);
 $routes->post('auth/login', 'Auth\AuthController::attemptLogin', ['as' => 'auth.login']);
 $routes->get('logout', 'Auth\AuthController::logout', ['as' => 'logout']);
 
-$routes->group('unduhan', function($routes) {
-    $routes->get('/', 'Unduhan\Unduhan::index');
-    $routes->get('(:any)', 'Unduhan\Unduhan::index/$1');
+$routes->group('poster', function($routes) {
+    $routes->get('/', 'Poster\Poster::index');
+});
+
+$routes->group('modul', function($routes) {
+    $routes->get('/', 'Modul\ModulController::publicIndex');
 });
 
 // artikel publik (baca artikel)
 $routes->group('artikel', function ($routes) {
     $routes->get('/', 'Posts\PostsController::index', ['as' => 'artikel']);
-    $routes->get('farmasi', 'Posts\PostsController::kategori/farmasi', ['as' => 'artikel.farmasi']);
-    $routes->get('kebidanan', 'Posts\PostsController::kategori/bidan', ['as' => 'artikel.kebidanan']);
-    $routes->get('gizi', 'Posts\PostsController::kategori/gizi', ['as' => 'artikel.gizi']);
+    $routes->get('(:segment)', 'Posts\PostsController::kategori/$1', ['as' => 'artikel.kategori']);
     $routes->get('baca/(:segment)', 'Posts\PostsController::bacaArtikel/$1', ['as' => 'artikel.baca']);
     $routes->post('komentar/(:num)', 'Posts\PostsController::simpanKomentar/$1', ['as' => 'artikel.komentar']);
     $routes->post('cari', 'Posts\PostsController::cariArtikel', ['as' => 'artikel.cari']);
@@ -78,12 +79,19 @@ $routes->group('admin', ['filter' => 'admin'], function ($routes) {
     // Dashboard Baru
     $routes->get('dashboard', 'Admin\Dashboard::index', ['as' => 'admin.dashboard']);
     
+    // Kelola Running Text (SuperAdmin Only)
+    $routes->get('kelola-running-text', 'SuperAdmin\RunningTextController::index', ['as' => 'admin.kelola.running.text']);
+    $routes->post('kelola-running-text/save', 'SuperAdmin\RunningTextController::save', ['as' => 'admin.kelola.running.text.save']);
+    
     // Kelola Pengguna & Admin
     $routes->get('kelola-pengguna', 'Admin\Dashboard::kelolaPengguna', ['as' => 'admin.kelola.pengguna']);
     $routes->get('kelola-admin', 'Admin\Dashboard::kelolaAdmin', ['as' => 'admin.kelola.admin']);
     $routes->get('kelola-artikel', 'Admin\Dashboard::kelolaArtikel', ['as' => 'admin.kelola.artikel']);
-    $routes->get('kelola-faq', 'Admin\Dashboard::kelolaFaq', ['as' => 'admin.kelola.faq']);
-    $routes->get('kelola-unduhan', 'Admin\Dashboard::kelolaUnduhan', ['as' => 'admin.kelola.unduhan']);
+    $routes->get('kelola-tanya-jawab', 'Admin\Dashboard::kelolaFaq', ['as' => 'admin.kelola.faq']);
+    $routes->get('kelola-poster', 'Admin\Dashboard::kelolaPoster', ['as' => 'admin.kelola.poster']);
+    $routes->get('kelola-modul', 'Modul\ModulController::index', ['as' => 'admin.kelola.modul']);
+    $routes->get('kelola-kategori', 'Admin\Dashboard::kelolaKategori', ['as' => 'admin.kelola.kategori']);
+    $routes->get('kelola-padukuhan', 'Admin\PadukuhanController::index', ['as' => 'admin.kelola.padukuhan']);
     
     // Pengguna
     $routes->post('pengguna/tambah', 'Admin\Dashboard::tambahPengguna');
@@ -103,10 +111,27 @@ $routes->group('admin', ['filter' => 'admin'], function ($routes) {
     $routes->post('faq/ubah/(:num)', 'Admin\Dashboard::ubahFaq/$1');
     $routes->post('faq/hapus/(:num)', 'Admin\Dashboard::hapusFaq/$1');
     
-    // Unduhan
-    $routes->post('unduhan/tambah', 'Admin\Dashboard::tambahUnduhan');
-    $routes->post('unduhan/ubah/(:num)', 'Admin\Dashboard::ubahUnduhan/$1');
-    $routes->post('unduhan/hapus/(:num)', 'Admin\Dashboard::hapusUnduhan/$1');
+    // Poster
+    $routes->post('poster/tambah', 'Admin\Dashboard::tambahPoster');
+    $routes->post('poster/ubah/(:num)', 'Admin\Dashboard::ubahPoster/$1');
+    $routes->post('poster/hapus/(:num)', 'Admin\Dashboard::hapusPoster/$1');
+    
+    // Modul
+    $routes->post('modul/tambah', 'Modul\ModulController::tambah');
+    $routes->post('modul/ubah/(:num)', 'Modul\ModulController::ubah/$1');
+    $routes->post('modul/hapus/(:num)', 'Modul\ModulController::hapus/$1');
+    
+    // Kategori
+    $routes->post('kategori/tambah', 'Admin\Dashboard::tambahKategori');
+    $routes->post('kategori/ubah/(:num)', 'Admin\Dashboard::ubahKategori/$1');
+    $routes->post('kategori/hapus/(:num)', 'Admin\Dashboard::hapusKategori/$1');
+    $routes->get('kategori/get/(:num)', 'Admin\Dashboard::getKategori/$1');
+    
+    // Padukuhan
+    $routes->post('padukuhan/store', 'Admin\PadukuhanController::store');
+    $routes->post('padukuhan/update/(:num)', 'Admin\PadukuhanController::update/$1');
+    $routes->post('padukuhan/delete/(:num)', 'Admin\PadukuhanController::delete/$1');
+    $routes->get('padukuhan/get/(:num)', 'Admin\PadukuhanController::get/$1');
     
     // Old routes (keep for compatibility)
     $routes->get('dashboard-old', 'Admins\AdminsController::dashboard', ['as' => 'admin.dashboard.old']);
@@ -231,7 +256,11 @@ $routes->group('admin', ['filter' => 'admin'], function ($routes) {
     $routes->get('monitoring/balita/delete-kunjungan/(:num)', 'Admin\Monitoring\MonitoringBalitaController::deleteKunjungan/$1', ['as' => 'admin.monitoring.balita.delete.kunjungan']);
     
     // laporan
-    $routes->get('monitoring/laporan', 'Admin\Monitoring\MonitoringController::laporan', ['as' => 'admin.monitoring.laporan']);
+    $routes->get('monitoring/laporan', 'Admin\Monitoring\LaporanController::index', ['as' => 'admin.monitoring.laporan']);
+    $routes->get('monitoring/laporan/export-excel', 'Admin\Monitoring\LaporanController::exportExcel', ['as' => 'admin.monitoring.laporan.export.excel']);
+    $routes->get('monitoring/laporan/export-pdf', 'Admin\Monitoring\LaporanController::exportPdf', ['as' => 'admin.monitoring.laporan.export.pdf']);
+    $routes->get('monitoring/laporan/export-detail-excel/(:segment)/(:num)', 'Admin\Monitoring\LaporanController::exportDetailExcel/$1/$2', ['as' => 'admin.monitoring.laporan.export.detail.excel']);
+    $routes->get('monitoring/laporan/export-detail-pdf/(:segment)/(:num)', 'Admin\Monitoring\LaporanController::exportDetailPdf/$1/$2', ['as' => 'admin.monitoring.laporan.export.detail.pdf']);
     
     // kunjungan rutin
     $routes->get('monitoring/input-kunjungan/(:num)', 'Admin\Monitoring\MonitoringController::inputKunjungan/$1', ['as' => 'admin.monitoring.input.kunjungan']);

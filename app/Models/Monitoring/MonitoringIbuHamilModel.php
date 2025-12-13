@@ -22,7 +22,7 @@ class MonitoringIbuHamilModel extends Model
 
     public function getAllWithUserInfo($padukuhanId = null)
     {
-        $this->select('monitoring_ibu_hamil.*, monitoring_identitas.nama_ibu as full_name, users.username, users.padukuhan_id, padukuhan.nama_padukuhan')
+        $this->select('monitoring_ibu_hamil.*, monitoring_identitas.nama_ibu, monitoring_identitas.usia_kehamilan, monitoring_identitas.nomor_telepon, users.username, users.padukuhan_id, padukuhan.nama_padukuhan')
             ->join('users', 'users.id = monitoring_ibu_hamil.user_id')
             ->join('monitoring_identitas', 'monitoring_identitas.monitoring_id = monitoring_ibu_hamil.id', 'left')
             ->join('padukuhan', 'padukuhan.id = users.padukuhan_id', 'left')

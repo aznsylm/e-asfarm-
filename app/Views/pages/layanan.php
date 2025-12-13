@@ -1,4 +1,5 @@
 <?= $this->extend('layouts/app') ?>
+<?= $this->section('title') ?>Layanan<?= $this->endSection() ?>
 <?= $this->section('content') ?>
 
 <style>
@@ -59,6 +60,11 @@
         margin-bottom: 15px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
+    @media (max-width: 991px) {
+        .row.g-4 > div[style*="width: 20%"] {
+            width: 50% !important;
+        }
+    }
 </style>
 
 <!-- Layanan Overview -->
@@ -70,7 +76,7 @@
             </div>
         </div>
         <div class="row g-4">
-            <div class="col-md-6 col-lg-3">
+            <div class="col-6 col-md-4" style="flex: 0 0 auto; width: 20%;">
                 <a href="#" class="layanan-link">
                     <div class="layanan-card p-4 text-center">
                         <div class="layanan-icon">
@@ -81,7 +87,7 @@
                     </div>
                 </a>
             </div>
-            <div class="col-md-6 col-lg-3">
+            <div class="col-6 col-md-4" style="flex: 0 0 auto; width: 20%;">
                 <a href="#" class="layanan-link">
                     <div class="layanan-card p-4 text-center">
                         <div class="layanan-icon">
@@ -92,7 +98,7 @@
                     </div>
                 </a>
             </div>
-            <div class="col-md-6 col-lg-3">
+            <div class="col-6 col-md-4" style="flex: 0 0 auto; width: 20%;">
                 <a href="#" class="layanan-link">
                     <div class="layanan-card p-4 text-center">
                         <div class="layanan-icon">
@@ -103,14 +109,25 @@
                     </div>
                 </a>
             </div>
-            <div class="col-md-6 col-lg-3">
-                <a href="#" class="layanan-link">
+            <div class="col-6 col-md-4" style="flex: 0 0 auto; width: 20%;">
+                <a href="<?= base_url('poster'); ?>" class="layanan-link">
                     <div class="layanan-card p-4 text-center">
                         <div class="layanan-icon">
-                            <i class="fas fa-download"></i>
+                            <i class="fas fa-image"></i>
                         </div>
                         <h4 class="fw-bold mb-3" style="color: #047d78;">Poster Kesehatan</h4>
                         <p class="text-muted">Materi edukasi visual yang mudah dipahami</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4" style="flex: 0 0 auto; width: 20%;">
+                <a href="<?= base_url('modul'); ?>" class="layanan-link">
+                    <div class="layanan-card p-4 text-center">
+                        <div class="layanan-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3" style="color: #047d78;">Modul Edukasi</h4>
+                        <p class="text-muted">Modul pembelajaran kesehatan lengkap dan terstruktur</p>
                     </div>
                 </a>
             </div>
@@ -130,19 +147,19 @@
             <div class="col-lg-8 mx-auto">
                 <div class="faq-item">
                     <h5 class="fw-bold mb-2" style="color: #047d78;">Apakah layanan E-Asfarm gratis?</h5>
-                    <p class="mb-0 text-muted">Ya, semua layanan E-Asfarm dapat diakses secara gratis oleh seluruh pengguna.</p>
+                    <p class="mb-0 text-muted" style="text-align: justify;">Ya, semua layanan E-Asfarm dapat diakses secara gratis oleh seluruh pengguna.</p>
                 </div>
                 <div class="faq-item">
                     <h5 class="fw-bold mb-2" style="color: #047d78;">Berapa lama waktu respons konsultasi?</h5>
-                    <p class="mb-0 text-muted">Pakar kami akan merespons pertanyaan Anda dalam waktu maksimal 1x24 jam.</p>
+                    <p class="mb-0 text-muted" style="text-align: justify;">Pakar kami akan merespons pertanyaan Anda dalam waktu maksimal 1x24 jam.</p>
                 </div>
                 <div class="faq-item">
                     <h5 class="fw-bold mb-2" style="color: #047d78;">Apakah informasi saya aman?</h5>
-                    <p class="mb-0 text-muted">Ya, kami menjaga kerahasiaan data pribadi dan konsultasi Anda dengan sistem keamanan terbaik.</p>
+                    <p class="mb-0 text-muted" style="text-align: justify;">Ya, kami menjaga kerahasiaan data pribadi dan konsultasi Anda dengan sistem keamanan terbaik.</p>
                 </div>
                 <div class="faq-item">
                     <h5 class="fw-bold mb-2" style="color: #047d78;">Siapa yang bisa menggunakan E-Asfarm?</h5>
-                    <p class="mb-0 text-muted">E-Asfarm dapat digunakan oleh siapa saja, terutama ibu hamil, ibu menyusui, dan keluarga yang peduli kesehatan, namun saat ini untuk fitur khusus hanya dapat diakses dan dikelola oleh Kalurahan Guwosari, Bantul.</p>
+                    <p class="mb-0 text-muted" style="text-align: justify;">E-Asfarm dapat digunakan oleh siapa saja, terutama ibu hamil, ibu menyusui, dan keluarga yang peduli kesehatan, namun saat ini untuk fitur khusus hanya dapat diakses dan dikelola oleh Kalurahan Guwosari, Bantul.</p>
                 </div>
             </div>
         </div>

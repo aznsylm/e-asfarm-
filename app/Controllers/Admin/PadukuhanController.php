@@ -21,50 +21,67 @@ class PadukuhanController extends BaseController
     {
         $data = [
             'title' => 'Kelola Padukuhan',
+            'breadcrumb' => 'Kelola Padukuhan',
             'padukuhan' => $this->padukuhanModel->findAll()
         ];
-        return view('admin/padukuhan/index', $data);
+        return view('admin/kelola-padukuhan', $data);
     }
 
     public function store()
     {
-        $validation = \Config\Services::validation();
-        $validation->setRules([
-            'kode_padukuhan' => 'required|is_unique[padukuhan.kode_padukuhan]',
-            'nama_padukuhan' => 'required'
-        ]);
+        $this->response->setContentType('application/json');
 
-        if (!$validation->withRequest($this->request)->run()) {
-            return redirect()->back()->with('error', 'Kode padukuhan sudah digunakan atau data tidak valid');
+        if (!$this->validate(['nama_padukuhan' => 'required|min_length[3]'])) {
+            return $this->response->setJSON(['success' => false, 'errors' => $this->validator->getErrors()]);
         }
 
-        $this->padukuhanModel->save([
-            'kode_padukuhan' => $this->request->getPost('kode_padukuhan'),
-            'nama_padukuhan' => $this->request->getPost('nama_padukuhan')
-        ]);
+        if ($this->padukuhanModel->insert(['nama_padukuhan' => $this->request->getPost('nama_padukuhan')])) {
+            return $this->response->setJSON(['success' => true, 'message' => 'Padukuhan berhasil ditambahkan']);
+        }
 
-        return redirect()->to('/admin/padukuhan')->with('success', 'Padukuhan berhasil ditambahkan');
+        return $this->response->setJSON(['success' => false, 'message' => 'Gagal menambahkan padukuhan']);
     }
 
     public function update($id)
     {
-        $this->padukuhanModel->update($id, [
-            'kode_padukuhan' => $this->request->getPost('kode_padukuhan'),
-            'nama_padukuhan' => $this->request->getPost('nama_padukuhan')
-        ]);
+        $this->response->setContentType('application/json');
 
-        return redirect()->to('/admin/padukuhan')->with('success', 'Padukuhan berhasil diperbarui');
+        if (!$this->validate(['nama_padukuhan' => 'required|min_length[3]'])) {
+            return $this->response->setJSON(['success' => false, 'errors' => $this->validator->getErrors()]);
+        }
+
+        if ($this->padukuhanModel->update($id, ['nama_padukuhan' => $this->request->getPost('nama_padukuhan')])) {
+            return $this->response->setJSON(['success' => true, 'message' => 'Padukuhan berhasil diubah']);
+        }
+
+        return $this->response->setJSON(['success' => false, 'message' => 'Gagal mengubah padukuhan']);
     }
 
     public function delete($id)
     {
+        $this->response->setContentType('application/json');
+
         $userCount = $this->userModel->where('padukuhan_id', $id)->countAllResults();
-        
         if ($userCount > 0) {
-            return redirect()->back()->with('error', 'Tidak dapat menghapus padukuhan yang masih memiliki pengguna');
+            return $this->response->setJSON(['success' => false, 'message' => 'Tidak dapat menghapus padukuhan yang masih memiliki pengguna']);
         }
 
-        $this->padukuhanModel->delete($id);
-        return redirect()->to('/admin/padukuhan')->with('success', 'Padukuhan berhasil dihapus');
+        if ($this->padukuhanModel->delete($id)) {
+            return $this->response->setJSON(['success' => true, 'message' => 'Padukuhan berhasil dihapus']);
+        }
+
+        return $this->response->setJSON(['success' => false, 'message' => 'Gagal menghapus padukuhan']);
+    }
+
+    public function get($id)
+    {
+        $this->response->setContentType('application/json');
+        $padukuhan = $this->padukuhanModel->find($id);
+        
+        if ($padukuhan) {
+            return $this->response->setJSON(['success' => true, 'data' => $padukuhan]);
+        }
+        
+        return $this->response->setJSON(['success' => false, 'message' => 'Padukuhan tidak ditemukan']);
     }
 }

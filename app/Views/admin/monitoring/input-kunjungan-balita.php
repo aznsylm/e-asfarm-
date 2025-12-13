@@ -1,19 +1,12 @@
-<?= $this->extend('layouts/dashboard_layout') ?>
+<?= $this->extend('layouts/adminlte_layout') ?>
 <?= $this->section('content') ?>
 
-<div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-12">
-            <a href="<?= base_url('admin/monitoring/balita/riwayat/'.$monitoring['id']) ?>" class="btn btn-outline-secondary btn-sm mb-2">
-                <i class="ti ti-arrow-left"></i> Kembali
-            </a>
-            <h2>Input Kunjungan Rutin Balita</h2>
-            <p class="text-muted">
-                Pasien: <strong><?= esc($identitas['nama_anak']) ?></strong> | 
-                Kunjungan ke-<strong><?= $nextKunjungan ?></strong>
-            </p>
-        </div>
-    </div>
+<div class="mb-3">
+    <a href="<?= base_url('admin/monitoring/balita/riwayat/'.$monitoring['id']) ?>" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left"></i> Kembali
+    </a>
+</div>
+<p class="mb-3">Pasien: <strong><?= esc($identitas['nama_anak']) ?></strong> | Kunjungan ke-<strong><?= $nextKunjungan ?></strong></p>
 
     <div class="row">
         <div class="col-12">
@@ -285,7 +278,7 @@
                 </div>
 
                 <div class="mt-4">
-                    <button type="submit" class="btn btn-primary"><i class="ti ti-check"></i> Simpan Kunjungan</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Simpan Kunjungan</button>
                     <a href="<?= base_url('admin/monitoring/balita/riwayat/' . $monitoring['id']) ?>" class="btn btn-secondary">Batal</a>
                 </div>
             </form>

@@ -1,4 +1,5 @@
 <?= $this->extend('layouts/app') ?>
+<?= $this->section('title') ?>Tentang Kami<?= $this->endSection() ?>
 <?= $this->section('content') ?>
 
 <style>
@@ -14,13 +15,13 @@
 .info-content.active{display:block;}
 @media(max-width:991px){.info-tab{padding:10px 15px;font-size:14px;}}
 .peneliti-slider{overflow:hidden;position:relative;}
-.peneliti-track{display:flex;animation:slide-peneliti 20s linear infinite;gap:30px;}
+.peneliti-track{display:flex;animation:slide-peneliti 5s linear infinite;gap:30px;}
 .peneliti-track:hover{animation-play-state:paused;}
 .peneliti-item{flex-shrink:0;}
 .peneliti-item img{height:280px;width:auto;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);cursor:pointer;transition:all .3s;}
 .peneliti-item img:hover{transform:scale(1.05);box-shadow:0 4px 12px rgba(0,0,0,0.2);}
 @keyframes slide-peneliti{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
-@media(max-width:767px){.peneliti-track{animation-duration:12s;}}
+@media(max-width:767px){.peneliti-track{animation-duration:15s;}}
 </style>
 
 <style>
@@ -194,8 +195,8 @@
             <a href="#img5"><img src="<?= base_url('assets/images/frontend-pages/Emelda.webp'); ?>" alt="Tenaga Ahli" class="rounded-circle mb-2 img-clickable" style="width: 150px; height: 150px; object-fit: cover;"></a>
             <h6 class="fw-bold mb-1" style="color: #047d78;">apt. Emelda, M.Farm</h6>
             <p class="mb-1 small" style="color: #047d78;">Apoteker Fokus Pada Bidang Etnomedisin</p>
-            <p class="mb-2 text-muted small"><i class="ti ti-phone"></i> 08xxxxxxxxxx</p>
-            <a href="https://wa.me/628xxxxxxxxxx" target="_blank" class="btn btn-sm" style="background-color: #047d78; color: white;">
+            <p class="mb-2 text-muted small"><i class="ti ti-phone"></i> 085752334536</p>
+            <a href="https://wa.me/6285752334536" target="_blank" class="btn btn-sm" style="background-color: #047d78; color: white;">
               <i class="ti ti-brand-whatsapp"></i> Konsultasi
             </a>
           </div>
@@ -207,8 +208,8 @@
             <a href="#img6"><img src="<?= base_url('assets/images/frontend-pages/Eliza.webp'); ?>" alt="Tenaga Ahli" class="rounded-circle mb-2 img-clickable" style="width: 150px; height: 150px; object-fit: cover;"></a>
             <h6 class="fw-bold mb-1" style="color: #047d78;">apt. Eliza Dwinta, M.Pharm.,SCI</h6>
             <p class="mb-1 small" style="color: #047d78;">Apoteker Fokus Pada Kesehatan Mental</p>
-            <p class="mb-2 text-muted small"><i class="ti ti-phone"></i> 08xxxxxxxxxx</p>
-            <a href="https://wa.me/628xxxxxxxxxx" target="_blank" class="btn btn-sm" style="background-color: #047d78; color: white;">
+            <p class="mb-2 text-muted small"><i class="ti ti-phone"></i> 082226351616</p>
+            <a href="https://wa.me/6282226351616" target="_blank" class="btn btn-sm" style="background-color: #047d78; color: white;">
               <i class="ti ti-brand-whatsapp"></i> Konsultasi
             </a>
           </div>

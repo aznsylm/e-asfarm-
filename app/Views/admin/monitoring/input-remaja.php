@@ -1,18 +1,13 @@
-<?= $this->extend('layouts/dashboard_layout') ?>
+<?= $this->extend('layouts/adminlte_layout') ?>
 <?= $this->section('content') ?>
 
 <link rel="stylesheet" href="<?= base_url('assets/css/monitoring.css') ?>">
 
-<div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-12">
-            <a href="<?= base_url('admin/monitoring/remaja') ?>" class="btn btn-outline-secondary btn-sm mb-2">
-                <i class="ti ti-arrow-left"></i> Kembali
-            </a>
-            <h2>Input Data Monitoring Remaja</h2>
-            <p class="text-muted">Form Input 7 Tahap - Kesehatan Remaja (10-19 tahun)</p>
-        </div>
-    </div>
+<div class="mb-3">
+    <a href="<?= base_url('admin/monitoring/remaja') ?>" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left"></i> Kembali
+    </a>
+</div>
 
     <div class="row">
         <div class="col-12">
@@ -195,7 +190,7 @@
                             </div>
                             <div id="haidSkipMessage">
                                 <div class="alert alert-info">
-                                    <i class="ti ti-info-circle"></i> Tahap ini khusus untuk remaja perempuan. Silakan lanjut ke tahap berikutnya.
+                                    <i class="fas fa-info-circle"></i> Tahap ini khusus untuk remaja perempuan. Silakan lanjut ke tahap berikutnya.
                                 </div>
                             </div>
                         </div>
@@ -322,13 +317,13 @@
                         <!-- Navigation Buttons -->
                         <div class="wizard-navigation mt-4">
                             <button type="button" class="btn btn-secondary" id="prevBtn" onclick="changeStep(-1)" style="display:none;">
-                                <i class="ti ti-arrow-left"></i> Kembali
+                                <i class="fas fa-arrow-left"></i> Kembali
                             </button>
                             <button type="button" class="btn btn-primary" id="nextBtn" onclick="changeStep(1)">
-                                Lanjut <i class="ti ti-arrow-right"></i>
+                                Lanjut <i class="fas fa-arrow-right"></i>
                             </button>
                             <button type="submit" class="btn btn-success" id="submitBtn" style="display:none;">
-                                <i class="ti ti-check"></i> Simpan Data
+                                <i class="fas fa-check"></i> Simpan Data
                             </button>
                         </div>
                     </form>
@@ -447,10 +442,9 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', function(e) {
         console.log('Form submitting...');
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="ti ti-loader"></i> Menyimpan...';
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
     });
     
-    // Initialize buttons
     updateButtons();
     
     // Debug: cek style tombol

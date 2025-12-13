@@ -6,51 +6,72 @@
     min-height: 80vh;
     display: flex;
     align-items: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    margin: -20px -15px;
+    background: #f5f5f5;
     padding: 40px 15px;
+    overflow-x: hidden;
 }
 .login-card {
     border: none;
-    border-radius: 15px;
+    border-radius: 0;
     overflow: hidden;
 }
 .login-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #047d78;
     padding: 40px 30px;
     text-align: center;
+    border-bottom: 4px solid #036663;
 }
 .login-body {
     padding: 40px 30px;
+    background: #fff;
 }
 .form-control {
-    border-radius: 8px;
+    border-radius: 0;
     padding: 12px 15px;
     border: 1px solid #e0e0e0;
+    transition: all 0.3s;
 }
 .form-control:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    border-color: #047d78;
+    box-shadow: none;
+    border-width: 2px;
 }
 .form-control.is-invalid {
     border-color: #dc3545;
 }
 .btn-login {
     padding: 12px;
-    border-radius: 8px;
+    border-radius: 0;
     font-weight: 600;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #047d78;
     border: none;
+    transition: all 0.3s;
 }
 .btn-login:hover {
+    background: #036663;
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 12px rgba(4, 125, 120, 0.3);
 }
 .input-group-text {
-    border-radius: 0 8px 8px 0;
+    border-radius: 0;
     border-left: 0;
     background: white;
     cursor: pointer;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s;
+}
+.input-group:focus-within .input-group-text {
+    border-color: #047d78;
+    border-width: 2px;
+}
+.login-link {
+    color: #047d78;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+.login-link:hover {
+    color: #036663;
 }
 </style>
 
@@ -58,10 +79,11 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-12 col-sm-10 col-md-8 col-lg-5">
-                <div class="card login-card shadow-lg">
+                <div class="card login-card shadow">
                     <div class="login-header">
-                        <h3 class="text-white mb-2">Selamat Datang</h3>
-                        <p class="text-white-50 mb-0">Silakan login ke E-Asfarm</p>
+                        <img src="<?= base_url('assets/images/logos/E-Asfarm-Logo.png'); ?>" alt="E-Asfarm" style="height: 50px; margin-bottom: 20px;">
+                        <h3 class="text-white mb-2 fw-bold">Selamat Datang</h3>
+                        <p class="text-white mb-0" style="opacity: 0.9;">Silakan login ke E-Asfarm</p>
                     </div>
                     
                     <div class="login-body">
@@ -107,14 +129,17 @@
                             </div>
                         </form>
                         
-                        <div class="text-center mt-4">
-                            <a href="/" class="text-decoration-none">← Kembali ke Beranda</a>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <a href="/" class="login-link"><i class="fas fa-arrow-left me-2"></i>Kembali ke Beranda</a>
+                            <a href="#" class="login-link" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">
+                                <i class="fas fa-key me-1"></i>Lupa Password?
+                            </a>
                         </div>
                     </div>
                 </div>
                 
                 <div class="text-center mt-4">
-                    <p class="text-white small">Login Anda dilindungi dengan enkripsi</p>
+                    <p class="text-muted small"><i class="fas fa-shield-alt me-2"></i>Login Anda dilindungi dengan enkripsi</p>
                 </div>
             </div>
         </div>
@@ -182,5 +207,27 @@ document.getElementById('password').addEventListener('input', function() {
     }
 });
 </script>
+
+<!-- Modal Lupa Password -->
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 0;">
+            <div class="modal-header" style="background: #047d78; border: none;">
+                <h5 class="modal-title text-white">Lupa Password</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center p-4">
+                <i class="fas fa-user-cog" style="font-size: 3rem; color: #047d78; margin-bottom: 20px;"></i>
+                <p class="mb-3">Untuk reset password, silakan hubungi:</p>
+                <h6 class="fw-bold" style="color: #047d78;">Teknisi Website</h6>
+                <p class="mb-2">Aizan Syalim</p>
+                <a href="https://wa.me/6282255693035" target="_blank" class="btn btn-login w-100 mt-3">
+                    Hubungi via WhatsApp
+                </a>
+                <p class="text-muted small mt-3 mb-0">082255693035</p>
+            </div>
+        </div>
+    </div>
+</div>
 
 <?= $this->endSection() ?>

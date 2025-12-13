@@ -1,4 +1,4 @@
-<?= $this->extend('layouts/dashboard_layout') ?>
+<?= $this->extend('layouts/adminlte_layout') ?>
 <?= $this->section('content') ?>
 
 <link rel="stylesheet" href="<?= base_url('assets/css/monitoring.css') ?>">
@@ -11,36 +11,34 @@
 }
 </style>
 
-<div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-12">
-            <a href="<?= base_url('admin/monitoring/riwayat/'.$monitoring['id']) ?>" class="btn btn-outline-secondary btn-sm mb-2">
-                <i class="ti ti-arrow-left"></i> Kembali
-            </a>
-            <h2><?= $isEdit ? 'Edit' : 'Input' ?> Kunjungan Rutin - Kunjungan ke-<?= $kunjunganKe ?></h2>
-            <p class="text-muted">Pasien: <strong><?= esc($identitas['nama_ibu']) ?></strong></p>
-            <?php if(!$isEdit): ?>
-            <p class="mb-0">
-                <span class="badge bg-<?= $kunjunganKe >= 13 ? 'warning' : 'info' ?> fs-6">
-                    Kunjungan ke-<?= $kunjunganKe ?> dari maksimal <?= $maxKunjungan ?>
-                </span>
-                <?php if($kunjunganKe >= 13): ?>
-                    <span class="badge bg-warning fs-6 ms-2">⚠️ Mendekati Batas Maksimal</span>
-                <?php endif; ?>
-            </p>
-            <?php endif; ?>
-        </div>
+<div class="mb-3">
+    <a href="<?= base_url('admin/monitoring/riwayat/'.$monitoring['id']) ?>" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left"></i> Kembali
+    </a>
+</div>
+
+<div class="row mb-3">
+    <div class="col-12">
+        <p class="mb-1">Pasien: <strong><?= esc($identitas['nama_ibu']) ?></strong></p>
+        <?php if(!$isEdit): ?>
+        <span class="badge badge-<?= $kunjunganKe >= 13 ? 'warning' : 'info' ?>">
+            Kunjungan ke-<?= $kunjunganKe ?> dari maksimal <?= $maxKunjungan ?>
+        </span>
+        <?php if($kunjunganKe >= 13): ?>
+            <span class="badge badge-warning ml-2">⚠️ Mendekati Batas Maksimal</span>
+        <?php endif; ?>
+        <?php endif; ?>
     </div>
+</div>
 
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <!-- Info & Tanggal Kunjungan -->
                     <div class="alert alert-<?= $isEdit ? 'warning' : 'info' ?> mb-4">
                         <div class="row align-items-center">
                             <div class="col-md-6">
-                                <h5 class="mb-0"><i class="ti ti-calendar-event"></i> <?= $isEdit ? 'Edit' : '' ?> Kunjungan ke-<?= $kunjunganKe ?></h5>
+                                <h5 class="mb-0"><i class="fas fa-calendar"></i> <?= $isEdit ? 'Edit' : '' ?> Kunjungan ke-<?= $kunjunganKe ?></h5>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label mb-1">Tanggal Kunjungan *</label>
@@ -292,16 +290,15 @@
                             </div>
                         </div>
 
-                        <!-- Navigation -->
                         <div class="wizard-navigation mt-4">
                             <button type="button" class="btn btn-secondary" id="prevBtn" onclick="changeStep(-1)" style="display:none;">
-                                <i class="ti ti-arrow-left"></i> Kembali
+                                <i class="fas fa-arrow-left"></i> Kembali
                             </button>
                             <button type="button" class="btn btn-primary" id="nextBtn" onclick="changeStep(1)">
-                                Lanjut <i class="ti ti-arrow-right"></i>
+                                Lanjut <i class="fas fa-arrow-right"></i>
                             </button>
                             <button type="submit" class="btn btn-success" id="submitBtn" style="display:none;">
-                                <i class="ti ti-check"></i> <?= $isEdit ? 'Update' : 'Simpan' ?> Kunjungan
+                                <i class="fas fa-check"></i> <?= $isEdit ? 'Update' : 'Simpan' ?> Kunjungan
                             </button>
                         </div>
                     </form>

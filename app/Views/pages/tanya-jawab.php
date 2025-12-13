@@ -1,4 +1,5 @@
 <?= $this->extend('layouts/app') ?>
+<?= $this->section('title') ?>Tanya Jawab <?= esc($kategori['display_name']) ?><?= $this->endSection() ?>
 <?= $this->section('content') ?>
 
 <!-- Custom CSS -->
@@ -30,6 +31,7 @@
         .running-text-container {
             max-width: 1320px;
             margin: 0 auto;
+            padding: 0;
         }
     }
     .running-text-label {
@@ -45,17 +47,9 @@
     }
     .running-text-content {
         flex: 1;
-        overflow-x: auto;
-        overflow-y: hidden;
+        overflow: hidden;
         position: relative;
         background: #fff;
-        scroll-behavior: smooth;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-        -webkit-overflow-scrolling: touch;
-    }
-    .running-text-content::-webkit-scrollbar {
-        display: none;
     }
     .running-text-marquee {
         display: flex;
@@ -120,19 +114,12 @@
         }
     }
 
-    /* Category tabs - horizontal scroll on mobile */
-    .tabs-container {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
+    /* Category tabs - horizontal scroll */
     .category-tabs-wrapper {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
         -ms-overflow-style: none;
-        scroll-behavior: smooth;
-        flex: 1;
     }
     .category-tabs-wrapper::-webkit-scrollbar {
         display: none;
@@ -141,7 +128,6 @@
         display: flex;
         gap: 0.5rem;
         flex-wrap: nowrap;
-        padding-bottom: 0.5rem;
     }
     .category-tabs .btn {
         white-space: nowrap;
@@ -149,27 +135,6 @@
         padding: 0.5rem 1rem;
         font-size: 0.875rem;
         min-height: 44px;
-    }
-    .scroll-btn {
-        background: white;
-        border: 1px solid #047d78;
-        color: #047d78;
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        flex-shrink: 0;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    .scroll-btn:hover {
-        background: #047d78;
-        color: white;
-    }
-    @media (max-width: 767.98px) {
-        .scroll-btn { display: flex; }
     }
     @media (max-width: 576px) {
         .category-tabs .btn {
@@ -246,16 +211,9 @@
 <section class="py-4">
     <div class="container-fluid">
         <div class="d-flex justify-content-between breadcrumb-mobile">
-            <h2 class="fs-5 fs-md-4 fw-bold mb-0">
-                Tanya Jawab <?php 
-                    if ($kategori['name'] == 'kehamilan') echo 'Kehamilan';
-                    elseif ($kategori['name'] == 'menyusui') echo 'Menyusui';
-                    elseif ($kategori['name'] == 'persalinan') echo 'Persalinan';
-                    elseif ($kategori['name'] == 'vaksin') echo 'Vaksin';
-                    elseif ($kategori['name'] == 'nutrisi') echo 'Nutrisi';
-                    else echo ucfirst($kategori['name']);
-                ?>
-            </h2>
+            <h3 class="fw-bold text-teal">
+                Tanya Jawab <?= esc($kategori['display_name']) ?>
+            </h3>
             <div class="d-flex align-items-center breadcrumb-links" style="gap: 0.5rem;">
                 <a href="<?= base_url('/'); ?>" class="text-muted fw-bold link-primary text-uppercase" style="font-size: 0.875rem;">
                     E-asfarm
@@ -266,14 +224,7 @@
                 </a>
                 <iconify-icon icon="solar:alt-arrow-right-outline" class="text-muted" style="font-size: 1rem;"></iconify-icon>
                 <a href="#" class="text-primary link-primary fw-bold text-uppercase" style="font-size: 0.875rem;">
-                    <?php 
-                        if ($kategori['name'] == 'kehamilan') echo 'Kehamilan';
-                        elseif ($kategori['name'] == 'menyusui') echo 'Menyusui';
-                        elseif ($kategori['name'] == 'persalinan') echo 'Persalinan';
-                        elseif ($kategori['name'] == 'vaksin') echo 'Vaksin';
-                        elseif ($kategori['name'] == 'nutrisi') echo 'Nutrisi';
-                        else echo ucfirst($kategori['name']);
-                    ?>
+                    <?= esc($kategori['display_name']) ?>
                 </a>
             </div>
         </div>
@@ -293,9 +244,9 @@
                     <div class="running-text-marquee auto-scroll" id="runningMarquee">
                         <a href="https://wa.me/6281902808231" target="_blank" class="running-text-item">Apoteker Klinis (apt. Nurul Kusumawardani, M. Farm)</a>
                         <span class="running-text-separator">•</span>
-                        <a href="https://wa.me/628xxxxxxxxxx" target="_blank" class="running-text-item">Apoteker Etnomedisin (apt. Emelda, M.Farm)</a>
+                        <a href="https://wa.me/6285752334536" target="_blank" class="running-text-item">Apoteker Etnomedisin (apt. Emelda, M.Farm)</a>
                         <span class="running-text-separator">•</span>
-                        <a href="https://wa.me/628xxxxxxxxxx" target="_blank" class="running-text-item">Apoteker Kesehatan Mental (apt. Eliza Dwinta, M.Pharm.,SCI)</a>
+                        <a href="https://wa.me/6282226351616" target="_blank" class="running-text-item">Apoteker Kesehatan Mental (apt. Eliza Dwinta, M.Pharm.,SCI)</a>
                         <span class="running-text-separator">•</span>
                         <a href="https://wa.me/62088233780554" target="_blank" class="running-text-item">Bidan (Silvia Rizki Syah Putri., S.Tr.Keb., M. Keb)</a>
                         <span class="running-text-separator">•</span>
@@ -305,9 +256,9 @@
                         <span class="running-text-separator">•</span>
                         <a href="https://wa.me/6281902808231" target="_blank" class="running-text-item">Apoteker Klinis (apt. Nurul Kusumawardani, M. Farm)</a>
                         <span class="running-text-separator">•</span>
-                        <a href="https://wa.me/628xxxxxxxxxx" target="_blank" class="running-text-item">Apoteker Etnomedisin (apt. Emelda, M.Farm)</a>
+                        <a href="https://wa.me/6285752334536" target="_blank" class="running-text-item">Apoteker Etnomedisin (apt. Emelda, M.Farm)</a>
                         <span class="running-text-separator">•</span>
-                        <a href="https://wa.me/628xxxxxxxxxx" target="_blank" class="running-text-item">Apoteker Kesehatan Mental (apt. Eliza Dwinta, M.Pharm.,SCI)</a>
+                        <a href="https://wa.me/6282226351616" target="_blank" class="running-text-item">Apoteker Kesehatan Mental (apt. Eliza Dwinta, M.Pharm.,SCI)</a>
                         <span class="running-text-separator">•</span>
                         <a href="https://wa.me/62088233780554" target="_blank" class="running-text-item">Bidan (Silvia Rizki Syah Putri., S.Tr.Keb., M. Keb)</a>
                         <span class="running-text-separator">•</span>
@@ -322,35 +273,14 @@
 
         <!-- Kategori Tabs -->
         <div class="mb-4">
-            <div class="tabs-container">
-                <button class="scroll-btn" onclick="scrollTabs(-1)">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <div class="category-tabs-wrapper" id="tabsWrapper">
-                    <div class="category-tabs">
-                        <a href="<?= base_url('tanya-jawab/kehamilan'); ?>" class="btn <?= $kategori['name'] == 'kehamilan' ? 'btn-teal' : 'btn-outline-teal' ?>">
-                            <i class="fas fa-baby me-2"></i>Kehamilan
-                        </a>
-                        <a href="<?= base_url('tanya-jawab/menyusui'); ?>" class="btn <?= $kategori['name'] == 'menyusui' ? 'btn-teal' : 'btn-outline-teal' ?>">
-                            <i class="fas fa-heart me-2"></i>Menyusui
-                        </a>
-                        <a href="<?= base_url('tanya-jawab/persalinan'); ?>" class="btn <?= $kategori['name'] == 'persalinan' ? 'btn-teal' : 'btn-outline-teal' ?>">
-                            <i class="fas fa-hospital me-2"></i>Persalinan
-                        </a>
-                        <a href="<?= base_url('tanya-jawab/vaksin'); ?>" class="btn <?= $kategori['name'] == 'vaksin' ? 'btn-teal' : 'btn-outline-teal' ?>">
-                            <i class="fas fa-syringe me-2"></i>Vaksin
-                        </a>
-                        <a href="<?= base_url('tanya-jawab/nutrisi'); ?>" class="btn <?= $kategori['name'] == 'nutrisi' ? 'btn-teal' : 'btn-outline-teal' ?>">
-                            <i class="fas fa-apple-alt me-2"></i>Nutrisi
-                        </a>
-                        <a href="<?= base_url('tanya-jawab/etnomedisin'); ?>" class="btn <?= $kategori['name'] == 'etnomedisin' ? 'btn-teal' : 'btn-outline-teal' ?>">
-                            <i class="fas fa-leaf me-2"></i>Etnomedisin
-                        </a>
-                    </div>
+            <div class="category-tabs-wrapper">
+                <div class="category-tabs">
+                    <?php foreach($tanyaJawabCategories as $cat): ?>
+                    <a href="<?= base_url('tanya-jawab/' . $cat['slug']); ?>" class="btn <?= $kategori['name'] == $cat['slug'] ? 'btn-teal' : 'btn-outline-teal' ?>">
+                        <?= esc($cat['name']) ?>
+                    </a>
+                    <?php endforeach; ?>
                 </div>
-                <button class="scroll-btn" onclick="scrollTabs(1)">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
             </div>
         </div>
 
@@ -384,22 +314,15 @@
                 <?php endforeach; ?>
             </div>
         <?php else: ?>
-            <div class="text-center py-4 py-md-5">
-                <i class="fas fa-question-circle text-muted" style="font-size: 3rem;"></i>
-                <h4 class="mt-3 text-muted fs-8 fs-md-15">Belum Ada Pertanyaan</h4>
-                <p class="text-muted fs-8 fs-md-15">Tidak ada pertanyaan tersedia untuk kategori ini saat ini.</p>
+            <div class="text-center py-5">
+                <i class="fas fa-comments text-muted" style="font-size: 3rem;"></i>
+                <p class="text-muted mt-3">Belum ada tanya jawab tersedia</p>
             </div>
         <?php endif; ?>
     </div>
 </section>
 
 <script>
-function scrollTabs(direction) {
-    const wrapper = document.getElementById('tabsWrapper');
-    const scrollAmount = 200;
-    wrapper.scrollLeft += direction * scrollAmount;
-}
-
 let autoScrollTimeout;
 function pauseAutoScroll() {
     const marquee = document.getElementById('runningMarquee');

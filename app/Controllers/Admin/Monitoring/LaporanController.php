@@ -6,6 +6,8 @@ use App\Controllers\BaseController;
 use App\Models\Monitoring\MonitoringIbuHamilModel;
 use App\Models\Monitoring\KunjunganModel;
 use App\Models\Monitoring\KunjunganAntropometriModel;
+use App\Models\MonitoringBalita\MonitoringBalitaModel;
+use App\Models\MonitoringRemaja\MonitoringRemajaModel;
 use App\Models\PadukuhanModel;
 
 class LaporanController extends BaseController
@@ -14,6 +16,8 @@ class LaporanController extends BaseController
     protected $kunjunganModel;
     protected $antropometriModel;
     protected $padukuhanModel;
+    protected $balitaModel;
+    protected $remajaModel;
 
     public function __construct()
     {
@@ -21,6 +25,8 @@ class LaporanController extends BaseController
         $this->kunjunganModel = new KunjunganModel();
         $this->antropometriModel = new KunjunganAntropometriModel();
         $this->padukuhanModel = new PadukuhanModel();
+        $this->balitaModel = new MonitoringBalitaModel();
+        $this->remajaModel = new MonitoringRemajaModel();
     }
 
     public function index()
@@ -28,155 +34,599 @@ class LaporanController extends BaseController
         $role = session()->get('role');
         $padukuhanId = session()->get('padukuhan_id');
         
-        // Get filter from request
-        $filterPadukuhan = $this->request->getGet('padukuhan');
-        $periode = $this->request->getGet('periode') ?? 'bulan_ini';
+        // Get parameters
+        $tab = $this->request->getGet('tab') ?? 'ibu-hamil';
+        $bulan = $this->request->getGet('bulan') ?? date('m');
+        $tahun = $this->request->getGet('tahun') ?? date('Y');
+        $search = $this->request->getGet('search') ?? '';
         
-        // Admin hanya lihat data padukuhan sendiri
-        if ($role === 'admin') {
-            $filterPadukuhan = $padukuhanId;
-        }
+        // Get totals for cards
+        $totalIbuHamil = $this->getTotalIbuHamil($padukuhanId);
+        $totalBalita = $this->getTotalBalita($padukuhanId);
+        $totalRemaja = $this->getTotalRemaja($padukuhanId);
         
-        // Get date range based on periode
-        $dateRange = $this->getDateRange($periode);
-        
-        // Get statistics
-        $stats = $this->getStatistics($filterPadukuhan, $dateRange);
-        
-        // Get chart data
-        $chartData = $this->getChartData($filterPadukuhan, $dateRange);
-        
-        // Get patient list
-        $patientList = $this->getPatientList($filterPadukuhan);
+        // Get data list based on tab with pagination
+        $dataList = $this->getDataByTab($tab, $padukuhanId, $bulan, $tahun, $search);
         
         $data = [
             'title' => 'Data Statistik & Laporan',
-            'stats' => $stats,
-            'chartData' => $chartData,
-            'patientList' => $patientList,
-            'padukuhanList' => $this->padukuhanModel->findAll(),
-            'selectedPadukuhan' => $filterPadukuhan,
-            'periode' => $periode,
-            'role' => $role
+            'tab' => $tab,
+            'bulan' => $bulan,
+            'tahun' => $tahun,
+            'search' => $search,
+            'totalIbuHamil' => $totalIbuHamil,
+            'totalBalita' => $totalBalita,
+            'totalRemaja' => $totalRemaja,
+            'dataList' => $dataList,
+            'pager' => $this->getPager($tab, $padukuhanId, $bulan, $tahun, $search)
         ];
         
         return view('admin/monitoring/laporan', $data);
     }
 
-    private function getDateRange($periode)
+    private function getTotalIbuHamil($padukuhanId)
     {
-        $today = date('Y-m-d');
+        $builder = $this->monitoringModel->select('monitoring_ibu_hamil.*')
+            ->join('users', 'users.id = monitoring_ibu_hamil.user_id')
+            ->where('monitoring_ibu_hamil.status', 'active');
         
-        switch ($periode) {
-            case 'hari_ini':
-                return ['start' => $today, 'end' => $today];
-            case 'minggu_ini':
-                return ['start' => date('Y-m-d', strtotime('monday this week')), 'end' => $today];
-            case 'bulan_ini':
-                return ['start' => date('Y-m-01'), 'end' => date('Y-m-t')];
-            case 'tahun_ini':
-                return ['start' => date('Y-01-01'), 'end' => date('Y-12-31')];
-            default:
-                return ['start' => date('Y-m-01'), 'end' => date('Y-m-t')];
+        if ($padukuhanId) {
+            $builder->where('users.padukuhan_id', $padukuhanId);
         }
+        
+        return $builder->countAllResults();
     }
 
-    private function getStatistics($padukuhanId, $dateRange)
+    private function getTotalBalita($padukuhanId)
+    {
+        $builder = $this->balitaModel->select('monitoring_balita.*')
+            ->join('users', 'users.id = monitoring_balita.user_id');
+        
+        if ($padukuhanId) {
+            $builder->where('users.padukuhan_id', $padukuhanId);
+        }
+        
+        return $builder->countAllResults();
+    }
+
+    private function getTotalRemaja($padukuhanId)
+    {
+        $builder = $this->remajaModel->select('monitoring_remaja.*')
+            ->join('users', 'users.id = monitoring_remaja.user_id');
+        
+        if ($padukuhanId) {
+            $builder->where('users.padukuhan_id', $padukuhanId);
+        }
+        
+        return $builder->countAllResults();
+    }
+
+    private function getDataByTab($tab, $padukuhanId, $bulan, $tahun, $search)
+    {
+        $perPage = 10;
+        $db = \Config\Database::connect();
+        
+        if ($tab === 'ibu-hamil') {
+            // Get monitoring IDs that have kunjungan in selected month/year
+            $subQuery = $db->table('kunjungan')
+                ->distinct()
+                ->select('monitoring_id')
+                ->where('MONTH(tanggal_kunjungan)', $bulan)
+                ->where('YEAR(tanggal_kunjungan)', $tahun)
+                ->getCompiledSelect();
+            
+            $builder = $this->monitoringModel->select('monitoring_ibu_hamil.*, monitoring_identitas.nama_ibu, monitoring_identitas.usia_kehamilan, monitoring_identitas.rencana_tanggal_persalinan, users.username')
+                ->join('users', 'users.id = monitoring_ibu_hamil.user_id')
+                ->join('monitoring_identitas', 'monitoring_identitas.monitoring_id = monitoring_ibu_hamil.id', 'left')
+                ->where('monitoring_ibu_hamil.status', 'active')
+                ->where("monitoring_ibu_hamil.id IN ($subQuery)", null, false);
+            
+            if ($padukuhanId) {
+                $builder->where('users.padukuhan_id', $padukuhanId);
+            }
+            
+            if ($search) {
+                $builder->like('monitoring_identitas.nama_ibu', $search);
+            }
+            
+            return $builder->paginate($perPage);
+        } 
+        elseif ($tab === 'balita') {
+            // Get monitoring IDs that have kunjungan in selected month/year
+            $subQuery = $db->table('kunjungan_balita')
+                ->distinct()
+                ->select('monitoring_balita_id')
+                ->where('MONTH(tanggal_kunjungan)', $bulan)
+                ->where('YEAR(tanggal_kunjungan)', $tahun)
+                ->getCompiledSelect();
+            
+            $builder = $this->balitaModel->select('monitoring_balita.*, monitoring_balita_identitas.nama_anak, monitoring_balita_identitas.tanggal_lahir, users.username')
+                ->join('users', 'users.id = monitoring_balita.user_id')
+                ->join('monitoring_balita_identitas', 'monitoring_balita_identitas.monitoring_balita_id = monitoring_balita.id', 'left')
+                ->where("monitoring_balita.id IN ($subQuery)", null, false);
+            
+            if ($padukuhanId) {
+                $builder->where('users.padukuhan_id', $padukuhanId);
+            }
+            
+            if ($search) {
+                $builder->like('monitoring_balita_identitas.nama_anak', $search);
+            }
+            
+            return $builder->paginate($perPage);
+        }
+        elseif ($tab === 'remaja') {
+            // Get monitoring IDs that have kunjungan in selected month/year
+            $subQuery = $db->table('kunjungan_remaja')
+                ->distinct()
+                ->select('monitoring_id')
+                ->where('MONTH(tanggal_kunjungan)', $bulan)
+                ->where('YEAR(tanggal_kunjungan)', $tahun)
+                ->getCompiledSelect();
+            
+            $builder = $this->remajaModel->select('monitoring_remaja.*, monitoring_remaja_identitas.nama_lengkap, monitoring_remaja_identitas.tanggal_lahir, monitoring_remaja_identitas.jenis_kelamin, users.username')
+                ->join('users', 'users.id = monitoring_remaja.user_id')
+                ->join('monitoring_remaja_identitas', 'monitoring_remaja_identitas.monitoring_id = monitoring_remaja.id', 'left')
+                ->where("monitoring_remaja.id IN ($subQuery)", null, false);
+            
+            if ($padukuhanId) {
+                $builder->where('users.padukuhan_id', $padukuhanId);
+            }
+            
+            if ($search) {
+                $builder->like('monitoring_remaja_identitas.nama_lengkap', $search);
+            }
+            
+            return $builder->paginate($perPage);
+        }
+        
+        return [];
+    }
+
+    private function getPager($tab, $padukuhanId, $bulan, $tahun, $search)
+    {
+        if ($tab === 'ibu-hamil') {
+            return $this->monitoringModel->pager;
+        } elseif ($tab === 'balita') {
+            return $this->balitaModel->pager;
+        } elseif ($tab === 'remaja') {
+            return $this->remajaModel->pager;
+        }
+        return null;
+    }
+
+    private function getAllDataForExport($tab, $padukuhanId, $bulan, $tahun, $search)
     {
         $db = \Config\Database::connect();
         
-        // Total pasien aktif
-        $builder = $db->table('monitoring_ibu_hamil')
-                     ->join('users', 'users.id = monitoring_ibu_hamil.user_id')
-                     ->where('monitoring_ibu_hamil.status', 'active');
-        
-        if ($padukuhanId) {
-            $builder->where('users.padukuhan_id', $padukuhanId);
+        if ($tab === 'ibu-hamil') {
+            $subQuery = $db->table('kunjungan')
+                ->distinct()
+                ->select('monitoring_id')
+                ->where('MONTH(tanggal_kunjungan)', $bulan)
+                ->where('YEAR(tanggal_kunjungan)', $tahun)
+                ->getCompiledSelect();
+            
+            $builder = $this->monitoringModel->select('monitoring_ibu_hamil.*, monitoring_identitas.nama_ibu, monitoring_identitas.usia_kehamilan, monitoring_identitas.rencana_tanggal_persalinan, users.username')
+                ->join('users', 'users.id = monitoring_ibu_hamil.user_id')
+                ->join('monitoring_identitas', 'monitoring_identitas.monitoring_id = monitoring_ibu_hamil.id', 'left')
+                ->where('monitoring_ibu_hamil.status', 'active')
+                ->where("monitoring_ibu_hamil.id IN ($subQuery)", null, false);
+            
+            if ($padukuhanId) $builder->where('users.padukuhan_id', $padukuhanId);
+            if ($search) $builder->like('monitoring_identitas.nama_ibu', $search);
+            
+            return $builder->findAll();
+        } 
+        elseif ($tab === 'balita') {
+            $subQuery = $db->table('kunjungan_balita')
+                ->distinct()
+                ->select('monitoring_balita_id')
+                ->where('MONTH(tanggal_kunjungan)', $bulan)
+                ->where('YEAR(tanggal_kunjungan)', $tahun)
+                ->getCompiledSelect();
+            
+            $builder = $this->balitaModel->select('monitoring_balita.*, monitoring_balita_identitas.nama_anak, monitoring_balita_identitas.tanggal_lahir, users.username')
+                ->join('users', 'users.id = monitoring_balita.user_id')
+                ->join('monitoring_balita_identitas', 'monitoring_balita_identitas.monitoring_balita_id = monitoring_balita.id', 'left')
+                ->where("monitoring_balita.id IN ($subQuery)", null, false);
+            
+            if ($padukuhanId) $builder->where('users.padukuhan_id', $padukuhanId);
+            if ($search) $builder->like('monitoring_balita_identitas.nama_anak', $search);
+            
+            return $builder->findAll();
+        }
+        elseif ($tab === 'remaja') {
+            $subQuery = $db->table('kunjungan_remaja')
+                ->distinct()
+                ->select('monitoring_id')
+                ->where('MONTH(tanggal_kunjungan)', $bulan)
+                ->where('YEAR(tanggal_kunjungan)', $tahun)
+                ->getCompiledSelect();
+            
+            $builder = $this->remajaModel->select('monitoring_remaja.*, monitoring_remaja_identitas.nama_lengkap, monitoring_remaja_identitas.tanggal_lahir, monitoring_remaja_identitas.jenis_kelamin, users.username')
+                ->join('users', 'users.id = monitoring_remaja.user_id')
+                ->join('monitoring_remaja_identitas', 'monitoring_remaja_identitas.monitoring_id = monitoring_remaja.id', 'left')
+                ->where("monitoring_remaja.id IN ($subQuery)", null, false);
+            
+            if ($padukuhanId) $builder->where('users.padukuhan_id', $padukuhanId);
+            if ($search) $builder->like('monitoring_remaja_identitas.nama_lengkap', $search);
+            
+            return $builder->findAll();
         }
         
-        $totalPasien = $builder->countAllResults();
+        return [];
+    }
+
+    public function exportExcel()
+    {
+        $role = session()->get('role');
+        $padukuhanId = session()->get('padukuhan_id');
+        $tab = $this->request->getGet('tab') ?? 'ibu-hamil';
+        $bulan = $this->request->getGet('bulan') ?? date('m');
+        $tahun = $this->request->getGet('tahun') ?? date('Y');
+        $search = $this->request->getGet('search') ?? '';
         
-        // Total kunjungan periode ini
-        $builder = $db->table('kunjungan')
-                     ->join('monitoring_ibu_hamil', 'monitoring_ibu_hamil.id = kunjungan.monitoring_id')
-                     ->join('users', 'users.id = monitoring_ibu_hamil.user_id')
-                     ->where('kunjungan.tanggal_kunjungan >=', $dateRange['start'])
-                     ->where('kunjungan.tanggal_kunjungan <=', $dateRange['end']);
+        $dataList = $this->getAllDataForExport($tab, $padukuhanId, $bulan, $tahun, $search);
         
-        if ($padukuhanId) {
-            $builder->where('users.padukuhan_id', $padukuhanId);
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        
+        // Header
+        $sheet->setCellValue('A1', 'LAPORAN MONITORING KESEHATAN');
+        $sheet->mergeCells('A1:G1');
+        $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
+        $sheet->getStyle('A1')->getAlignment()->setHorizontal('center');
+        
+        $sheet->setCellValue('A2', 'Periode: ' . date('F', mktime(0,0,0,$bulan,1)) . ' ' . $tahun);
+        $sheet->mergeCells('A2:G2');
+        $sheet->getStyle('A2')->getAlignment()->setHorizontal('center');
+        
+        // Table headers
+        $row = 4;
+        if ($tab === 'ibu-hamil') {
+            $sheet->setCellValue('A'.$row, 'No');
+            $sheet->setCellValue('B'.$row, 'Nama Ibu');
+            $sheet->setCellValue('C'.$row, 'Usia Kehamilan');
+            $sheet->setCellValue('D'.$row, 'Trimester');
+            $sheet->setCellValue('E'.$row, 'HPL');
+            $sheet->setCellValue('F'.$row, 'Kunjungan Bulan Ini');
+            $sheet->setCellValue('G'.$row, 'Total Kunjungan');
+            $sheet->setCellValue('H'.$row, 'Status');
+            
+            $row++;
+            $no = 1;
+            foreach ($dataList as $d) {
+                $totalKunjungan = $this->kunjunganModel->where('monitoring_id', $d['id'])->countAllResults();
+                $kunjunganBulanIni = $this->kunjunganModel->where('monitoring_id', $d['id'])
+                    ->where('MONTH(tanggal_kunjungan)', $bulan)
+                    ->where('YEAR(tanggal_kunjungan)', $tahun)
+                    ->countAllResults();
+                $usiaKehamilan = $d['usia_kehamilan'] ?? 0;
+                $trimester = $usiaKehamilan <= 13 ? 1 : ($usiaKehamilan <= 27 ? 2 : 3);
+                $status = $totalKunjungan < 4 ? 'Perlu Perhatian' : 'Aktif';
+                
+                $sheet->setCellValue('A'.$row, $no++);
+                $sheet->setCellValue('B'.$row, $d['nama_ibu'] ?? '-');
+                $sheet->setCellValue('C'.$row, $usiaKehamilan . ' minggu');
+                $sheet->setCellValue('D'.$row, 'Trimester ' . $trimester);
+                $sheet->setCellValue('E'.$row, isset($d['rencana_tanggal_persalinan']) ? date('d/m/Y', strtotime($d['rencana_tanggal_persalinan'])) : '-');
+                $sheet->setCellValue('F'.$row, $kunjunganBulanIni);
+                $sheet->setCellValue('G'.$row, $totalKunjungan);
+                $sheet->setCellValue('H'.$row, $status);
+                $row++;
+            }
+        }
+        elseif ($tab === 'balita') {
+            $sheet->setCellValue('A'.$row, 'No');
+            $sheet->setCellValue('B'.$row, 'Nama Anak');
+            $sheet->setCellValue('C'.$row, 'Usia');
+            $sheet->setCellValue('D'.$row, 'Kunjungan Bulan Ini');
+            $sheet->setCellValue('E'.$row, 'Total Kunjungan');
+            $sheet->setCellValue('F'.$row, 'Status Gizi');
+            
+            $row++;
+            $no = 1;
+            $kunjunganBalitaModel = new \App\Models\MonitoringBalita\KunjunganBalitaModel();
+            foreach ($dataList as $d) {
+                $totalKunjungan = $kunjunganBalitaModel->where('monitoring_balita_id', $d['id'])->countAllResults();
+                $kunjunganBulanIni = $kunjunganBalitaModel->where('monitoring_balita_id', $d['id'])
+                    ->where('MONTH(tanggal_kunjungan)', $bulan)
+                    ->where('YEAR(tanggal_kunjungan)', $tahun)
+                    ->countAllResults();
+                $usia = '-';
+                if(isset($d['tanggal_lahir'])) {
+                    $tglLahir = new \DateTime($d['tanggal_lahir']);
+                    $today = new \DateTime();
+                    $diff = $today->diff($tglLahir);
+                    $usia = $diff->y . ' thn ' . $diff->m . ' bln';
+                }
+                $statusGizi = $totalKunjungan < 6 ? 'Perlu Pemantauan' : 'Normal';
+                
+                $sheet->setCellValue('A'.$row, $no++);
+                $sheet->setCellValue('B'.$row, $d['nama_anak'] ?? '-');
+                $sheet->setCellValue('C'.$row, $usia);
+                $sheet->setCellValue('D'.$row, $kunjunganBulanIni);
+                $sheet->setCellValue('E'.$row, $totalKunjungan);
+                $sheet->setCellValue('F'.$row, $statusGizi);
+                $row++;
+            }
+        }
+        elseif ($tab === 'remaja') {
+            $sheet->setCellValue('A'.$row, 'No');
+            $sheet->setCellValue('B'.$row, 'Nama');
+            $sheet->setCellValue('C'.$row, 'Usia');
+            $sheet->setCellValue('D'.$row, 'Jenis Kelamin');
+            $sheet->setCellValue('E'.$row, 'Kunjungan Bulan Ini');
+            $sheet->setCellValue('F'.$row, 'Total Kunjungan');
+            $sheet->setCellValue('G'.$row, 'Status Anemia');
+            
+            $row++;
+            $no = 1;
+            $kunjunganRemajaModel = new \App\Models\MonitoringRemaja\KunjunganRemajaModel();
+            foreach ($dataList as $d) {
+                $totalKunjungan = $kunjunganRemajaModel->where('monitoring_id', $d['id'])->countAllResults();
+                $kunjunganBulanIni = $kunjunganRemajaModel->where('monitoring_id', $d['id'])
+                    ->where('MONTH(tanggal_kunjungan)', $bulan)
+                    ->where('YEAR(tanggal_kunjungan)', $tahun)
+                    ->countAllResults();
+                $usia = '-';
+                if(isset($d['tanggal_lahir'])) {
+                    $tglLahir = new \DateTime($d['tanggal_lahir']);
+                    $today = new \DateTime();
+                    $diff = $today->diff($tglLahir);
+                    $usia = $diff->y . ' tahun';
+                }
+                $jenisKelamin = isset($d['jenis_kelamin']) ? ($d['jenis_kelamin'] == 'L' ? 'Laki-laki' : 'Perempuan') : '-';
+                $statusAnemia = $totalKunjungan < 4 ? 'Perlu Pemeriksaan' : 'Normal';
+                
+                $sheet->setCellValue('A'.$row, $no++);
+                $sheet->setCellValue('B'.$row, $d['nama_lengkap'] ?? '-');
+                $sheet->setCellValue('C'.$row, $usia);
+                $sheet->setCellValue('D'.$row, $jenisKelamin);
+                $sheet->setCellValue('E'.$row, $kunjunganBulanIni);
+                $sheet->setCellValue('F'.$row, $totalKunjungan);
+                $sheet->setCellValue('G'.$row, $statusAnemia);
+                $row++;
+            }
         }
         
-        $totalKunjungan = $builder->countAllResults();
-        
-        // Pasien risiko tinggi (TD > 140/90 atau LILA < 23.5)
-        $risikoTinggi = 0; // Simplified for now
-        
-        return [
-            'total_pasien' => $totalPasien,
-            'total_kunjungan' => $totalKunjungan,
-            'risiko_tinggi' => $risikoTinggi
-        ];
-    }
-
-    private function getChartData($padukuhanId, $dateRange)
-    {
-        $db = \Config\Database::connect();
-        
-        // Get TD data for chart
-        $builder = $db->table('kunjungan_antropometri')
-                     ->select('kunjungan.tanggal_kunjungan, kunjungan_antropometri.tekanan_darah')
-                     ->join('kunjungan', 'kunjungan.id = kunjungan_antropometri.kunjungan_id')
-                     ->join('monitoring_ibu_hamil', 'monitoring_ibu_hamil.id = kunjungan.monitoring_id')
-                     ->join('users', 'users.id = monitoring_ibu_hamil.user_id')
-                     ->where('kunjungan.tanggal_kunjungan >=', $dateRange['start'])
-                     ->where('kunjungan.tanggal_kunjungan <=', $dateRange['end']);
-        
-        if ($padukuhanId) {
-            $builder->where('users.padukuhan_id', $padukuhanId);
+        // Auto size columns
+        foreach(range('A','H') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
         }
         
-        $tdData = $builder->orderBy('kunjungan.tanggal_kunjungan', 'ASC')->get()->getResultArray();
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $filename = 'Laporan_' . ucwords(str_replace('-', '_', $tab)) . '_' . $bulan . '_' . $tahun . '.xlsx';
         
-        // Process TD data
-        $labels = [];
-        $sistolik = [];
-        $diastolik = [];
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
         
-        foreach ($tdData as $row) {
-            $labels[] = date('d M', strtotime($row['tanggal_kunjungan']));
-            $td = explode('/', $row['tekanan_darah']);
-            $sistolik[] = isset($td[0]) ? (int)$td[0] : 0;
-            $diastolik[] = isset($td[1]) ? (int)$td[1] : 0;
+        $writer->save('php://output');
+        exit;
+    }
+
+    public function exportPdf()
+    {
+        $role = session()->get('role');
+        $padukuhanId = session()->get('padukuhan_id');
+        $tab = $this->request->getGet('tab') ?? 'ibu-hamil';
+        $bulan = $this->request->getGet('bulan') ?? date('m');
+        $tahun = $this->request->getGet('tahun') ?? date('Y');
+        $search = $this->request->getGet('search') ?? '';
+        
+        $dataList = $this->getAllDataForExport($tab, $padukuhanId, $bulan, $tahun, $search);
+        
+        $html = view('admin/monitoring/laporan_pdf', [
+            'tab' => $tab,
+            'bulan' => $bulan,
+            'tahun' => $tahun,
+            'dataList' => $dataList,
+            'kunjunganModel' => $this->kunjunganModel
+        ]);
+        
+        $dompdf = new \Dompdf\Dompdf();
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'landscape');
+        $dompdf->render();
+        
+        $filename = 'Laporan_' . ucwords(str_replace('-', '_', $tab)) . '_' . $bulan . '_' . $tahun . '.pdf';
+        $dompdf->stream($filename, ['Attachment' => true]);
+    }
+
+    public function exportDetailExcel($tab, $id)
+    {
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        
+        if ($tab === 'ibu-hamil') {`r`n            $data = $this->monitoringModel->select('monitoring_ibu_hamil.*, monitoring_identitas.*')`r`n                ->join('monitoring_identitas', 'monitoring_identitas.monitoring_id = monitoring_ibu_hamil.id', 'left')`r`n                ->where('monitoring_ibu_hamil.id', $id)`r`n                ->first();`r`n            $kunjungan = $this->kunjunganModel->where('monitoring_id', $id)->orderBy('tanggal_kunjungan', 'ASC')->findAll();
+            
+            // Header
+            $sheet->setCellValue('A1', 'LAPORAN DETAIL MONITORING IBU HAMIL');
+            $sheet->mergeCells('A1:F1');
+            $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
+            $sheet->getStyle('A1')->getAlignment()->setHorizontal('center');
+            
+            // Data Utama
+            $row = 3;
+            $sheet->setCellValue('A'.$row, 'Nama Ibu:');
+            $sheet->setCellValue('B'.$row, $data['nama_ibu'] ?? '-');
+            $row++;
+            $sheet->setCellValue('A'.$row, 'NIK:');
+            $sheet->setCellValue('B'.$row, $data['nik'] ?? '-');
+            $row++;
+            $sheet->setCellValue('A'.$row, 'Usia Kehamilan:');
+            $sheet->setCellValue('B'.$row, ($data['usia_kehamilan'] ?? '-') . ' minggu');
+            $row++;
+            $sheet->setCellValue('A'.$row, 'HPHT:');
+            $sheet->setCellValue('B'.$row, isset($data['hpht']) ? date('d/m/Y', strtotime($data['hpht'])) : '-');
+            $row++;
+            $sheet->setCellValue('A'.$row, 'HPL:');
+            $sheet->setCellValue('B'.$row, isset($data['rencana_tanggal_persalinan']) ? date('d/m/Y', strtotime($data['rencana_tanggal_persalinan'])) : '-');
+            
+            // Riwayat Kunjungan
+            $row += 2;
+            $sheet->setCellValue('A'.$row, 'RIWAYAT KUNJUNGAN');
+            $sheet->getStyle('A'.$row)->getFont()->setBold(true);
+            $row++;
+            
+            $sheet->setCellValue('A'.$row, 'No');
+            $sheet->setCellValue('B'.$row, 'Tanggal');
+            $sheet->setCellValue('C'.$row, 'Keluhan');
+            $sheet->setCellValue('D'.$row, 'TD');
+            $sheet->setCellValue('E'.$row, 'BB');
+            $sheet->setCellValue('F'.$row, 'Catatan');
+            $sheet->getStyle('A'.$row.':F'.$row)->getFont()->setBold(true);
+            
+            $row++;
+            $no = 1;
+            foreach ($kunjungan as $k) {
+                $antropometri = $this->antropometriModel->where('kunjungan_id', $k['id'])->first();
+                $sheet->setCellValue('A'.$row, $no++);
+                $sheet->setCellValue('B'.$row, date('d/m/Y', strtotime($k['tanggal_kunjungan'])));
+                $sheet->setCellValue('C'.$row, $k['keluhan'] ?? '-');
+                $sheet->setCellValue('D'.$row, $antropometri['tekanan_darah'] ?? '-');
+                $sheet->setCellValue('E'.$row, $antropometri['berat_badan'] ?? '-');
+                $sheet->setCellValue('F'.$row, $k['catatan'] ?? '-');
+                $row++;
+            }
+        }
+        elseif ($tab === 'balita') {`r`n            $data = $this->balitaModel->select('monitoring_balita.*, monitoring_balita_identitas.*')`r`n                ->join('monitoring_balita_identitas', 'monitoring_balita_identitas.monitoring_balita_id = monitoring_balita.id', 'left')`r`n                ->where('monitoring_balita.id', $id)`r`n                ->first();`r`n            $kunjunganBalitaModel = new \App\Models\MonitoringBalita\KunjunganBalitaModel();
+            $kunjungan = $kunjunganBalitaModel->where('monitoring_balita_id', $id)->orderBy('tanggal_kunjungan', 'ASC')->findAll();
+            
+            $sheet->setCellValue('A1', 'LAPORAN DETAIL MONITORING BALITA');
+            $sheet->mergeCells('A1:F1');
+            $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
+            $sheet->getStyle('A1')->getAlignment()->setHorizontal('center');
+            
+            $row = 3;
+            $sheet->setCellValue('A'.$row, 'Nama Anak:');
+            $sheet->setCellValue('B'.$row, $data['nama_anak'] ?? '-');
+            $row++;
+            $sheet->setCellValue('A'.$row, 'NIK:');
+            $sheet->setCellValue('B'.$row, $data['nik'] ?? '-');
+            $row++;
+            $sheet->setCellValue('A'.$row, 'Tanggal Lahir:');
+            $sheet->setCellValue('B'.$row, isset($data['tanggal_lahir']) ? date('d/m/Y', strtotime($data['tanggal_lahir'])) : '-');
+            
+            $row += 2;
+            $sheet->setCellValue('A'.$row, 'RIWAYAT KUNJUNGAN');
+            $sheet->getStyle('A'.$row)->getFont()->setBold(true);
+            $row++;
+            
+            $sheet->setCellValue('A'.$row, 'No');
+            $sheet->setCellValue('B'.$row, 'Tanggal');
+            $sheet->setCellValue('C'.$row, 'BB');
+            $sheet->setCellValue('D'.$row, 'TB');
+            $sheet->setCellValue('E'.$row, 'LK');
+            $sheet->setCellValue('F'.$row, 'Catatan');
+            $sheet->getStyle('A'.$row.':F'.$row)->getFont()->setBold(true);
+            
+            $row++;
+            $no = 1;
+            foreach ($kunjungan as $k) {
+                $sheet->setCellValue('A'.$row, $no++);
+                $sheet->setCellValue('B'.$row, date('d/m/Y', strtotime($k['tanggal_kunjungan'])));
+                $sheet->setCellValue('C'.$row, $k['berat_badan'] ?? '-');
+                $sheet->setCellValue('D'.$row, $k['tinggi_badan'] ?? '-');
+                $sheet->setCellValue('E'.$row, $k['lingkar_kepala'] ?? '-');
+                $sheet->setCellValue('F'.$row, $k['catatan'] ?? '-');
+                $row++;
+            }
+        }
+        elseif ($tab === 'remaja') {`r`n            $data = $this->remajaModel->select('monitoring_remaja.*, monitoring_remaja_identitas.*')`r`n                ->join('monitoring_remaja_identitas', 'monitoring_remaja_identitas.monitoring_id = monitoring_remaja.id', 'left')`r`n                ->where('monitoring_remaja.id', $id)`r`n                ->first();`r`n            $kunjunganRemajaModel = new \App\Models\MonitoringRemaja\KunjunganRemajaModel();
+            $kunjungan = $kunjunganRemajaModel->where('monitoring_id', $id)->orderBy('tanggal_kunjungan', 'ASC')->findAll();
+            
+            $sheet->setCellValue('A1', 'LAPORAN DETAIL MONITORING REMAJA');
+            $sheet->mergeCells('A1:F1');
+            $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
+            $sheet->getStyle('A1')->getAlignment()->setHorizontal('center');
+            
+            $row = 3;
+            $sheet->setCellValue('A'.$row, 'Nama:');
+            $sheet->setCellValue('B'.$row, $data['nama_lengkap'] ?? '-');
+            $row++;
+            $sheet->setCellValue('A'.$row, 'NIK:');
+            $sheet->setCellValue('B'.$row, $data['nik'] ?? '-');
+            $row++;
+            $sheet->setCellValue('A'.$row, 'Tanggal Lahir:');`r`n            $sheet->setCellValue('B'.$row, isset($data['tanggal_lahir']) ? date('d/m/Y', strtotime($data['tanggal_lahir'])) : '-' ?? '-') . ' tahun');
+            
+            $row += 2;
+            $sheet->setCellValue('A'.$row, 'RIWAYAT KUNJUNGAN');
+            $sheet->getStyle('A'.$row)->getFont()->setBold(true);
+            $row++;
+            
+            $sheet->setCellValue('A'.$row, 'No');
+            $sheet->setCellValue('B'.$row, 'Tanggal');
+            $sheet->setCellValue('C'.$row, 'BB');
+            $sheet->setCellValue('D'.$row, 'TB');
+            $sheet->setCellValue('E'.$row, 'TD');
+            $sheet->setCellValue('F'.$row, 'Catatan');
+            $sheet->getStyle('A'.$row.':F'.$row)->getFont()->setBold(true);
+            
+            $row++;
+            $no = 1;
+            foreach ($kunjungan as $k) {
+                $sheet->setCellValue('A'.$row, $no++);
+                $sheet->setCellValue('B'.$row, date('d/m/Y', strtotime($k['tanggal_kunjungan'])));
+                $sheet->setCellValue('C'.$row, $k['berat_badan'] ?? '-');
+                $sheet->setCellValue('D'.$row, $k['tinggi_badan'] ?? '-');
+                $sheet->setCellValue('E'.$row, $k['tekanan_darah'] ?? '-');
+                $sheet->setCellValue('F'.$row, $k['catatan'] ?? '-');
+                $row++;
+            }
         }
         
-        return [
-            'labels' => $labels,
-            'sistolik' => $sistolik,
-            'diastolik' => $diastolik
-        ];
+        foreach(range('A','F') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+        
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $filename = 'Detail_' . ucwords(str_replace('-', '_', $tab)) . '_' . $id . '.xlsx';
+        
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        
+        $writer->save('php://output');
+        exit;
     }
 
-    private function getPatientList($padukuhanId)
+    public function exportDetailPdf($tab, $id)
     {
-        return $this->monitoringModel->getAllWithUserInfo($padukuhanId);
+        $data = [];
+        $kunjungan = [];
+        
+        if ($tab === 'ibu-hamil') {`r`n            $data = $this->monitoringModel->select('monitoring_ibu_hamil.*, monitoring_identitas.*')`r`n                ->join('monitoring_identitas', 'monitoring_identitas.monitoring_id = monitoring_ibu_hamil.id', 'left')`r`n                ->where('monitoring_ibu_hamil.id', $id)`r`n                ->first();`r`n            $kunjungan = $this->kunjunganModel->where('monitoring_id', $id)->orderBy('tanggal_kunjungan', 'ASC')->findAll();
+        }
+        elseif ($tab === 'balita') {`r`n            $data = $this->balitaModel->select('monitoring_balita.*, monitoring_balita_identitas.*')`r`n                ->join('monitoring_balita_identitas', 'monitoring_balita_identitas.monitoring_balita_id = monitoring_balita.id', 'left')`r`n                ->where('monitoring_balita.id', $id)`r`n                ->first();`r`n            $kunjunganBalitaModel = new \App\Models\MonitoringBalita\KunjunganBalitaModel();
+            $kunjungan = $kunjunganBalitaModel->where('monitoring_balita_id', $id)->orderBy('tanggal_kunjungan', 'ASC')->findAll();
+        }
+        elseif ($tab === 'remaja') {`r`n            $data = $this->remajaModel->select('monitoring_remaja.*, monitoring_remaja_identitas.*')`r`n                ->join('monitoring_remaja_identitas', 'monitoring_remaja_identitas.monitoring_id = monitoring_remaja.id', 'left')`r`n                ->where('monitoring_remaja.id', $id)`r`n                ->first();`r`n            $kunjunganRemajaModel = new \App\Models\MonitoringRemaja\KunjunganRemajaModel();
+            $kunjungan = $kunjunganRemajaModel->where('monitoring_id', $id)->orderBy('tanggal_kunjungan', 'ASC')->findAll();
+        }
+        
+        $html = view('admin/monitoring/laporan_detail_pdf', [
+            'tab' => $tab,
+            'data' => $data,
+            'kunjungan' => $kunjungan,
+            'antropometriModel' => $this->antropometriModel
+        ]);
+        
+        $dompdf = new \Dompdf\Dompdf();
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+        
+        $filename = 'Detail_' . ucwords(str_replace('-', '_', $tab)) . '_' . $id . '.pdf';
+        $dompdf->stream($filename, ['Attachment' => true]);
     }
 
-    public function ibuHamil()
-    {
-        $data = ['title' => 'Laporan Ibu Hamil & Menyusui'];
-        return view('admin/laporan/ibu-hamil', $data);
-    }
-
-    public function balita()
-    {
-        $data = ['title' => 'Laporan Balita & Anak'];
-        return view('admin/laporan/balita', $data);
-    }
-
-    public function remaja()
-    {
-        $data = ['title' => 'Laporan Remaja'];
-        return view('admin/laporan/remaja', $data);
-    }
 }
+
+
+
+
+
+

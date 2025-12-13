@@ -100,4 +100,22 @@ class ArticleModel extends Model
                     ->orderBy('articles.created_at', 'DESC')
                     ->findAll();
     }
+
+    public function getCategories($articleId)
+    {
+        return $this->db->table('article_categories')
+            ->select('categories.*')
+            ->join('categories', 'categories.id = article_categories.category_id')
+            ->where('article_categories.article_id', $articleId)
+            ->get()->getResultArray();
+    }
+
+    public function syncCategories($articleId, $categoryIds)
+    {
+        $this->db->table('article_categories')->where('article_id', $articleId)->delete();
+        if (!empty($categoryIds)) {
+            $data = array_map(fn($catId) => ['article_id' => $articleId, 'category_id' => $catId], $categoryIds);
+            $this->db->table('article_categories')->insertBatch($data);
+        }
+    }
 }

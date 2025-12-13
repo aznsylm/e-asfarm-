@@ -1,28 +1,15 @@
-<?= $this->extend('layouts/dashboard_layout') ?>
+<?= $this->extend('layouts/adminlte_layout') ?>
 <?= $this->section('content') ?>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
-<div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h2>Kelola Admin</h2>
-            <p class="text-muted">Manajemen data admin sistem</p>
-        </div>
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="card-title">Data Admin</h3>
+        <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalPengguna" onclick="setModalTitle('Tambah Admin')">
+            <i class="fas fa-plus"></i> Tambah
+        </button>
     </div>
-
-    <div class="container-fluid">
-        <div class="tab-content mt-3" id="adminTabContent">
-            <!-- TAB ADMIN -->
-            <div class="tab-pane fade show active" id="admin">
-
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between">
-                        <h5>Data Admin</h5>
-                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalPengguna" onclick="setModalTitle('Tambah Admin')">
-                            <i class="bi bi-plus"></i> Tambah
-                        </button>
-                    </div>
                     <div class="card-body">
                         <table class="table table-sm">
                             <thead>
@@ -70,11 +57,6 @@
                         </table>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-</div>
 
 <!-- MODALS -->
 <?php include 'modals.php'; ?>

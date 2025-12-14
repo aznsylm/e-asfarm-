@@ -39,13 +39,6 @@ class SearchController extends BaseController
                 'url' => base_url('tanya-jawab/kehamilan'),
                 'category' => 'Menu'
             ],
-            'unduhan' => [
-                'type' => 'Halaman',
-                'title' => 'Unduhan - Modul dan Flayer Kesehatan',
-                'excerpt' => 'Download modul kesehatan dan flayer edukasi gratis untuk ibu dan anak.',
-                'url' => base_url('unduhan/modul'),
-                'category' => 'Menu'
-            ],
             'artikel' => [
                 'type' => 'Halaman',
                 'title' => 'Artikel Kesehatan - Farmasi, Kebidanan, Gizi',

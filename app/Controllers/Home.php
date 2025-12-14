@@ -109,22 +109,6 @@ class Home extends BaseController
         ]);
     }
 
-
-    public function syaratKetentuan()
-    {
-        return view('pages/terms');
-    }
-
-    public function kebijakanPrivasi()
-    {
-        return view('pages/privacy');
-    }
-
-    public function petunjukPenggunaan()
-    {
-        return view('pages/petunjukPenggunaan');
-    }
-
     public function getArtikelByKategori()
     {
         $articles = new ArticleModel();
@@ -166,26 +150,6 @@ class Home extends BaseController
     public function aboutUs()
     {
         return $this->tentangKami();
-    }
-
-    public function contact()
-    {
-        return $this->kontak();
-    }
-
-    public function service()
-    {
-        return $this->layanan();
-    }
-
-    public function terms()
-    {
-        return $this->syaratKetentuan();
-    }
-
-    public function privacy()
-    {
-        return $this->kebijakanPrivasi();
     }
 
 

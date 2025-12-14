@@ -30,6 +30,7 @@ class PostsController extends BaseController
 
         return view('post/category', compact('cArtikel', 'name', 'numCategories', 'popPosts', 'title', 'pager'));
     }
+
     public function category($slug)
     {
         $categoryModel = new \App\Models\CategoryModel();
@@ -80,7 +81,6 @@ class PostsController extends BaseController
         return view('post/category', compact('cArtikel', 'name', 'numCategories', 'popPosts', 'title', 'pager'));
     }
 
-    // page artikel
     public function singlePost($slugOrId)
     {
         $articleModel = new ArticleModel();
@@ -134,120 +134,6 @@ class PostsController extends BaseController
         return view('post/single',  compact('title', 'artikel', 'numCategories', 'popPosts', 'moreBlogPosts', 'relatedArticles', 'latestPosters'));
     }
 
-    // create artikel
-    public function createPost()
-    {
-        $category = new CategoryModel();
-
-        // validasi login / belum
-        if (!isset(auth()->user()->id)) {
-            return redirect()->to(base_url());
-        }
-
-        // mengambil data semua kategory
-        $categories = $category->getCategories();;
-        return view('post/create-posts', compact('categories'));
-    }
-
-    // function validasi create artikel
-    public function storetePost()
-    {
-
-        $postModel = new PostModel();
-
-        // Validasi input
-        $validation = \Config\Services::validation();
-        $validation->setRules([
-            'title' => 'required',
-            'image' => 'uploaded[image]|max_size[image,1024]|is_image[image]',
-            'body' => 'required',
-            'category' => 'required',
-        ]);
-        if (!$validation->withRequest($this->request)->run()) {
-            return redirect()->back()->withInput()->with('error', $validation->getErrors());
-        }
-
-        //input image
-        $img = $this->request->getFile('image');
-        $img->move('public/assets/images/' . 'blog');
-
-
-        // input data
-        $data = [
-            "title" => $this->request->getPost('title'),
-            "image" => $img->getClientName(),
-            "body" => $this->request->getPost('body'),
-            "user_id" => auth()->user()->id,
-            "user_name" => auth()->user()->username,
-            "category" => $this->request->getPost('category'),
-
-        ];
-
-        // simpan ke database
-        $postModel->save($data);
-
-        // cek apakah berhasil
-        if ($postModel->affectedRows() > 0) {
-            return redirect()->to(base_url('posts/create-posts'))->with('create', 'Articel saved successfully');
-        } else {
-            // Penanganan jika terjadi kesalahan
-            return redirect()->back()->withInput()->with('error', 'Failed to save Articel');
-        }
-    }
-
-
-    // delete artikel
-    public function deletePost($id)
-    {
-        $postModel = new PostModel();
-
-        // Validasi login
-        if (!isset(auth()->user()->id)) {
-            return redirect()->to(base_url());
-        }
-
-        // Dapatkan data artikel berdasarkan ID
-        $post = $postModel->find($id);
-
-        // Periksa apakah pengguna memiliki hak untuk menghapus artikel
-        if ($post && auth()->user()->id == $post['user_id']) {
-            // Hapus artikel
-            if ($postModel->delete($id)) {
-                return redirect()->to(base_url())->with('delete', 'Artikel berhasil dihapus');
-            } else {
-                return redirect()->to(base_url())->with('error', 'Gagal menghapus artikel');
-            }
-        } else {
-            return redirect()->to(base_url())->with('error', 'Anda tidak memiliki izin untuk menghapus artikel');
-        }
-    }
-
-    // edit artikel
-    public function editPost($id)
-    {
-        $post = new PostModel();
-        $category = new CategoryModel();
-
-        //    memanggil data dengan id
-        $edPost = $post->find($id);
-
-        // validasi belum login
-        if (!isset(auth()->user()->id)) {
-            return redirect()->to(base_url());
-        }
-
-        // validasi page edit artikel sesuai user berdasarkan id
-        if (auth()->user()->id == $edPost['user_id']) {
-            // mengambil data semua kategory
-            $categories = $category->getCategories();;
-
-            return view('post/edit-post', compact('edPost', 'categories'));
-        } else {
-            return redirect()->to(base_url());
-        }
-    }
-
-    // Method dengan nama Indonesia
     public function kategori($name)
     {
         return $this->category($name);
@@ -256,11 +142,6 @@ class PostsController extends BaseController
     public function bacaArtikel($id)
     {
         return $this->singlePost($id);
-    }
-
-    public function simpanKomentar($id)
-    {
-        return $this->storeComment($id);
     }
 
     public function buatArtikel()
@@ -419,26 +300,5 @@ class PostsController extends BaseController
         }
 
         return redirect()->back()->with('error', 'Gagal menghapus artikel');
-    }
-
-    public function cariArtikel()
-    {
-        return $this->searchPosts();
-    }
-
-    public function searchPosts()
-    {
-        $post = new PostModel();
-
-        // memanggil keywor
-        $keyword = $this->request->getPost('keyword');
-
-        $searches = $post->like('title', $keyword)->findAll();
-        
-        
-
-        if ($searches) {
-            return view('post/searches', compact('searches', 'keyword'));
-        }
     }
 }

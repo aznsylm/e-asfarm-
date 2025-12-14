@@ -47,6 +47,7 @@
                     </a>
                 </div>
             </div>
+            <p class="text-muted mt-2 mb-0" style="font-size: 0.95rem;">Baca artikel terkini seputar <?= strtolower(esc($name)) ?> yang ditulis oleh tenaga ahli terpercaya</p>
         </div>
     </section>
 

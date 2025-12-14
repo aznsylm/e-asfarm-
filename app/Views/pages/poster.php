@@ -38,6 +38,7 @@
                 </a>
             </div>
         </div>
+        <p class="text-muted mt-2 mb-0" style="font-size: 0.95rem;">Koleksi poster informatif seputar kesehatan ibu hamil, menyusui, anak, dan remaja yang mudah dipahami</p>
     </div>
 </section>
 

@@ -38,6 +38,7 @@
                 </a>
             </div>
         </div>
+        <p class="text-muted mt-2 mb-0" style="font-size: 0.95rem;">Unduh modul edukasi kesehatan ibu dan anak untuk panduan praktis dalam merawat keluarga Anda</p>
     </div>
 </section>
 

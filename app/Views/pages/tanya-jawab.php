@@ -228,6 +228,7 @@
                 </a>
             </div>
         </div>
+        <p class="text-muted mt-2 mb-0" style="font-size: 0.95rem;">Temukan jawaban lengkap dari pertanyaan seputar <?= strtolower(esc($kategori['display_name'])) ?> yang sering ditanyakan</p>
     </div>
 </section>
 

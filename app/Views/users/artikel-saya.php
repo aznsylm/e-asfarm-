@@ -1,14 +1,14 @@
-<?= $this->extend('layouts/dashboard_layout') ?>
+<?= $this->extend('layouts/user_layout') ?>
 <?= $this->section('content') ?>
 
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Artikel Saya</h2>
-                <div>
-                    <a href="<?= route_to('pengguna.dashboard') ?>" class="btn btn-outline-secondary me-2">Kembali ke Dashboard</a>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalArtikel">
+            <div class="mb-4">
+                <h2 class="mb-3">Artikel Saya</h2>
+                <div class="d-flex flex-column flex-md-row">
+                    <a href="<?= route_to('pengguna.dashboard') ?>" class="btn btn-outline-secondary mb-2 mb-md-0 mr-md-2">Kembali ke Dashboard</a>
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#modalArtikel">
                         <i class="bi bi-plus-circle"></i> Buat Artikel Baru
                     </button>
                 </div>
@@ -72,17 +72,17 @@
                                             <?php endif; ?>
                                         </td>
                                         <td>
-                                            <div class="btn-group btn-group-sm">
+                                            <div class="d-flex flex-column flex-md-row">
                                                 <?php if ($artikel['status'] === 'approved'): ?>
-                                                    <a href="<?= base_url('artikel/baca/' . ($artikel['slug'] ?: $artikel['id'])) ?>" class="btn btn-outline-primary" target="_blank">Lihat</a>
+                                                    <a href="<?= base_url('artikel/baca/' . ($artikel['slug'] ?: $artikel['id'])) ?>" class="btn btn-outline-primary btn-sm mb-1 mb-md-0 mr-md-1" target="_blank">Lihat</a>
                                                 <?php endif; ?>
                                                 
                                                 <?php if (in_array($artikel['status'], ['pending', 'rejected'])): ?>
-                                                    <button class="btn btn-outline-warning" onclick="editArtikel(<?= $artikel['id'] ?>)">Edit</button>
+                                                    <button class="btn btn-outline-warning btn-sm mb-1 mb-md-0 mr-md-1" onclick="editArtikel(<?= $artikel['id'] ?>)">Edit</button>
                                                 <?php endif; ?>
                                                 
                                                 <?php if ($artikel['status'] === 'rejected'): ?>
-                                                    <button class="btn btn-outline-danger" onclick="hapusArtikel(<?= $artikel['id'] ?>)">Hapus</button>
+                                                    <button class="btn btn-outline-danger btn-sm" onclick="hapusArtikel(<?= $artikel['id'] ?>)">Hapus</button>
                                                 <?php endif; ?>
                                             </div>
                                         </td>
@@ -98,7 +98,7 @@
                         <div class="text-center py-5">
                             <h5 class="text-muted">Belum ada artikel</h5>
                             <p class="text-muted">Mulai menulis artikel pertama Anda!</p>
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalArtikel">
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#modalArtikel">
                                 <i class="bi bi-plus-circle"></i> Buat Artikel Baru
                             </button>
                         </div>
@@ -115,7 +115,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="titleArtikel">Tambah Artikel</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
             </div>
             <form id="formArtikel" enctype="multipart/form-data">
                 <?= csrf_field() ?>
@@ -128,10 +128,10 @@
                     <div class="mb-2">
                         <label>Kategori *</label>
                         <select class="form-select form-select-sm" name="category" required>
-                            <option value="">Pilih</option>
-                            <option value="Farmasi">Farmasi</option>
-                            <option value="Gizi">Gizi</option>
-                            <option value="Bidan">Bidan</option>
+                            <option value="">Pilih Kategori</option>
+                            <?php foreach($artikelCategories as $cat): ?>
+                            <option value="<?= esc($cat['name']) ?>"><?= esc($cat['name']) ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="mb-2">
@@ -140,14 +140,14 @@
                     </div>
                     <div class="mb-2">
                         <label>Gambar * 
-                            <i class="bi bi-question-circle text-primary" data-bs-toggle="tooltip" data-bs-placement="right" title="Format: JPG, JPEG, PNG, WEBP | Maksimal: 2MB | Resolusi disarankan: 1200x630px"></i>
+                            <i class="fas fa-question-circle text-primary" data-toggle="tooltip" data-placement="right" title="Format: JPG, JPEG, PNG, WEBP | Maksimal: 2MB | Resolusi disarankan: 1200x630px"></i>
                         </label>
                         <input type="file" class="form-control form-control-sm" name="image" id="imageArtikel" accept="image/jpeg,image/jpg,image/png,image/webp" required>
-                        <small class="text-muted"><i class="bi bi-info-circle"></i> Format: JPG, PNG, WEBP | Max: 2MB</small>
+                        <small class="text-muted"><i class="fas fa-info-circle"></i> Format: JPG, PNG, WEBP | Max: 2MB</small>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
                     <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
                 </div>
             </form>
@@ -172,13 +172,8 @@ if (document.getElementById('contentArtikel')) {
 }
 
 // Initialize tooltips
-document.addEventListener('DOMContentLoaded', function() {
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    if (typeof bootstrap !== 'undefined') {
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
-    }
+$(document).ready(function() {
+    $('[data-toggle="tooltip"]').tooltip();
 });
 
 // Submit form

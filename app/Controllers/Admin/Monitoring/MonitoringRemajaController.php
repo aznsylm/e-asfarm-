@@ -79,16 +79,24 @@ class MonitoringRemajaController extends BaseController
     private function getRemajaAlerts($padukuhanId)
     {
         $db = \Config\Database::connect();
+        
+        // Subquery untuk mendapatkan kunjungan terakhir per monitoring
+        $subQuery = $db->table('kunjungan_remaja kr2')
+            ->select('MAX(kr2.id) as last_kunjungan_id')
+            ->groupBy('kr2.monitoring_id')
+            ->getCompiledSelect();
+        
         $builder = $db->table('kunjungan_remaja kr')
-            ->select('mri.nama_lengkap, mri.no_hp_wali, kra.tekanan_darah, krs.dapat_ttd, krs.minum_ttd, krs.kebiasaan_sarapan, kran.gejala_anemia')
+            ->select('mri.nama_lengkap, mri.no_hp_wali, kra.tekanan_darah, krs.dapat_ttd, krs.minum_ttd, krs.kebiasaan_sarapan, kran.gejala_anemia, kr.tanggal_kunjungan, p.nama_padukuhan, mr.id as monitoring_id')
             ->join('monitoring_remaja mr', 'mr.id = kr.monitoring_id')
             ->join('monitoring_remaja_identitas mri', 'mri.monitoring_id = mr.id')
             ->join('kunjungan_remaja_antropometri kra', 'kra.kunjungan_id = kr.id')
             ->join('kunjungan_remaja_suplementasi krs', 'krs.kunjungan_id = kr.id')
             ->join('kunjungan_remaja_anemia kran', 'kran.kunjungan_id = kr.id')
             ->join('users u', 'u.id = mr.user_id')
-            ->orderBy('kr.tanggal_kunjungan', 'DESC')
-            ->limit(100);
+            ->join('padukuhan p', 'p.id = u.padukuhan_id', 'left')
+            ->where("kr.id IN ($subQuery)", null, false)
+            ->orderBy('kr.tanggal_kunjungan', 'DESC');
         
         if ($padukuhanId) {
             $builder->where('u.padukuhan_id', $padukuhanId);
@@ -103,26 +111,26 @@ class MonitoringRemajaController extends BaseController
             if (!empty($row['tekanan_darah'])) {
                 $td = explode('/', $row['tekanan_darah']);
                 if (count($td) == 2 && ((int)$td[0] >= 140 || (int)$td[1] >= 90)) {
-                    $alertData['td_tinggi'][] = ['nama' => $row['nama_lengkap'], 'hp' => $row['no_hp_wali'], 'detail' => $row['tekanan_darah']];
+                    $alertData['td_tinggi'][] = ['nama' => $row['nama_lengkap'], 'hp' => $row['no_hp_wali'], 'detail' => $row['tekanan_darah'], 'padukuhan' => $row['nama_padukuhan'], 'tanggal' => $row['tanggal_kunjungan'], 'monitoring_id' => $row['monitoring_id']];
                     $alertCount++;
                 }
             }
             // 2. Tidak minum TTD
             if ($row['dapat_ttd'] == 1 && $row['minum_ttd'] == 0) {
-                $alertData['ttd'][] = ['nama' => $row['nama_lengkap'], 'hp' => $row['no_hp_wali'], 'detail' => 'Tidak diminum'];
+                $alertData['ttd'][] = ['nama' => $row['nama_lengkap'], 'hp' => $row['no_hp_wali'], 'detail' => 'Tidak diminum', 'padukuhan' => $row['nama_padukuhan'], 'tanggal' => $row['tanggal_kunjungan'], 'monitoring_id' => $row['monitoring_id']];
                 $alertCount++;
             }
             // 3. Anemia
             if (!empty($row['gejala_anemia'])) {
                 $gejala = json_decode($row['gejala_anemia'], true);
                 if (is_array($gejala) && count($gejala) > 0) {
-                    $alertData['anemia'][] = ['nama' => $row['nama_lengkap'], 'hp' => $row['no_hp_wali'], 'detail' => implode(', ', $gejala)];
+                    $alertData['anemia'][] = ['nama' => $row['nama_lengkap'], 'hp' => $row['no_hp_wali'], 'detail' => implode(', ', $gejala), 'padukuhan' => $row['nama_padukuhan'], 'tanggal' => $row['tanggal_kunjungan'], 'monitoring_id' => $row['monitoring_id']];
                     $alertCount++;
                 }
             }
             // 4. Tidak sarapan
             if ($row['kebiasaan_sarapan'] === 'Tidak Pernah') {
-                $alertData['sarapan'][] = ['nama' => $row['nama_lengkap'], 'hp' => $row['no_hp_wali'], 'detail' => 'Tidak pernah'];
+                $alertData['sarapan'][] = ['nama' => $row['nama_lengkap'], 'hp' => $row['no_hp_wali'], 'detail' => 'Tidak pernah', 'padukuhan' => $row['nama_padukuhan'], 'tanggal' => $row['tanggal_kunjungan'], 'monitoring_id' => $row['monitoring_id']];
                 $alertCount++;
             }
         }

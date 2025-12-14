@@ -11,6 +11,34 @@
 <div class="card mb-3">
     <div class="card-header">
         <h3 class="card-title"><i class="fas fa-user-circle"></i> Profil Pengguna</h3>
+        <div class="card-tools">
+            <div class="btn-group">
+                <button type="button" class="btn btn-danger btn-sm dropdown-toggle" data-toggle="dropdown">
+                    <i class="fas fa-file-pdf"></i> Export PDF
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="<?= base_url('admin/user-export-pdf/' . $user['id']) ?>" target="_blank">
+                        <i class="fas fa-file-pdf"></i> Kunjungan Terakhir Saja
+                    </a>
+                    <a class="dropdown-item" href="<?= base_url('admin/user-export-all-pdf/' . $user['id']) ?>" target="_blank">
+                        <i class="fas fa-file-pdf"></i> Semua Kategori (Lengkap)
+                    </a>
+                </div>
+            </div>
+            <div class="btn-group ml-1">
+                <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown">
+                    <i class="fas fa-file-excel"></i> Export Excel
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="<?= base_url('admin/user-export-excel/' . $user['id']) ?>">
+                        <i class="fas fa-file-excel"></i> Kunjungan Terakhir Saja
+                    </a>
+                    <a class="dropdown-item" href="<?= base_url('admin/user-export-all-excel/' . $user['id']) ?>">
+                        <i class="fas fa-file-excel"></i> Semua Kategori (Lengkap)
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
         <div class="card-body">
             <div class="row">

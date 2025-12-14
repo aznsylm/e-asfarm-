@@ -43,7 +43,7 @@ $imgPath = file_exists(FCPATH.'uploads/articles/'.$artikel['image']) ? 'uploads/
                 <div class="col-lg-8">
                     <!-- Gambar Artikel -->
                     <div class="mb-4">
-                        <img src="<?= base_url($imgPath); ?>" alt="<?= esc($artikel['title']); ?>" class="w-100" style="max-height: 500px; object-fit: contain; background: #f8f9fa;">
+                        <img src="<?= base_url($imgPath); ?>" alt="<?= esc($artikel['title']); ?>" class="w-100" style="max-height: 500px; object-fit: contain; background: #f8f9fa; cursor: pointer;" onclick="openImageModal(this.src)">
                     </div>
                     
                     <!-- Judul Artikel -->
@@ -106,7 +106,7 @@ $imgPath = file_exists(FCPATH.'uploads/articles/'.$artikel['image']) ? 'uploads/
                             <?php if (!empty($latestPosters)) : ?>
                                 <?php foreach (array_slice($latestPosters, 0, 2) as $index => $poster) : ?>
                                     <div class="text-center mb-3 <?= $index === 0 ? 'pb-3 border-bottom' : '' ?> <?= $index === 1 ? 'd-none d-lg-block' : '' ?>">
-                                        <img src="<?= base_url('uploads/posters/' . $poster['thumbnail']); ?>" alt="<?= esc($poster['title']); ?>" class="w-100 mb-2" style="max-height: 250px; object-fit: contain; background: #f8f9fa;">
+                                        <img src="<?= base_url('uploads/posters/' . $poster['thumbnail']); ?>" alt="<?= esc($poster['title']); ?>" class="w-100 mb-2" style="max-height: 250px; object-fit: contain; background: #f8f9fa; cursor: pointer;" onclick="openImageModal(this.src)">
                                         <p class="fw-semibold text-dark mb-2"><?= esc($poster['title']); ?></p>
                                     </div>
                                 <?php endforeach; ?>
@@ -124,12 +124,40 @@ $imgPath = file_exists(FCPATH.'uploads/articles/'.$artikel['image']) ? 'uploads/
     </section>
 </div>
 
+<!-- Image Modal -->
+<div id="imageModal" class="image-modal" onclick="closeImageModal()">
+    <span class="image-modal-close">&times;</span>
+    <img id="modalImage" src="" alt="Detail">
+</div>
+
+<style>
+.image-modal{display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.9);cursor:zoom-out;}
+.image-modal img{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);max-width:90%;max-height:90%;object-fit:contain;}
+.image-modal-close{position:absolute;top:20px;right:30px;color:#fff;font-size:40px;font-weight:bold;cursor:pointer;z-index:10000;}
+.image-modal-close:hover{color:#ccc;}
+</style>
+
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     var unwantedElements = document.querySelectorAll('.ql-clipboard, .ql-tooltip');
     unwantedElements.forEach(function(element) {
         element.remove();
     });
+});
+
+function openImageModal(src) {
+    document.getElementById('imageModal').style.display = 'block';
+    document.getElementById('modalImage').src = src;
+    document.body.style.overflow = 'hidden';
+}
+
+function closeImageModal() {
+    document.getElementById('imageModal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeImageModal();
 });
 </script>
 

@@ -12,6 +12,35 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!-- AdminLTE v3.2.0 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+    <style>
+    /* Mobile Responsive Styles */
+    @media (max-width: 768px) {
+        .content-header h1 { font-size: 1.5rem; }
+        .card-title { font-size: 1rem; }
+        .table-responsive { font-size: 0.875rem; overflow-x: auto; }
+        .btn { font-size: 0.875rem; padding: 0.375rem 0.75rem; }
+        .btn-sm { font-size: 0.75rem; padding: 0.25rem 0.5rem; }
+        .alert { font-size: 0.875rem; }
+        .breadcrumb { font-size: 0.75rem; }
+        .card-body { padding: 1rem; }
+        .modal-dialog { margin: 0.5rem; max-width: calc(100% - 1rem); }
+        .input-group { flex-wrap: nowrap; }
+        .card-header .btn { margin-top: 0.5rem; }
+        .d-flex.justify-content-between { flex-direction: column; align-items: flex-start !important; }
+        .d-flex.justify-content-between .btn { margin-top: 0.5rem; width: 100%; }
+    }
+    
+    @media (max-width: 576px) {
+        .content-header h1 { font-size: 1.25rem; }
+        .card-header h3 { font-size: 0.95rem; }
+        .btn-group { display: flex; flex-direction: column; }
+        .btn-group .btn { width: 100%; margin-bottom: 0.25rem; border-radius: 0.25rem !important; }
+        .table thead { font-size: 0.75rem; }
+        .table tbody { font-size: 0.8rem; }
+        .modal-body { padding: 0.75rem; }
+        .form-control, .form-select { font-size: 0.875rem; }
+    }
+    </style>
     <?= $this->renderSection('styles') ?>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -49,8 +78,8 @@
 
     <!-- Sidebar -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
-        <a href="<?= base_url('admin/dashboard') ?>" class="brand-link text-center">
-            <img src="<?= base_url('assets/images/logos/E-Asfarm-Logo.png') ?>" alt="E-Asfarm" style="width: 80px; height: 80px; margin: 10px auto; display: block;">
+        <a href="<?= base_url('admin/dashboard') ?>" class="brand-link text-center" style="padding: 0.5rem; background-color: #fff;">
+            <img src="<?= base_url('assets/images/logos/E-Asfarm-Logo.png') ?>" alt="E-Asfarm" style="width: 200px; height: 120px; object-fit: contain; margin: 0 auto; display: block;">
         </a>
 
         <div class="sidebar">

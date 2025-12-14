@@ -10,29 +10,142 @@ class UsersController extends BaseController
     public function dashboard()
     {
         helper('auth');
-        
         $user = current_user();
-        $articleModel = new ArticleModel();
-
-        // Statistik artikel user
-        $totalArtikel = $articleModel->where('author_id', $user->id)->countAllResults();
-        $artikelPending = $articleModel->where('author_id', $user->id)->where('status', 'pending')->countAllResults();
-        $artikelApproved = $articleModel->where('author_id', $user->id)->where('status', 'approved')->countAllResults();
-        $artikelRejected = $articleModel->where('author_id', $user->id)->where('status', 'rejected')->countAllResults();
-
-        // Artikel terbaru user
-        $artikelTerbaru = $articleModel->where('author_id', $user->id)
-                                   ->orderBy('created_at', 'DESC')
-                                   ->limit(5)
-                                   ->find();
-
+        
+        // Get monitoring data
+        $monitoringIbuHamil = new \App\Models\Monitoring\MonitoringIbuHamilModel();
+        $monitoringBalita = new \App\Models\MonitoringBalita\MonitoringBalitaModel();
+        $monitoringRemaja = new \App\Models\MonitoringRemaja\MonitoringRemajaModel();
+        
+        $dataIbuHamil = $monitoringIbuHamil->where('user_id', $user->id)->where('status', 'active')->first();
+        $dataBalita = $monitoringBalita->where('user_id', $user->id)->first();
+        $dataRemaja = $monitoringRemaja->where('user_id', $user->id)->where('status', 'active')->first();
+        
+        $alerts = [];
+        $lastVisit = null;
+        
+        // Check Ibu Hamil alerts
+        if ($dataIbuHamil) {
+            $kunjunganModel = new \App\Models\Monitoring\KunjunganModel();
+            $antropometriModel = new \App\Models\Monitoring\KunjunganAntropometriModel();
+            $identitasModel = new \App\Models\Monitoring\MonitoringIdentitasModel();
+            $keluhanModel = new \App\Models\Monitoring\KunjunganKeluhanModel();
+            
+            $lastKunjungan = $kunjunganModel->where('monitoring_id', $dataIbuHamil['id'])->orderBy('tanggal_kunjungan', 'DESC')->first();
+            $identitas = $identitasModel->where('monitoring_id', $dataIbuHamil['id'])->first();
+            
+            if ($lastKunjungan) {
+                $lastVisit = $lastKunjungan['tanggal_kunjungan'];
+                $antropometri = $antropometriModel->where('kunjungan_id', $lastKunjungan['id'])->first();
+                $keluhan = $keluhanModel->where('kunjungan_id', $lastKunjungan['id'])->first();
+                
+                if ($antropometri) {
+                    $td = explode('/', $antropometri['tekanan_darah']);
+                    if (count($td) == 2 && ($td[0] >= 140 || $td[1] >= 90)) {
+                        $alerts[] = ['type' => 'danger', 'icon' => 'heartbeat', 'message' => 'Tekanan darah tinggi: '.$antropometri['tekanan_darah'].' mmHg. Segera konsultasi!'];
+                    }
+                    if ($antropometri['lila'] < 23.5) {
+                        $alerts[] = ['type' => 'warning', 'icon' => 'ruler', 'message' => 'LILA rendah: '.$antropometri['lila'].' cm. Risiko KEK!'];
+                    }
+                }
+                
+                if ($keluhan && !empty($keluhan['keluhan'])) {
+                    $keluhanArray = json_decode($keluhan['keluhan'], true);
+                    if (is_array($keluhanArray) && (in_array('Pucat', $keluhanArray) || in_array('Pusing', $keluhanArray) || in_array('Lemas', $keluhanArray))) {
+                        $alerts[] = ['type' => 'warning', 'icon' => 'exclamation-circle', 'message' => 'Gejala anemia terdeteksi. Konsultasi dengan tenaga kesehatan!'];
+                    }
+                }
+                
+                if ($identitas && !empty($identitas['rencana_tanggal_persalinan'])) {
+                    $hpl = strtotime($identitas['rencana_tanggal_persalinan']);
+                    $today = strtotime(date('Y-m-d'));
+                    $diff = ($hpl - $today) / 86400;
+                    if ($diff > 0 && $diff <= 14) {
+                        $alerts[] = ['type' => 'info', 'icon' => 'calendar-check', 'message' => 'HPL tinggal '.round($diff).' hari lagi!'];
+                    }
+                }
+            }
+        }
+        
+        // Check Balita alerts
+        if ($dataBalita) {
+            $kunjunganBalitaModel = new \App\Models\MonitoringBalita\KunjunganBalitaModel();
+            $lastKunjunganBalita = $kunjunganBalitaModel->where('monitoring_balita_id', $dataBalita['id'])->orderBy('tanggal_kunjungan', 'DESC')->first();
+            
+            if ($lastKunjunganBalita) {
+                if (!$lastVisit) $lastVisit = $lastKunjunganBalita['tanggal_kunjungan'];
+                
+                $antropometriBalita = new \App\Models\MonitoringBalita\KunjunganBalitaAntropometriModel();
+                $imunisasiModel = new \App\Models\MonitoringBalita\KunjunganBalitaImunisasiModel();
+                $giziModel = new \App\Models\MonitoringBalita\KunjunganBalitaGiziModel();
+                $keluhanBalitaModel = new \App\Models\MonitoringBalita\KunjunganBalitaKeluhanModel();
+                
+                $antropometri = $antropometriBalita->where('kunjungan_balita_id', $lastKunjunganBalita['id'])->first();
+                $imunisasi = $imunisasiModel->where('kunjungan_balita_id', $lastKunjunganBalita['id'])->first();
+                $gizi = $giziModel->where('kunjungan_balita_id', $lastKunjunganBalita['id'])->first();
+                $keluhanBalita = $keluhanBalitaModel->where('kunjungan_balita_id', $lastKunjunganBalita['id'])->first();
+                
+                if ($imunisasi && $imunisasi['status_imunisasi'] == 'belum_lengkap') {
+                    $alerts[] = ['type' => 'warning', 'icon' => 'syringe', 'message' => 'Imunisasi belum lengkap. Segera lengkapi!'];
+                }
+                if ($antropometri && $antropometri['berat_badan'] < 10) {
+                    $alerts[] = ['type' => 'danger', 'icon' => 'weight', 'message' => 'Berat badan kurang: '.$antropometri['berat_badan'].' kg!'];
+                }
+                if ($gizi && $gizi['vitamin_a'] == 'tidak') {
+                    $alerts[] = ['type' => 'warning', 'icon' => 'capsules', 'message' => 'Belum dapat Vitamin A!'];
+                }
+                if ($keluhanBalita && ($keluhanBalita['demam'] || $keluhanBalita['diare'])) {
+                    $keluhan = [];
+                    if ($keluhanBalita['demam']) $keluhan[] = 'demam';
+                    if ($keluhanBalita['diare']) $keluhan[] = 'diare';
+                    $alerts[] = ['type' => 'danger', 'icon' => 'thermometer-half', 'message' => 'Keluhan serius: '.implode(', ', $keluhan).'!'];
+                }
+            }
+        }
+        
+        // Check Remaja alerts
+        if ($dataRemaja) {
+            $kunjunganRemajaModel = new \App\Models\MonitoringRemaja\KunjunganRemajaModel();
+            $lastKunjunganRemaja = $kunjunganRemajaModel->where('monitoring_id', $dataRemaja['id'])->orderBy('tanggal_kunjungan', 'DESC')->first();
+            
+            if ($lastKunjunganRemaja) {
+                if (!$lastVisit) $lastVisit = $lastKunjunganRemaja['tanggal_kunjungan'];
+                
+                $antropometriRemajaModel = new \App\Models\MonitoringRemaja\KunjunganRemajaAntropometriModel();
+                $anemiaModel = new \App\Models\MonitoringRemaja\KunjunganRemajaAnemiaModel();
+                $gayaHidupModel = new \App\Models\MonitoringRemaja\KunjunganRemajaGayaHidupModel();
+                $suplementasiRemajaModel = new \App\Models\MonitoringRemaja\KunjunganRemajaSuplementasiModel();
+                
+                $antropometri = $antropometriRemajaModel->where('kunjungan_id', $lastKunjunganRemaja['id'])->first();
+                $anemia = $anemiaModel->where('kunjungan_id', $lastKunjunganRemaja['id'])->first();
+                $gayaHidup = $gayaHidupModel->where('kunjungan_id', $lastKunjunganRemaja['id'])->first();
+                $suplementasi = $suplementasiRemajaModel->where('kunjungan_id', $lastKunjunganRemaja['id'])->first();
+                
+                if ($antropometri) {
+                    $td = explode('/', $antropometri['tekanan_darah']);
+                    if (count($td) == 2 && ($td[0] >= 140 || $td[1] >= 90)) {
+                        $alerts[] = ['type' => 'danger', 'icon' => 'heartbeat', 'message' => 'Tekanan darah tinggi: '.$antropometri['tekanan_darah'].' mmHg!'];
+                    }
+                }
+                if ($suplementasi && isset($suplementasi['dapat_ttd']) && $suplementasi['dapat_ttd'] == 'ya' && isset($suplementasi['minum_ttd']) && $suplementasi['minum_ttd'] == 'tidak') {
+                    $alerts[] = ['type' => 'warning', 'icon' => 'pills', 'message' => 'TTD tidak diminum. Penting untuk mencegah anemia!'];
+                }
+                if ($anemia && isset($anemia['ada_gejala_anemia']) && $anemia['ada_gejala_anemia'] == 'ya') {
+                    $alerts[] = ['type' => 'warning', 'icon' => 'exclamation-triangle', 'message' => 'Gejala anemia terdeteksi!'];
+                }
+                if ($gayaHidup && isset($gayaHidup['frekuensi_sarapan']) && $gayaHidup['frekuensi_sarapan'] == 'tidak_pernah') {
+                    $alerts[] = ['type' => 'info', 'icon' => 'utensils', 'message' => 'Tidak pernah sarapan. Penting untuk energi harian!'];
+                }
+            }
+        }
+        
         $data = [
             'user' => $user,
-            'totalArtikel' => $totalArtikel,
-            'artikelPending' => $artikelPending,
-            'artikelApproved' => $artikelApproved,
-            'artikelRejected' => $artikelRejected,
-            'artikelTerbaru' => $artikelTerbaru
+            'hasIbuHamil' => !empty($dataIbuHamil),
+            'hasBalita' => !empty($dataBalita),
+            'hasRemaja' => !empty($dataRemaja),
+            'alerts' => $alerts,
+            'lastVisit' => $lastVisit
         ];
 
         return view('users/dashboard', $data);
@@ -44,15 +157,20 @@ class UsersController extends BaseController
         
         $user = current_user();
         $articleModel = new ArticleModel();
+        $categoryModel = new \App\Models\CategoryModel();
 
         // Ambil semua artikel user dengan pagination
         $artikelSaya = $articleModel->where('author_id', $user->id)
                                 ->orderBy('created_at', 'DESC')
                                 ->paginate(10);
+        
+        // Ambil kategori artikel
+        $artikelCategories = $categoryModel->getByType('artikel');
 
         $data = [
             'user' => $user,
             'artikelSaya' => $artikelSaya,
+            'artikelCategories' => $artikelCategories,
             'pager' => $articleModel->pager
         ];
 
@@ -226,12 +344,54 @@ class UsersController extends BaseController
         helper('auth');
         $user = current_user();
         
-        // Untuk saat ini, selalu tampilkan belum ada data
-        // Karena fitur balita belum diimplementasi
+        $monitoringBalitaModel = new \App\Models\MonitoringBalita\MonitoringBalitaModel();
+        $identitasModel = new \App\Models\MonitoringBalita\MonitoringBalitaIdentitasModel();
+        $kunjunganModel = new \App\Models\MonitoringBalita\KunjunganBalitaModel();
+        $antropometriModel = new \App\Models\MonitoringBalita\KunjunganBalitaAntropometriModel();
+        $keluhanModel = new \App\Models\MonitoringBalita\KunjunganBalitaKeluhanModel();
+        $imunisasiModel = new \App\Models\MonitoringBalita\KunjunganBalitaImunisasiModel();
+        $swamedikasModel = new \App\Models\MonitoringBalita\KunjunganBalitaSwamedikasModel();
+        $giziModel = new \App\Models\MonitoringBalita\KunjunganBalitaGiziModel();
+        $kpspModel = new \App\Models\MonitoringBalita\KunjunganBalitaKpspModel();
+        
+        $monitoring = $monitoringBalitaModel->where('user_id', $user->id)->first();
+        
+        if (!$monitoring) {
+            $data = [
+                'user' => $user,
+                'title' => 'Monitoring Kesehatan Balita & Anak',
+                'hasMonitoring' => false
+            ];
+            return view('users/monitoring-balita', $data);
+        }
+        
+        $identitas = $identitasModel->where('monitoring_balita_id', $monitoring['id'])->first();
+        $kunjunganList = $kunjunganModel->where('monitoring_balita_id', $monitoring['id'])
+                                        ->orderBy('kunjungan_ke', 'DESC')
+                                        ->findAll();
+        
+        $allKunjungan = [];
+        foreach ($kunjunganList as $kunjungan) {
+            $detail = [
+                'kunjungan' => $kunjungan,
+                'antropometri' => $antropometriModel->where('kunjungan_balita_id', $kunjungan['id'])->first(),
+                'keluhan' => $keluhanModel->where('kunjungan_balita_id', $kunjungan['id'])->first(),
+                'imunisasi' => $imunisasiModel->where('kunjungan_balita_id', $kunjungan['id'])->first(),
+                'swamedikasi' => $swamedikasModel->where('kunjungan_balita_id', $kunjungan['id'])->first(),
+                'gizi' => $giziModel->where('kunjungan_balita_id', $kunjungan['id'])->first(),
+                'kpsp' => $kpspModel->where('kunjungan_balita_id', $kunjungan['id'])->first()
+            ];
+            $allKunjungan[] = $detail;
+        }
+        
         $data = [
             'user' => $user,
             'title' => 'Monitoring Kesehatan Balita & Anak',
-            'hasMonitoring' => false
+            'hasMonitoring' => true,
+            'monitoring' => $monitoring,
+            'identitas' => $identitas,
+            'allKunjungan' => $allKunjungan,
+            'totalKunjungan' => count($kunjunganList)
         ];
 
         return view('users/monitoring-balita', $data);
@@ -370,5 +530,35 @@ class UsersController extends BaseController
         }
 
         return $this->response->setJSON(['success' => false, 'message' => 'Gagal menghapus artikel']);
+    }
+
+    public function hubungiKami()
+    {
+        helper('auth');
+        $currentUser = current_user();
+        
+        $userModel = new \App\Models\UserModel();
+        $user = $userModel->find($currentUser->id);
+        
+        $adminContacts = [];
+        $padukuhanName = null;
+        if ($user['padukuhan_id']) {
+            $adminContacts = $userModel->where('padukuhan_id', $user['padukuhan_id'])
+                                       ->where('role', 'admin')
+                                       ->findAll();
+            
+            $padukuhanModel = new \App\Models\PadukuhanModel();
+            $padukuhan = $padukuhanModel->find($user['padukuhan_id']);
+            $padukuhanName = $padukuhan['nama_padukuhan'] ?? null;
+        }
+        
+        $data = [
+            'user' => $currentUser,
+            'title' => 'Hubungi Kami',
+            'adminContacts' => $adminContacts,
+            'padukuhanName' => $padukuhanName
+        ];
+
+        return view('users/hubungi-kami', $data);
     }
 }

@@ -70,8 +70,15 @@ class Home extends BaseController
         // Get artikel categories for dynamic tabs
         $categoryModel = new CategoryModel();
         $artikelCategories = $categoryModel->where(['type' => 'artikel', 'is_active' => 1])->findAll();
+        
+        // Get dynamic links for service cards
+        $firstArtikelCategory = $categoryModel->where(['type' => 'artikel', 'is_active' => 1])->first();
+        $artikelLink = $firstArtikelCategory ? 'artikel/kategori/' . $firstArtikelCategory['slug'] : 'artikel';
+        
+        $firstTanyaJawabCategory = $categoryModel->where(['type' => 'tanya_jawab', 'is_active' => 1])->first();
+        $tanyaJawabLink = $firstTanyaJawabCategory ? 'tanya-jawab/' . $firstTanyaJawabCategory['slug'] : 'tanya-jawab';
 
-        return view('home', compact('title', 'data', 'data1', 'data3', 'farmasiPosts', 'farmasiPostsRecomendasi', 'dataFourPosts', 'giziPosts', 'giziPostsRecomendasi', 'bidanPosts', 'categories', 'totalArtikel', 'latestDownloads', 'artikelCategories'));
+        return view('home', compact('title', 'data', 'data1', 'data3', 'farmasiPosts', 'farmasiPostsRecomendasi', 'dataFourPosts', 'giziPosts', 'giziPostsRecomendasi', 'bidanPosts', 'categories', 'totalArtikel', 'latestDownloads', 'artikelCategories', 'artikelLink', 'tanyaJawabLink'));
     }
 
     public function tentangKami()
@@ -86,7 +93,20 @@ class Home extends BaseController
 
     public function layanan()
     {
-        return view('pages/layanan');
+        $categoryModel = new CategoryModel();
+        
+        // Get first active artikel category
+        $firstArtikelCategory = $categoryModel->where(['type' => 'artikel', 'is_active' => 1])->first();
+        $artikelLink = $firstArtikelCategory ? 'artikel/kategori/' . $firstArtikelCategory['slug'] : 'artikel';
+        
+        // Get first active tanya_jawab category
+        $firstTanyaJawabCategory = $categoryModel->where(['type' => 'tanya_jawab', 'is_active' => 1])->first();
+        $tanyaJawabLink = $firstTanyaJawabCategory ? 'tanya-jawab/' . $firstTanyaJawabCategory['slug'] : 'tanya-jawab';
+        
+        return view('pages/layanan', [
+            'artikelLink' => $artikelLink,
+            'tanyaJawabLink' => $tanyaJawabLink
+        ]);
     }
 
 

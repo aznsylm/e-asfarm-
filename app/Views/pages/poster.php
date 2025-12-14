@@ -60,7 +60,7 @@ $posters = $postersByCategory[$cat['name']] ?? [];
                         <img src="<?= base_url('uploads/posters/'.$item['thumbnail']) ?>" 
                              class="card-img-top" 
                              style="height: 320px; object-fit: cover; cursor: pointer; border-radius: 8px 8px 0 0;" 
-                             onclick="showPreview('<?= base_url('uploads/posters/'.$item['thumbnail']) ?>', '<?= esc($item['title']) ?>', '<?= esc($item['link_drive']) ?>')">
+                             onclick="openImageModal(this.src)">
                         <div class="card-body p-2">
                             <h6 class="card-title fw-bold text-dark mb-2" style="font-size: 0.9rem;"><?= esc($item['title']) ?></h6>
                             <a href="<?= esc($item['link_drive']) ?>" target="_blank" class="btn btn-teal btn-sm w-100">
@@ -90,36 +90,34 @@ $posters = $postersByCategory[$cat['name']] ?? [];
 </section>
 <?php endforeach; ?>
 
-<!-- Modal Preview -->
-<div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 90%; max-height: 90vh;">
-        <div class="modal-content bg-transparent border-0">
-            <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close" style="z-index: 1050;"></button>
-            <div class="text-center p-3">
-                <img id="previewImage" src="" class="img-fluid rounded-8 shadow-lg mb-3" style="max-height: 80vh; width: auto;">
-                <h4 class="text-white fw-bold" id="previewTitle"></h4>
-                <a id="downloadLink" href="" target="_blank" class="btn btn-teal mt-2">
-                    <i class="fas fa-download me-1"></i>Unduh File
-                </a>
-            </div>
-        </div>
-    </div>
+<!-- Image Modal -->
+<div id="imageModal" class="image-modal" onclick="closeImageModal()">
+    <span class="image-modal-close">&times;</span>
+    <img id="modalImage" src="" alt="Detail">
 </div>
 
 <style>
-#previewModal .modal-dialog{display:flex;align-items:center;min-height:calc(100% - 1rem);}
-#previewModal .modal-content{background:rgba(0,0,0,0.9)!important;}
+.image-modal{display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.9);cursor:zoom-out;}
+.image-modal img{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);max-width:90%;max-height:90%;object-fit:contain;}
+.image-modal-close{position:absolute;top:20px;right:30px;color:#fff;font-size:40px;font-weight:bold;cursor:pointer;z-index:10000;}
+.image-modal-close:hover{color:#ccc;}
 </style>
 
 <script>
-function showPreview(imageUrl, title, downloadUrl) {
-    document.getElementById('previewImage').src = imageUrl;
-    document.getElementById('previewTitle').textContent = title;
-    document.getElementById('downloadLink').href = downloadUrl;
-    
-    var modal = new bootstrap.Modal(document.getElementById('previewModal'));
-    modal.show();
+function openImageModal(src) {
+    document.getElementById('imageModal').style.display = 'block';
+    document.getElementById('modalImage').src = src;
+    document.body.style.overflow = 'hidden';
 }
+
+function closeImageModal() {
+    document.getElementById('imageModal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeImageModal();
+});
 
 const toggleStates = {};
 

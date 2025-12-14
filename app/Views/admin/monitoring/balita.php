@@ -134,14 +134,17 @@
                 <?php if(!empty($alertData['imunisasi'])): ?>
                 <h6 class="mt-3">Imunisasi Belum Lengkap (<?= count($alertData['imunisasi']) ?>)</h6>
                 <table class="table table-sm table-bordered">
-                    <thead><tr><th>No</th><th>Nama Anak</th><th>No HP/WA Wali</th><th>Status</th></tr></thead>
+                    <thead><tr><th>No</th><th>Nama Anak</th><th>Padukuhan</th><th>No HP/WA Wali</th><th>Status</th><th>Tgl Kunjungan</th><th>Aksi</th></tr></thead>
                     <tbody>
                         <?php $no=1; foreach($alertData['imunisasi'] as $item): ?>
                         <tr>
                             <td><?= $no++ ?></td>
                             <td><?= esc($item['nama']) ?></td>
+                            <td><?= esc($item['padukuhan'] ?? '-') ?></td>
                             <td><a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $item['hp']) ?>" target="_blank" class="text-success"><?= esc($item['hp']) ?></a></td>
                             <td><?= esc($item['detail']) ?></td>
+                            <td><?= isset($item['tanggal']) ? date('d/m/Y', strtotime($item['tanggal'])) : '-' ?></td>
+                            <td><a href="<?= base_url('admin/monitoring/balita/riwayat/'.$item['monitoring_id']) ?>" class="btn btn-info btn-sm" title="Lihat Detail"><i class="fas fa-eye"></i></a></td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -151,14 +154,17 @@
                 <?php if(!empty($alertData['bb_kurang'])): ?>
                 <h6 class="mt-3">Berat Badan Kurang (<?= count($alertData['bb_kurang']) ?>)</h6>
                 <table class="table table-sm table-bordered">
-                    <thead><tr><th>No</th><th>Nama Anak</th><th>No HP/WA Wali</th><th>Berat Badan</th></tr></thead>
+                    <thead><tr><th>No</th><th>Nama Anak</th><th>Padukuhan</th><th>No HP/WA Wali</th><th>Berat Badan</th><th>Tgl Kunjungan</th><th>Aksi</th></tr></thead>
                     <tbody>
                         <?php $no=1; foreach($alertData['bb_kurang'] as $item): ?>
                         <tr>
                             <td><?= $no++ ?></td>
                             <td><?= esc($item['nama']) ?></td>
+                            <td><?= esc($item['padukuhan'] ?? '-') ?></td>
                             <td><a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $item['hp']) ?>" target="_blank" class="text-success"><?= esc($item['hp']) ?></a></td>
                             <td><?= esc($item['detail']) ?></td>
+                            <td><?= isset($item['tanggal']) ? date('d/m/Y', strtotime($item['tanggal'])) : '-' ?></td>
+                            <td><a href="<?= base_url('admin/monitoring/balita/riwayat/'.$item['monitoring_id']) ?>" class="btn btn-info btn-sm" title="Lihat Detail"><i class="fas fa-eye"></i></a></td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -168,14 +174,17 @@
                 <?php if(!empty($alertData['vitamin_a'])): ?>
                 <h6 class="mt-3">Tidak Dapat Vitamin A (<?= count($alertData['vitamin_a']) ?>)</h6>
                 <table class="table table-sm table-bordered">
-                    <thead><tr><th>No</th><th>Nama Anak</th><th>No HP/WA Wali</th><th>Status</th></tr></thead>
+                    <thead><tr><th>No</th><th>Nama Anak</th><th>Padukuhan</th><th>No HP/WA Wali</th><th>Status</th><th>Tgl Kunjungan</th><th>Aksi</th></tr></thead>
                     <tbody>
                         <?php $no=1; foreach($alertData['vitamin_a'] as $item): ?>
                         <tr>
                             <td><?= $no++ ?></td>
                             <td><?= esc($item['nama']) ?></td>
+                            <td><?= esc($item['padukuhan'] ?? '-') ?></td>
                             <td><a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $item['hp']) ?>" target="_blank" class="text-success"><?= esc($item['hp']) ?></a></td>
                             <td><?= esc($item['detail']) ?></td>
+                            <td><?= isset($item['tanggal']) ? date('d/m/Y', strtotime($item['tanggal'])) : '-' ?></td>
+                            <td><a href="<?= base_url('admin/monitoring/balita/riwayat/'.$item['monitoring_id']) ?>" class="btn btn-info btn-sm" title="Lihat Detail"><i class="fas fa-eye"></i></a></td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -185,14 +194,17 @@
                 <?php if(!empty($alertData['keluhan'])): ?>
                 <h6 class="mt-3">Keluhan Serius (<?= count($alertData['keluhan']) ?>)</h6>
                 <table class="table table-sm table-bordered">
-                    <thead><tr><th>No</th><th>Nama Anak</th><th>No HP/WA Wali</th><th>Keluhan</th></tr></thead>
+                    <thead><tr><th>No</th><th>Nama Anak</th><th>Padukuhan</th><th>No HP/WA Wali</th><th>Keluhan</th><th>Tgl Kunjungan</th><th>Aksi</th></tr></thead>
                     <tbody>
                         <?php $no=1; foreach($alertData['keluhan'] as $item): ?>
                         <tr>
                             <td><?= $no++ ?></td>
                             <td><?= esc($item['nama']) ?></td>
+                            <td><?= esc($item['padukuhan'] ?? '-') ?></td>
                             <td><a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $item['hp']) ?>" target="_blank" class="text-success"><?= esc($item['hp']) ?></a></td>
                             <td><?= esc($item['detail']) ?></td>
+                            <td><?= isset($item['tanggal']) ? date('d/m/Y', strtotime($item['tanggal'])) : '-' ?></td>
+                            <td><a href="<?= base_url('admin/monitoring/balita/riwayat/'.$item['monitoring_id']) ?>" class="btn btn-info btn-sm" title="Lihat Detail"><i class="fas fa-eye"></i></a></td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>

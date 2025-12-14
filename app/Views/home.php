@@ -90,6 +90,40 @@
     width: 100%;
     height: auto;
     display: block;
+    cursor: pointer;
+}
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    cursor: zoom-out;
+}
+.image-modal img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+}
+.image-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: #fff;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10000;
+}
+.image-modal-close:hover {
+    color: #ccc;
 }
 .heroSwiper .swiper-pagination-bullet {
     background: #fff;
@@ -166,6 +200,7 @@
     height: 250px;
     object-fit: cover;
     border-radius: 8px 8px 0 0;
+    cursor: pointer;
 }
 .artikel-card {
     background: #fff;
@@ -308,16 +343,19 @@
         <div class="swiper heroSwiper">
             <div class="swiper-wrapper">
                 <div class="swiper-slide">
-                    <img src="<?= base_url('assets/images/hero-banner/banner-contoh.jpg'); ?>" alt="E-Asfarm Banner 1">
+                    <img src="<?= base_url('assets/images/hero-banner/GAMBAR-1-(SELAMAT-DATANG).webp'); ?>" alt="E-Asfarm Banner 1" onclick="openImageModal(this.src)">
                 </div>
                 <div class="swiper-slide">
-                    <img src="<?= base_url('assets/images/hero-banner/banner-contoh.jpg'); ?>" alt="E-Asfarm Banner 2">
+                    <img src="<?= base_url('assets/images/hero-banner/GAMBAR-2-(PREVALENSI).webp'); ?>" alt="E-Asfarm Banner 2" onclick="openImageModal(this.src)">
                 </div>
                 <div class="swiper-slide">
-                    <img src="<?= base_url('assets/images/hero-banner/banner-contoh.jpg'); ?>" alt="E-Asfarm Banner 3">
+                    <img src="<?= base_url('assets/images/hero-banner/GAMBAR-3-(PEMANFAATAN-ETNOMEDISIN).webp'); ?>" alt="E-Asfarm Banner 3" onclick="openImageModal(this.src)">
                 </div>
                 <div class="swiper-slide">
-                    <img src="<?= base_url('assets/images/hero-banner/banner-contoh.jpg'); ?>" alt="E-Asfarm Banner 4">
+                    <img src="<?= base_url('assets/images/hero-banner/GAMBAR-4-(PERAN-FARMASI).webp'); ?>" alt="E-Asfarm Banner 4" onclick="openImageModal(this.src)">
+                </div>
+                <div class="swiper-slide">
+                    <img src="<?= base_url('assets/images/hero-banner/GAMBAR-5-(DAMPAK).webp'); ?>" alt="E-Asfarm Banner 5" onclick="openImageModal(this.src)">
                 </div>
             </div>
             <div class="swiper-pagination"></div>
@@ -326,6 +364,12 @@
         </div>
     </div>
 </section>
+
+<!-- Image Modal -->
+<div id="imageModal" class="image-modal" onclick="closeImageModal()">
+    <span class="image-modal-close">&times;</span>
+    <img id="modalImage" src="" alt="Detail">
+</div>
 
 <!-- Layanan Kesehatan Section -->
 <section class="py-4">
@@ -337,7 +381,7 @@
         </div>
         <div class="row g-4 justify-content-center">
             <div class="col-6 col-md-4" style="flex: 0 0 auto; width: 20%;">
-                <a href="#" class="text-decoration-none">
+                <a href="<?= base_url('tentang-kami#team'); ?>" class="text-decoration-none">
                     <div class="card service-card h-100 border-0 shadow-sm text-center p-4">
                         <i class="fas fa-user-md mb-3" style="font-size: 3rem; color: #047d78;"></i>
                         <h5 class="fw-semibold" style="color: #047d78;">Konsultasi Pakar</h5>
@@ -345,7 +389,7 @@
                 </a>
             </div>
             <div class="col-6 col-md-4" style="flex: 0 0 auto; width: 20%;">
-                <a href="#" class="text-decoration-none">
+                <a href="<?= base_url($artikelLink); ?>" class="text-decoration-none">
                     <div class="card service-card h-100 border-0 shadow-sm text-center p-4">
                         <i class="fas fa-newspaper mb-3" style="font-size: 3rem; color: #047d78;"></i>
                         <h5 class="fw-semibold" style="color: #047d78;">Artikel Kesehatan</h5>
@@ -353,7 +397,7 @@
                 </a>
             </div>
             <div class="col-6 col-md-4" style="flex: 0 0 auto; width: 20%;">
-                <a href="#" class="text-decoration-none">
+                <a href="<?= base_url($tanyaJawabLink); ?>" class="text-decoration-none">
                     <div class="card service-card h-100 border-0 shadow-sm text-center p-4">
                         <i class="fas fa-comments mb-3" style="font-size: 3rem; color: #047d78;"></i>
                         <h5 class="fw-semibold" style="color: #047d78;">Tanya Jawab</h5>
@@ -433,7 +477,7 @@
                     <img src="<?= base_url('assets/images/logos/Logo-Tut-Wuri.png'); ?>" alt="Mitra 2" style="max-height: 80px;">
                 </div>
                 <div class="mitra-item">
-                    <img src="<?= base_url('assets/images/logos/LOGO1A.png'); ?>" alt="Mitra 3" style="max-height: 80px;">
+                    <img src="<?= base_url('assets/images/logos/LOGO4A.png'); ?>" alt="Mitra 3" style="max-height: 100px;">
                 </div>
                 <div class="mitra-item">
                     <img src="<?= base_url('assets/images/logos/logobantul.png'); ?>" alt="Mitra 4" style="max-height: 80px;">
@@ -448,7 +492,7 @@
                     <img src="<?= base_url('assets/images/logos/Logo-Tut-Wuri.png'); ?>" alt="Mitra 2" style="max-height: 100px;">
                 </div>
                 <div class="mitra-item">
-                    <img src="<?= base_url('assets/images/logos/LOGO1A.png'); ?>" alt="Mitra 3" style="max-height: 100px;">
+                    <img src="<?= base_url('assets/images/logos/LOGO4A.png'); ?>" alt="Mitra 3" style="max-height: 100px;">
                 </div>
                 <div class="mitra-item">
                     <img src="<?= base_url('assets/images/logos/logobantul.png'); ?>" alt="Mitra 4" style="max-height: 100px;">
@@ -482,7 +526,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 sliderContainer.innerHTML += `
                     <div class="swiper-slide">
                         <div class="artikel-card shadow-sm">
-                            <img src="${img}" alt="${post.title}" onerror="this.src='<?= base_url('assets/images/blog/default.jpg'); ?>'">
+                            <img src="${img}" alt="${post.title}" onclick="openImageModal('${img}')" onerror="this.src='<?= base_url('assets/images/blog/default.jpg'); ?>'">
                             <div class="p-3">
                                 <h4 style="color: #047d78; margin-bottom: 10px;">${post.title}</h4>
                                 <a href="<?= base_url('artikel/baca/'); ?>${slug}" style="color: #047d78; text-decoration: none; font-weight: 600;">Lebih Detail →</a>
@@ -564,6 +608,21 @@ const swiper = new Swiper('.heroSwiper', {
     effect: 'slide',
     grabCursor: true,
     lazy: true,
+});
+
+function openImageModal(src) {
+    document.getElementById('imageModal').style.display = 'block';
+    document.getElementById('modalImage').src = src;
+    document.body.style.overflow = 'hidden';
+}
+
+function closeImageModal() {
+    document.getElementById('imageModal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeImageModal();
 });
 </script>
 

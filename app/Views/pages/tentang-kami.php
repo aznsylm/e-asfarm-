@@ -3,11 +3,10 @@
 <?= $this->section('content') ?>
 
 <style>
-.lightbox{display:none;position:fixed;z-index:9999;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);}
-.lightbox:target{display:flex;align-items:center;justify-content:center;}
-.lightbox img{max-width:90%;max-height:90%;border-radius:8px;}
-.lightbox-close{position:absolute;top:20px;right:30px;color:#fff;font-size:40px;text-decoration:none;}
-.img-clickable{cursor:pointer;}
+.image-modal{display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.9);cursor:zoom-out;}
+.image-modal img{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);max-width:90%;max-height:90%;object-fit:contain;}
+.image-modal-close{position:absolute;top:20px;right:30px;color:#fff;font-size:40px;font-weight:bold;cursor:pointer;z-index:10000;}
+.image-modal-close:hover{color:#ccc;}
 .info-tab{border:2px solid #047d78;background:#fff;color:#047d78;padding:12px 20px;border-radius:8px;cursor:pointer;transition:all .3s;text-align:left;width:100%;margin-bottom:10px;}
 .info-tab:hover{background:#f5f5f5;}
 .info-tab.active{background:#047d78;color:#fff;}
@@ -22,16 +21,8 @@
 .peneliti-item img:hover{transform:scale(1.05);box-shadow:0 4px 12px rgba(0,0,0,0.2);}
 @keyframes slide-peneliti{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
 @media(max-width:767px){.peneliti-track{animation-duration:15s;}}
-</style>
-
-<style>
-.team-card {
-  transition: all 0.3s;
-}
-.team-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
-}
+.team-card {transition: all 0.3s;}
+.team-card:hover {transform: translateY(-5px);box-shadow: 0 8px 16px rgba(0,0,0,0.15);}
 </style>
 
 <!-- Informasi E-Asfarm -->
@@ -139,7 +130,7 @@
       <div class="col-lg-4 col-md-6">
         <div class="card h-100 border-0 shadow-sm team-card" style="border-radius: 8px;">
           <div class="card-body text-center p-4">
-            <a href="#img1"><img src="<?= base_url('assets/images/frontend-pages/apt.Nurul Kusumawardani.jpg'); ?>" alt="Apoteker" class="rounded-circle mb-3 img-clickable" style="width: 150px; height: 150px; object-fit: cover;"></a>
+            <img src="<?= base_url('assets/images/frontend-pages/apt.Nurul Kusumawardani.jpg'); ?>" alt="Apoteker" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover; cursor: pointer;" onclick="openImageModal(this.src)">
             <h4 class="fw-bold mb-2" style="color: #047d78;">apt. Nurul Kusumawardani, M. Farm</h4>
             <p class="mb-0" style="color: #047d78;">Ketua Dosen Peneliti</p>
           </div>
@@ -148,7 +139,7 @@
       <div class="col-lg-4 col-md-6">
         <div class="card h-100 border-0 shadow-sm team-card" style="border-radius: 8px;">
           <div class="card-body text-center p-4">
-            <a href="#img2"><img src="<?= base_url('assets/images/frontend-pages/dhina-puspasari-wijaya.png'); ?>" alt="Developer" class="rounded-circle mb-3 img-clickable" style="width: 150px; height: 150px; object-fit: cover; object-position: top;"></a>
+            <img src="<?= base_url('assets/images/frontend-pages/dhina-puspasari-wijaya.png'); ?>" alt="Developer" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover; object-position: top; cursor: pointer;" onclick="openImageModal(this.src)">
             <h4 class="fw-bold mb-2" style="color: #047d78;">Dhina Puspasari Wijaya, S.Kom., M.Kom.</h4>
             <p class="mb-0" style="color: #047d78;">Web Developer</p>
           </div>
@@ -157,7 +148,7 @@
       <div class="col-lg-4 col-md-6">
         <div class="card h-100 border-0 shadow-sm team-card" style="border-radius: 8px;">
           <div class="card-body text-center p-4">
-            <a href="#img3"><img src="<?= base_url('assets/images/frontend-pages/aizan-syalim.png'); ?>" alt="Developer" class="rounded-circle mb-3 img-clickable" style="width: 150px; height: 150px; object-fit: cover; object-position: top;"></a>
+            <img src="<?= base_url('assets/images/frontend-pages/aizan-syalim.png'); ?>" alt="Developer" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover; object-position: top; cursor: pointer;" onclick="openImageModal(this.src)">
             <h4 class="fw-bold mb-2" style="color: #047d78;">Aizan Syalim</h4>
             <p class="mb-0" style="color: #047d78;">Web Developer</p>
           </div>
@@ -168,7 +159,7 @@
 </section>
 
 <!-- Tenaga Ahli -->
-<section class="py-4">
+<section class="py-4" id="team">
   <div class="container-fluid">
     <div class="row mb-4">
       <div class="col-12 text-center">
@@ -179,7 +170,7 @@
       <div class="col-lg-4 col-md-6">
         <div class="card h-100 border-0 shadow-sm" style="border-radius: 8px;">
           <div class="card-body text-center p-3">
-            <a href="#img4"><img src="<?= base_url('assets/images/frontend-pages/Nurul.webp'); ?>" alt="Apoteker" class="rounded-circle mb-2 img-clickable" style="width: 150px; height: 150px; object-fit: cover;"></a>
+            <img src="<?= base_url('assets/images/frontend-pages/Nurul.webp'); ?>" alt="Apoteker" class="rounded-circle mb-2" style="width: 150px; height: 150px; object-fit: cover; cursor: pointer;" onclick="openImageModal(this.src)">
             <h6 class="fw-bold mb-1" style="color: #047d78;">apt. Nurul Kusumawardani, M. Farm</h6>
             <p class="mb-1 small" style="color: #047d78;">Apoteker Klinis</p>
             <p class="mb-2 text-muted small"><i class="ti ti-phone"></i> 081902808231</p>
@@ -192,7 +183,7 @@
       <div class="col-lg-4 col-md-6">
         <div class="card h-100 border-0 shadow-sm" style="border-radius: 8px;">
           <div class="card-body text-center p-3">
-            <a href="#img5"><img src="<?= base_url('assets/images/frontend-pages/Emelda.webp'); ?>" alt="Tenaga Ahli" class="rounded-circle mb-2 img-clickable" style="width: 150px; height: 150px; object-fit: cover;"></a>
+            <img src="<?= base_url('assets/images/frontend-pages/Emelda.webp'); ?>" alt="Tenaga Ahli" class="rounded-circle mb-2" style="width: 150px; height: 150px; object-fit: cover; cursor: pointer;" onclick="openImageModal(this.src)">
             <h6 class="fw-bold mb-1" style="color: #047d78;">apt. Emelda, M.Farm</h6>
             <p class="mb-1 small" style="color: #047d78;">Apoteker Fokus Pada Bidang Etnomedisin</p>
             <p class="mb-2 text-muted small"><i class="ti ti-phone"></i> 085752334536</p>
@@ -205,7 +196,7 @@
       <div class="col-lg-4 col-md-6">
         <div class="card h-100 border-0 shadow-sm" style="border-radius: 8px;">
           <div class="card-body text-center p-3">
-            <a href="#img6"><img src="<?= base_url('assets/images/frontend-pages/Eliza.webp'); ?>" alt="Tenaga Ahli" class="rounded-circle mb-2 img-clickable" style="width: 150px; height: 150px; object-fit: cover;"></a>
+            <img src="<?= base_url('assets/images/frontend-pages/Eliza.webp'); ?>" alt="Tenaga Ahli" class="rounded-circle mb-2" style="width: 150px; height: 150px; object-fit: cover; cursor: pointer;" onclick="openImageModal(this.src)">
             <h6 class="fw-bold mb-1" style="color: #047d78;">apt. Eliza Dwinta, M.Pharm.,SCI</h6>
             <p class="mb-1 small" style="color: #047d78;">Apoteker Fokus Pada Kesehatan Mental</p>
             <p class="mb-2 text-muted small"><i class="ti ti-phone"></i> 082226351616</p>
@@ -218,7 +209,7 @@
       <div class="col-lg-4 col-md-6">
         <div class="card h-100 border-0 shadow-sm" style="border-radius: 8px;">
           <div class="card-body text-center p-3">
-            <a href="#img7"><img src="<?= base_url('assets/images/frontend-pages/Silvia.webp'); ?>" alt="Bidan" class="rounded-circle mb-2 img-clickable" style="width: 150px; height: 150px; object-fit: cover;"></a>
+            <img src="<?= base_url('assets/images/frontend-pages/Silvia.webp'); ?>" alt="Bidan" class="rounded-circle mb-2" style="width: 150px; height: 150px; object-fit: cover; cursor: pointer;" onclick="openImageModal(this.src)">
             <h6 class="fw-bold mb-1" style="color: #047d78;">Silvia Rizki Syah Putri., S.Tr.Keb., M. Keb</h6>
             <p class="mb-1 small" style="color: #047d78;">Bidan</p>
             <p class="mb-2 text-muted small"><i class="ti ti-phone"></i> 088233780554</p>
@@ -231,7 +222,7 @@
       <div class="col-lg-4 col-md-6">
         <div class="card h-100 border-0 shadow-sm" style="border-radius: 8px;">
           <div class="card-body text-center p-3">
-            <a href="#img8"><img src="<?= base_url('assets/images/frontend-pages/Adelia.webp'); ?>" alt="Bidan" class="rounded-circle mb-2 img-clickable" style="width: 150px; height: 150px; object-fit: cover;"></a>
+            <img src="<?= base_url('assets/images/frontend-pages/Adelia.webp'); ?>" alt="Bidan" class="rounded-circle mb-2" style="width: 150px; height: 150px; object-fit: cover; cursor: pointer;" onclick="openImageModal(this.src)">
             <h6 class="fw-bold mb-1" style="color: #047d78;">Adelia Kholila Putri, S.Keb</h6>
             <p class="mb-1 small" style="color: #047d78;">Bidan</p>
             <p class="mb-2 text-muted small"><i class="ti ti-phone"></i> 081297161149</p>
@@ -244,7 +235,7 @@
       <div class="col-lg-4 col-md-6">
         <div class="card h-100 border-0 shadow-sm" style="border-radius: 8px;">
           <div class="card-body text-center p-3">
-            <a href="#img9"><img src="<?= base_url('assets/images/frontend-pages/Indah.webp'); ?>" alt="Ahli Gizi" class="rounded-circle mb-2 img-clickable" style="width: 150px; height: 150px; object-fit: cover;"></a>
+            <img src="<?= base_url('assets/images/frontend-pages/Indah.webp'); ?>" alt="Ahli Gizi" class="rounded-circle mb-2" style="width: 150px; height: 150px; object-fit: cover; cursor: pointer;" onclick="openImageModal(this.src)">
             <h6 class="fw-bold mb-1" style="color: #047d78;">Wiji Indah Lestari, S.Gz., M.K.M</h6>
             <p class="mb-1 small" style="color: #047d78;">Ahli Gizi</p>
             <p class="mb-2 text-muted small"><i class="ti ti-phone"></i> 082293679312</p>
@@ -269,45 +260,51 @@
     <div class="peneliti-slider">
       <div class="peneliti-track">
         <div class="peneliti-item">
-          <a href="#img10"><img src="<?= base_url('assets/images/frontend-pages/Affrent.webp'); ?>" alt="Peneliti 1"></a>
+          <img src="<?= base_url('assets/images/frontend-pages/Affrent.webp'); ?>" alt="Peneliti 1" onclick="openImageModal(this.src)">
         </div>
         <div class="peneliti-item">
-          <a href="#img11"><img src="<?= base_url('assets/images/frontend-pages/Ainiyah.webp'); ?>" alt="Peneliti 2"></a>
+          <img src="<?= base_url('assets/images/frontend-pages/Ainiyah.webp'); ?>" alt="Peneliti 2" onclick="openImageModal(this.src)">
         </div>
         <div class="peneliti-item">
-          <a href="#img12"><img src="<?= base_url('assets/images/frontend-pages/Aldianus.webp'); ?>" alt="Peneliti 3"></a>
+          <img src="<?= base_url('assets/images/frontend-pages/Aldianus.webp'); ?>" alt="Peneliti 3" onclick="openImageModal(this.src)">
         </div>
         <div class="peneliti-item">
-          <a href="#img13"><img src="<?= base_url('assets/images/frontend-pages/Almas.webp'); ?>" alt="Peneliti 4"></a>
+          <img src="<?= base_url('assets/images/frontend-pages/Almas.webp'); ?>" alt="Peneliti 4" onclick="openImageModal(this.src)">
         </div>
         <div class="peneliti-item">
-          <a href="#img14"><img src="<?= base_url('assets/images/frontend-pages/Deni.webp'); ?>" alt="Peneliti 5"></a>
+          <img src="<?= base_url('assets/images/frontend-pages/Deni.webp'); ?>" alt="Peneliti 5" onclick="openImageModal(this.src)">
         </div>
         <div class="peneliti-item">
-          <a href="#img15"><img src="<?= base_url('assets/images/frontend-pages/Nadia.webp'); ?>" alt="Peneliti 6"></a>
+          <img src="<?= base_url('assets/images/frontend-pages/Nadia.webp'); ?>" alt="Peneliti 6" onclick="openImageModal(this.src)">
         </div>
         <div class="peneliti-item">
-          <a href="#img10"><img src="<?= base_url('assets/images/frontend-pages/Affrent.webp'); ?>" alt="Peneliti 1"></a>
+          <img src="<?= base_url('assets/images/frontend-pages/Affrent.webp'); ?>" alt="Peneliti 1" onclick="openImageModal(this.src)">
         </div>
         <div class="peneliti-item">
-          <a href="#img11"><img src="<?= base_url('assets/images/frontend-pages/Ainiyah.webp'); ?>" alt="Peneliti 2"></a>
+          <img src="<?= base_url('assets/images/frontend-pages/Ainiyah.webp'); ?>" alt="Peneliti 2" onclick="openImageModal(this.src)">
         </div>
         <div class="peneliti-item">
-          <a href="#img12"><img src="<?= base_url('assets/images/frontend-pages/Aldianus.webp'); ?>" alt="Peneliti 3"></a>
+          <img src="<?= base_url('assets/images/frontend-pages/Aldianus.webp'); ?>" alt="Peneliti 3" onclick="openImageModal(this.src)">
         </div>
         <div class="peneliti-item">
-          <a href="#img13"><img src="<?= base_url('assets/images/frontend-pages/Almas.webp'); ?>" alt="Peneliti 4"></a>
+          <img src="<?= base_url('assets/images/frontend-pages/Almas.webp'); ?>" alt="Peneliti 4" onclick="openImageModal(this.src)">
         </div>
         <div class="peneliti-item">
-          <a href="#img14"><img src="<?= base_url('assets/images/frontend-pages/Deni.webp'); ?>" alt="Peneliti 5"></a>
+          <img src="<?= base_url('assets/images/frontend-pages/Deni.webp'); ?>" alt="Peneliti 5" onclick="openImageModal(this.src)">
         </div>
         <div class="peneliti-item">
-          <a href="#img15"><img src="<?= base_url('assets/images/frontend-pages/Nadia.webp'); ?>" alt="Peneliti 6"></a>
+          <img src="<?= base_url('assets/images/frontend-pages/Nadia.webp'); ?>" alt="Peneliti 6" onclick="openImageModal(this.src)">
         </div>
       </div>
     </div>
   </div>
 </section>
+
+<!-- Image Modal -->
+<div id="imageModal" class="image-modal" onclick="closeImageModal()">
+    <span class="image-modal-close">&times;</span>
+    <img id="modalImage" src="" alt="Detail">
+</div>
 
 <script>
 function showInfo(id){
@@ -316,22 +313,21 @@ function showInfo(id){
   document.getElementById(id).classList.add('active');
   event.target.classList.add('active');
 }
-</script>
 
-<div id="img1" class="lightbox"><a href="#" class="lightbox-close">&times;</a><img src="<?= base_url('assets/images/frontend-pages/apt.Nurul Kusumawardani.jpg'); ?>"></div>
-<div id="img2" class="lightbox"><a href="#" class="lightbox-close">&times;</a><img src="<?= base_url('assets/images/frontend-pages/dhina-puspasari-wijaya.png'); ?>"></div>
-<div id="img3" class="lightbox"><a href="#" class="lightbox-close">&times;</a><img src="<?= base_url('assets/images/frontend-pages/aizan-syalim.png'); ?>"></div>
-<div id="img4" class="lightbox"><a href="#" class="lightbox-close">&times;</a><img src="<?= base_url('assets/images/frontend-pages/Nurul.webp'); ?>"></div>
-<div id="img5" class="lightbox"><a href="#" class="lightbox-close">&times;</a><img src="<?= base_url('assets/images/frontend-pages/Emelda.webp'); ?>"></div>
-<div id="img6" class="lightbox"><a href="#" class="lightbox-close">&times;</a><img src="<?= base_url('assets/images/frontend-pages/Eliza.webp'); ?>"></div>
-<div id="img7" class="lightbox"><a href="#" class="lightbox-close">&times;</a><img src="<?= base_url('assets/images/frontend-pages/Silvia.webp'); ?>"></div>
-<div id="img8" class="lightbox"><a href="#" class="lightbox-close">&times;</a><img src="<?= base_url('assets/images/frontend-pages/Adelia.webp'); ?>"></div>
-<div id="img9" class="lightbox"><a href="#" class="lightbox-close">&times;</a><img src="<?= base_url('assets/images/frontend-pages/Indah.webp'); ?>"></div>
-<div id="img10" class="lightbox"><a href="#" class="lightbox-close">&times;</a><img src="<?= base_url('assets/images/frontend-pages/Affrent.webp'); ?>"></div>
-<div id="img11" class="lightbox"><a href="#" class="lightbox-close">&times;</a><img src="<?= base_url('assets/images/frontend-pages/Ainiyah.webp'); ?>"></div>
-<div id="img12" class="lightbox"><a href="#" class="lightbox-close">&times;</a><img src="<?= base_url('assets/images/frontend-pages/Aldianus.webp'); ?>"></div>
-<div id="img13" class="lightbox"><a href="#" class="lightbox-close">&times;</a><img src="<?= base_url('assets/images/frontend-pages/Almas.webp'); ?>"></div>
-<div id="img14" class="lightbox"><a href="#" class="lightbox-close">&times;</a><img src="<?= base_url('assets/images/frontend-pages/Deni.webp'); ?>"></div>
-<div id="img15" class="lightbox"><a href="#" class="lightbox-close">&times;</a><img src="<?= base_url('assets/images/frontend-pages/Nadia.webp'); ?>"></div>
+function openImageModal(src) {
+    document.getElementById('imageModal').style.display = 'block';
+    document.getElementById('modalImage').src = src;
+    document.body.style.overflow = 'hidden';
+}
+
+function closeImageModal() {
+    document.getElementById('imageModal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeImageModal();
+});
+</script>
 
 <?= $this->endSection() ?>

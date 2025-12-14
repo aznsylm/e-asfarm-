@@ -1,152 +1,112 @@
-<?= $this->extend('layouts/dashboard_layout') ?>
+<?= $this->extend('layouts/user_layout') ?>
 <?= $this->section('content') ?>
 
-<div class="container-fluid">
-    <!-- Welcome Banner -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card bg-primary text-white mb-4">
-                <div class="card-body p-4">
-                    <h2 class="mb-2"><i class="bi bi-hand-wave"></i> Selamat Datang, <?= esc($user->username) ?>!</h2>
-                    <p class="mb-0">Terima kasih telah bergabung dengan E-Asfarm. Mari berbagi pengetahuan kesehatan untuk masyarakat!</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Statistik Artikel -->
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="card border-primary">
-                <div class="card-body text-center">
-                    <i class="bi bi-file-text text-primary" style="font-size: 2rem;"></i>
-                    <h3 class="mt-2 mb-0 text-primary"><?= $totalArtikel ?></h3>
-                    <p class="text-muted mb-0">Total Artikel</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-warning">
-                <div class="card-body text-center">
-                    <i class="bi bi-clock-history text-warning" style="font-size: 2rem;"></i>
-                    <h3 class="mt-2 mb-0 text-warning"><?= $artikelPending ?></h3>
-                    <p class="text-muted mb-0">Menunggu Review</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-success">
-                <div class="card-body text-center">
-                    <i class="bi bi-check-circle text-success" style="font-size: 2rem;"></i>
-                    <h3 class="mt-2 mb-0 text-success"><?= $artikelApproved ?></h3>
-                    <p class="text-muted mb-0">Dipublikasikan</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header bg-white">
-                    <h5 class="mb-0"><i class="bi bi-lightning-charge"></i> Akses Cepat</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <a href="<?= route_to('pengguna.artikel') ?>" class="btn btn-primary w-100 py-3">
-                                <i class="bi bi-plus-circle"></i> Buat Artikel Baru
-                            </a>
-                        </div>
-                        <div class="col-md-4">
-                            <a href="<?= route_to('pengguna.artikel') ?>" class="btn btn-outline-primary w-100 py-3">
-                                <i class="bi bi-folder"></i> Kelola Artikel Saya
-                            </a>
-                        </div>
-                        <div class="col-md-4">
-                            <a href="<?= route_to('pengguna.monitoring') ?>" class="btn btn-outline-success w-100 py-3">
-                                <i class="bi bi-heart-pulse"></i> Monitoring Kesehatan
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Informasi Penting -->
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="card h-100">
-                <div class="card-header bg-info text-white">
-                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> Informasi Penting</h5>
-                </div>
-                <div class="card-body">
-                    <div class="alert alert-light border">
-                        <h6 class="alert-heading"><i class="bi bi-shield-check"></i> Proses Review Artikel</h6>
-                        <p class="mb-0 small">Setiap artikel yang Anda submit akan direview oleh admin untuk memastikan kualitas dan keakuratan informasi kesehatan sebelum dipublikasikan.</p>
-                    </div>
-                    <div class="alert alert-light border">
-                        <h6 class="alert-heading"><i class="bi bi-clock"></i> Waktu Review</h6>
-                        <p class="mb-0 small">Proses review biasanya memakan waktu 1-3 hari kerja. Anda akan melihat status artikel di halaman "Artikel Saya".</p>
-                    </div>
-                    <div class="alert alert-light border mb-0">
-                        <h6 class="alert-heading"><i class="bi bi-pencil-square"></i> Edit Artikel</h6>
-                        <p class="mb-0 small">Artikel yang ditolak atau pending dapat Anda edit dan submit ulang untuk direview kembali.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card h-100">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0"><i class="bi bi-lightbulb"></i> Tips Menulis Artikel</h5>
-                </div>
-                <div class="card-body">
-                    <ul class="list-unstyled">
-                        <li class="mb-3">
-                            <i class="bi bi-check-circle-fill text-success"></i>
-                            <strong>Judul Menarik:</strong> Gunakan judul yang informatif dan mudah dipahami
-                        </li>
-                        <li class="mb-3">
-                            <i class="bi bi-check-circle-fill text-success"></i>
-                            <strong>Konten Berkualitas:</strong> Minimal 300 kata dengan informasi yang bermanfaat
-                        </li>
-                        <li class="mb-3">
-                            <i class="bi bi-check-circle-fill text-success"></i>
-                            <strong>Gambar Relevan:</strong> Gunakan gambar berkualitas (JPG/PNG/WEBP, max 2MB)
-                        </li>
-                        <li class="mb-3">
-                            <i class="bi bi-check-circle-fill text-success"></i>
-                            <strong>Kategori Tepat:</strong> Pilih kategori yang sesuai (Farmasi/Gizi/Bidan)
-                        </li>
-                        <li class="mb-0">
-                            <i class="bi bi-check-circle-fill text-success"></i>
-                            <strong>Konten Original:</strong> Pastikan tidak melanggar hak cipta
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bantuan -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card border-warning">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-question-circle text-warning" style="font-size: 2rem;"></i>
-                        <div class="ms-3">
-                            <h6 class="mb-1">Butuh Bantuan?</h6>
-                            <p class="mb-0 text-muted">Jika ada pertanyaan atau kendala, silakan hubungi admin melalui menu kontak atau WhatsApp.</p>
-                        </div>
-                    </div>
-                </div>
+<div class="row">
+    <div class="col-12">
+        <div class="card" style="background-color: #047d78; color: white;">
+            <div class="card-body p-4">
+                <h2 class="mb-2">Selamat Datang, <?= esc($user->username) ?>!</h2>
+                <p class="mb-0">Pantau kesehatan Anda dan keluarga melalui E-Asfarm</p>
             </div>
         </div>
     </div>
 </div>
+
+<?php if (!empty($alerts)): ?>
+<div class="row">
+    <div class="col-12">
+        <?php foreach ($alerts as $alert): ?>
+        <div class="alert alert-<?= $alert['type'] ?> alert-dismissible fade show">
+            <strong><i class="fas fa-<?= $alert['icon'] ?>"></i> Perhatian!</strong> <?= $alert['message'] ?>
+            <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+        </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+<?php endif; ?>
+
+<div class="row">
+    <div class="col-lg-4 col-md-6 col-12 mb-3">
+        <div class="small-box <?= $hasIbuHamil ? 'bg-info' : 'bg-secondary' ?>">
+            <div class="inner">
+                <h3><?= $hasIbuHamil ? '<i class="fas fa-check"></i>' : '<i class="fas fa-times"></i>' ?></h3>
+                <p>Ibu Hamil & Menyusui</p>
+            </div>
+            <div class="icon"><i class="fas fa-baby"></i></div>
+            <?php if ($hasIbuHamil): ?>
+            <a href="<?= base_url('pengguna/monitoring') ?>" class="small-box-footer">Lihat Detail <i class="fas fa-arrow-circle-right"></i></a>
+            <?php endif; ?>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6 col-12 mb-3">
+        <div class="small-box <?= $hasBalita ? 'bg-success' : 'bg-secondary' ?>">
+            <div class="inner">
+                <h3><?= $hasBalita ? '<i class="fas fa-check"></i>' : '<i class="fas fa-times"></i>' ?></h3>
+                <p>Balita & Anak</p>
+            </div>
+            <div class="icon"><i class="fas fa-child"></i></div>
+            <?php if ($hasBalita): ?>
+            <a href="<?= base_url('pengguna/monitoring-balita') ?>" class="small-box-footer">Lihat Detail <i class="fas fa-arrow-circle-right"></i></a>
+            <?php endif; ?>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6 col-12 mb-3">
+        <div class="small-box <?= $hasRemaja ? 'bg-warning' : 'bg-secondary' ?>">
+            <div class="inner">
+                <h3><?= $hasRemaja ? '<i class="fas fa-check"></i>' : '<i class="fas fa-times"></i>' ?></h3>
+                <p>Remaja</p>
+            </div>
+            <div class="icon"><i class="fas fa-user-friends"></i></div>
+            <?php if ($hasRemaja): ?>
+            <a href="<?= base_url('pengguna/monitoring-remaja') ?>" class="small-box-footer">Lihat Detail <i class="fas fa-arrow-circle-right"></i></a>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+<?php if ($lastVisit): ?>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header" style="background-color: #047d78; color: white;">
+                <h3 class="card-title"><i class="fas fa-calendar-check"></i> Kunjungan Terakhir</h3>
+            </div>
+            <div class="card-body">
+                <p class="mb-0"><strong>Tanggal:</strong> <?= date('d F Y', strtotime($lastVisit)) ?></p>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
+<div class="row">
+    <div class="col-lg-6 col-12 mb-3">
+        <div class="card">
+            <div class="card-header" style="background-color: #047d78; color: white;">
+                <h3 class="card-title"><i class="fas fa-info-circle"></i> Informasi Kesehatan</h3>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2"><i class="fas fa-check-circle text-success"></i> Lakukan pemeriksaan rutin sesuai jadwal</li>
+                    <li class="mb-2"><i class="fas fa-check-circle text-success"></i> Konsumsi suplemen sesuai anjuran tenaga kesehatan</li>
+                    <li class="mb-2"><i class="fas fa-check-circle text-success"></i> Jaga pola makan bergizi seimbang</li>
+                    <li class="mb-2"><i class="fas fa-check-circle text-success"></i> Istirahat cukup dan kelola stres</li>
+                    <li class="mb-0"><i class="fas fa-check-circle text-success"></i> Segera hubungi tenaga kesehatan jika ada keluhan</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php if (!$hasIbuHamil && !$hasBalita && !$hasRemaja): ?>
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <h5><i class="fas fa-info-circle"></i> Belum Ada Data Monitoring</h5>
+            <p class="mb-0">Data monitoring kesehatan Anda belum diinput oleh tenaga kesehatan. Silakan hubungi admin padukuhan atau tenaga kesehatan di wilayah Anda untuk memulai monitoring kesehatan.</p>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
 
 <?= $this->endSection() ?>

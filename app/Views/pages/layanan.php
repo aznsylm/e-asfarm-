@@ -77,7 +77,7 @@
         </div>
         <div class="row g-4">
             <div class="col-6 col-md-4" style="flex: 0 0 auto; width: 20%;">
-                <a href="#" class="layanan-link">
+                <a href="<?= base_url('tentang-kami#team'); ?>" class="layanan-link">
                     <div class="layanan-card p-4 text-center">
                         <div class="layanan-icon">
                             <i class="fas fa-user-md"></i>
@@ -88,7 +88,7 @@
                 </a>
             </div>
             <div class="col-6 col-md-4" style="flex: 0 0 auto; width: 20%;">
-                <a href="#" class="layanan-link">
+                <a href="<?= base_url($artikelLink); ?>" class="layanan-link">
                     <div class="layanan-card p-4 text-center">
                         <div class="layanan-icon">
                             <i class="fas fa-newspaper"></i>
@@ -99,7 +99,7 @@
                 </a>
             </div>
             <div class="col-6 col-md-4" style="flex: 0 0 auto; width: 20%;">
-                <a href="#" class="layanan-link">
+                <a href="<?= base_url($tanyaJawabLink); ?>" class="layanan-link">
                     <div class="layanan-card p-4 text-center">
                         <div class="layanan-icon">
                             <i class="fas fa-comments"></i>

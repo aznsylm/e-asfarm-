@@ -83,8 +83,15 @@ class MonitoringBalitaController extends BaseController
     private function getBalitaAlerts($padukuhanId)
     {
         $db = \Config\Database::connect();
+        
+        // Subquery untuk mendapatkan kunjungan terakhir per monitoring
+        $subQuery = $db->table('kunjungan_balita kb2')
+            ->select('MAX(kb2.id) as last_kunjungan_id')
+            ->groupBy('kb2.monitoring_balita_id')
+            ->getCompiledSelect();
+        
         $builder = $db->table('kunjungan_balita kb')
-            ->select('mbi.nama_anak, mbi.no_hp_wali, kbi.status_imunisasi, kba.berat_badan, kbg.vitamin_a, kbk.demam, kbk.diare')
+            ->select('mbi.nama_anak, mbi.no_hp_wali, kbi.status_imunisasi, kba.berat_badan, kbg.vitamin_a, kbk.demam, kbk.diare, kb.tanggal_kunjungan, p.nama_padukuhan, mb.id as monitoring_id')
             ->join('monitoring_balita mb', 'mb.id = kb.monitoring_balita_id')
             ->join('monitoring_balita_identitas mbi', 'mbi.monitoring_balita_id = mb.id')
             ->join('kunjungan_balita_imunisasi kbi', 'kbi.kunjungan_balita_id = kb.id')
@@ -92,8 +99,9 @@ class MonitoringBalitaController extends BaseController
             ->join('kunjungan_balita_gizi kbg', 'kbg.kunjungan_balita_id = kb.id')
             ->join('kunjungan_balita_keluhan kbk', 'kbk.kunjungan_balita_id = kb.id')
             ->join('users u', 'u.id = mb.user_id')
-            ->orderBy('kb.tanggal_kunjungan', 'DESC')
-            ->limit(100);
+            ->join('padukuhan p', 'p.id = u.padukuhan_id', 'left')
+            ->where("kb.id IN ($subQuery)", null, false)
+            ->orderBy('kb.tanggal_kunjungan', 'DESC');
         
         if ($padukuhanId) {
             $builder->where('u.padukuhan_id', $padukuhanId);
@@ -105,18 +113,18 @@ class MonitoringBalitaController extends BaseController
         
         foreach ($results as $row) {
             // 1. Imunisasi belum lengkap
-            if ($row['status_imunisasi'] === 'Belum Lengkap') {
-                $alertData['imunisasi'][] = ['nama' => $row['nama_anak'], 'hp' => $row['no_hp_wali'], 'detail' => 'Belum Lengkap'];
+            if ($row['status_imunisasi'] === 'Belum Lengkap' || $row['status_imunisasi'] === 'Belum' || $row['status_imunisasi'] === 'Terlewat') {
+                $alertData['imunisasi'][] = ['nama' => $row['nama_anak'], 'hp' => $row['no_hp_wali'], 'detail' => $row['status_imunisasi'], 'padukuhan' => $row['nama_padukuhan'], 'tanggal' => $row['tanggal_kunjungan'], 'monitoring_id' => $row['monitoring_id']];
                 $alertCount++;
             }
             // 2. BB Kurang
             if (!empty($row['berat_badan']) && (float)$row['berat_badan'] < 10) {
-                $alertData['bb_kurang'][] = ['nama' => $row['nama_anak'], 'hp' => $row['no_hp_wali'], 'detail' => $row['berat_badan'] . ' kg'];
+                $alertData['bb_kurang'][] = ['nama' => $row['nama_anak'], 'hp' => $row['no_hp_wali'], 'detail' => $row['berat_badan'] . ' kg', 'padukuhan' => $row['nama_padukuhan'], 'tanggal' => $row['tanggal_kunjungan'], 'monitoring_id' => $row['monitoring_id']];
                 $alertCount++;
             }
             // 3. Tidak dapat Vitamin A
             if ($row['vitamin_a'] == 0) {
-                $alertData['vitamin_a'][] = ['nama' => $row['nama_anak'], 'hp' => $row['no_hp_wali'], 'detail' => 'Belum dapat'];
+                $alertData['vitamin_a'][] = ['nama' => $row['nama_anak'], 'hp' => $row['no_hp_wali'], 'detail' => 'Belum dapat', 'padukuhan' => $row['nama_padukuhan'], 'tanggal' => $row['tanggal_kunjungan'], 'monitoring_id' => $row['monitoring_id']];
                 $alertCount++;
             }
             // 4. Keluhan serius
@@ -124,7 +132,7 @@ class MonitoringBalitaController extends BaseController
                 $keluhan = [];
                 if ($row['demam'] == 1) $keluhan[] = 'Demam';
                 if ($row['diare'] == 1) $keluhan[] = 'Diare';
-                $alertData['keluhan'][] = ['nama' => $row['nama_anak'], 'hp' => $row['no_hp_wali'], 'detail' => implode(', ', $keluhan)];
+                $alertData['keluhan'][] = ['nama' => $row['nama_anak'], 'hp' => $row['no_hp_wali'], 'detail' => implode(', ', $keluhan), 'padukuhan' => $row['nama_padukuhan'], 'tanggal' => $row['tanggal_kunjungan'], 'monitoring_id' => $row['monitoring_id']];
                 $alertCount++;
             }
         }

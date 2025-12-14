@@ -75,12 +75,9 @@
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Nomor Telepon *</label>
-                                    <input type="tel" name="nomor_telepon" class="form-control" placeholder="Contoh: 081234567890" required>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Usia Kehamilan (bulan) *</label>
-                                    <input type="number" name="usia_kehamilan" class="form-control" min="1" max="9" placeholder="Contoh: 5" required>
+                                    <label class="form-label">Usia Kehamilan (minggu) *</label>
+                                    <input type="number" name="usia_kehamilan" class="form-control" min="1" max="42" placeholder="Contoh: 20" required>
+                                    <small class="text-muted">Rentang: 1-42 minggu</small>
                                 </div>
                             </div>
 

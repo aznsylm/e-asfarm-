@@ -66,6 +66,15 @@ $routes->group('pengguna', ['filter' => 'auth'], function ($routes) {
     $routes->get('monitoring', 'Users\UsersController::monitoring', ['as' => 'pengguna.monitoring']);
     $routes->get('monitoring-remaja', 'Users\UsersController::monitoringRemaja', ['as' => 'pengguna.monitoring.remaja']);
     $routes->get('monitoring-balita', 'Users\UsersController::monitoringBalita', ['as' => 'pengguna.monitoring.balita']);
+    $routes->get('hubungi-kami', 'Users\UsersController::hubungiKami', ['as' => 'pengguna.hubungi.kami']);
+    
+    // Export routes (reuse admin export controller)
+    $routes->get('monitoring/export-pdf/(:num)', 'Admin\Monitoring\LaporanController::exportDetailPdf/ibu-hamil/$1');
+    $routes->get('monitoring/export-excel/(:num)', 'Admin\Monitoring\LaporanController::exportDetailExcel/ibu-hamil/$1');
+    $routes->get('monitoring-remaja/export-pdf/(:num)', 'Admin\Monitoring\LaporanController::exportDetailPdf/remaja/$1');
+    $routes->get('monitoring-remaja/export-excel/(:num)', 'Admin\Monitoring\LaporanController::exportDetailExcel/remaja/$1');
+    $routes->get('monitoring-balita/export-pdf/(:num)', 'Admin\Monitoring\LaporanController::exportDetailPdf/balita/$1');
+    $routes->get('monitoring-balita/export-excel/(:num)', 'Admin\Monitoring\LaporanController::exportDetailExcel/balita/$1');
 });
 // email
 
@@ -211,6 +220,10 @@ $routes->group('admin', ['filter' => 'admin'], function ($routes) {
 
     // user detail
     $routes->get('user-detail/(:num)', 'Admin\UserDetailController::index/$1', ['as' => 'admin.user.detail']);
+    $routes->get('user-export-pdf/(:num)', 'Admin\UserDetailController::exportPdf/$1', ['as' => 'admin.user.export.pdf']);
+    $routes->get('user-export-excel/(:num)', 'Admin\UserDetailController::exportExcel/$1', ['as' => 'admin.user.export.excel']);
+    $routes->get('user-export-all-pdf/(:num)', 'Admin\UserDetailController::exportAllCategoriesPdf/$1', ['as' => 'admin.user.export.all.pdf']);
+    $routes->get('user-export-all-excel/(:num)', 'Admin\UserDetailController::exportAllCategoriesExcel/$1', ['as' => 'admin.user.export.all.excel']);
     
     // kelola padukuhan
     $routes->get('padukuhan', 'Admin\PadukuhanController::index', ['as' => 'admin.padukuhan']);

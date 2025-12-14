@@ -17,7 +17,7 @@
                         <th>No</th>
                         <th>Username</th>
                         <th>Email</th>
-                        <th>Nama</th>
+                        <th>Nomor HP</th>
                         <th>Padukuhan</th>
                         <th style="width: 200px;">Aksi</th>
                     </tr>
@@ -32,7 +32,7 @@
                         <td><?= $no++ ?></td>
                         <td><?= esc($u['username']) ?></td>
                         <td><?= esc($u['email']) ?></td>
-                        <td><?= esc($u['full_name'] ?? '-') ?></td>
+                        <td><?= esc($u['phone_number'] ?? '-') ?></td>
                         <td>
                             <?php 
                             if($u['padukuhan_id']) {

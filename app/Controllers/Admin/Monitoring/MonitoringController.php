@@ -81,7 +81,8 @@ class MonitoringController extends BaseController
             'monitoringList' => $query->paginate($perPage),
             'pager' => $this->monitoringModel->pager,
             'search' => $search,
-            'alerts' => $alerts
+            'alertCount' => $alerts['count'],
+            'alertData' => $alerts['data']
         ];
         return view('admin/monitoring/ibu-hamil', $data);
     }
@@ -89,20 +90,29 @@ class MonitoringController extends BaseController
     private function getIbuHamilAlerts($padukuhanId)
     {
         $db = \Config\Database::connect();
+        
+        // Subquery untuk mendapatkan kunjungan terakhir per monitoring
+        $subQuery = $db->table('kunjungan k2')
+            ->select('MAX(k2.id) as last_kunjungan_id')
+            ->groupBy('k2.monitoring_id')
+            ->getCompiledSelect();
+        
         $builder = $db->table('kunjungan_antropometri ka')
-            ->select('mi.nama_ibu, mi.nomor_telepon, ka.tekanan_darah, ka.lila, mi.rencana_tanggal_persalinan, kk.keluhan')
+            ->select('mi.nama_ibu, mi.nomor_telepon, ka.tekanan_darah, ka.lila, mi.rencana_tanggal_persalinan, kk.keluhan, k.tanggal_kunjungan, p.nama_padukuhan, mih.id as monitoring_id')
             ->join('kunjungan k', 'k.id = ka.kunjungan_id')
             ->join('monitoring_ibu_hamil mih', 'mih.id = k.monitoring_id')
             ->join('monitoring_identitas mi', 'mi.monitoring_id = mih.id')
             ->join('kunjungan_keluhan kk', 'kk.kunjungan_id = k.id')
             ->join('users u', 'u.id = mih.user_id')
-            ->orderBy('k.tanggal_kunjungan', 'DESC')
-            ->limit(100);
+            ->join('padukuhan p', 'p.id = u.padukuhan_id', 'left')
+            ->where("k.id IN ($subQuery)", null, false)
+            ->orderBy('k.tanggal_kunjungan', 'DESC');
         
         if ($padukuhanId) {
             $builder->where('u.padukuhan_id', $padukuhanId);
         }
         
+        $builder->where('mih.status', 'active');
         $results = $builder->get()->getResultArray();
         $alertData = ['td_tinggi' => [], 'lila_rendah' => [], 'anemia' => [], 'hpl_dekat' => []];
         $alertCount = 0;
@@ -112,20 +122,20 @@ class MonitoringController extends BaseController
             if (!empty($row['tekanan_darah'])) {
                 $td = explode('/', $row['tekanan_darah']);
                 if (count($td) == 2 && ((int)$td[0] >= 140 || (int)$td[1] >= 90)) {
-                    $alertData['td_tinggi'][] = ['nama' => $row['nama_ibu'], 'hp' => $row['nomor_telepon'], 'detail' => $row['tekanan_darah']];
+                    $alertData['td_tinggi'][] = ['nama' => $row['nama_ibu'], 'hp' => $row['nomor_telepon'], 'detail' => $row['tekanan_darah'], 'padukuhan' => $row['nama_padukuhan'], 'tanggal' => $row['tanggal_kunjungan'], 'monitoring_id' => $row['monitoring_id']];
                     $alertCount++;
                 }
             }
             // 2. LILA rendah
             if (!empty($row['lila']) && (float)$row['lila'] < 23.5) {
-                $alertData['lila_rendah'][] = ['nama' => $row['nama_ibu'], 'hp' => $row['nomor_telepon'], 'detail' => $row['lila'] . ' cm'];
+                $alertData['lila_rendah'][] = ['nama' => $row['nama_ibu'], 'hp' => $row['nomor_telepon'], 'detail' => $row['lila'] . ' cm', 'padukuhan' => $row['nama_padukuhan'], 'tanggal' => $row['tanggal_kunjungan'], 'monitoring_id' => $row['monitoring_id']];
                 $alertCount++;
             }
             // 3. Anemia
             if (!empty($row['keluhan'])) {
                 $keluhan = json_decode($row['keluhan'], true);
                 if (is_array($keluhan) && (in_array('Pucat', $keluhan) || in_array('Pusing', $keluhan) || in_array('Lemas', $keluhan))) {
-                    $alertData['anemia'][] = ['nama' => $row['nama_ibu'], 'hp' => $row['nomor_telepon'], 'detail' => implode(', ', $keluhan)];
+                    $alertData['anemia'][] = ['nama' => $row['nama_ibu'], 'hp' => $row['nomor_telepon'], 'detail' => implode(', ', $keluhan), 'padukuhan' => $row['nama_padukuhan'], 'tanggal' => $row['tanggal_kunjungan'], 'monitoring_id' => $row['monitoring_id']];
                     $alertCount++;
                 }
             }
@@ -135,7 +145,7 @@ class MonitoringController extends BaseController
                 $now = time();
                 $diff = ($hpl - $now) / 86400;
                 if ($diff > 0 && $diff <= 14) {
-                    $alertData['hpl_dekat'][] = ['nama' => $row['nama_ibu'], 'hp' => $row['nomor_telepon'], 'detail' => round($diff) . ' hari lagi'];
+                    $alertData['hpl_dekat'][] = ['nama' => $row['nama_ibu'], 'hp' => $row['nomor_telepon'], 'detail' => round($diff) . ' hari lagi', 'padukuhan' => $row['nama_padukuhan'], 'tanggal' => $row['rencana_tanggal_persalinan'], 'monitoring_id' => $row['monitoring_id']];
                     $alertCount++;
                 }
             }
@@ -146,13 +156,21 @@ class MonitoringController extends BaseController
 
     public function balita()
     {
-        $data = ['title' => 'Monitoring Balita & Anak'];
+        $data = [
+            'title' => 'Monitoring Balita & Anak',
+            'alertCount' => 0,
+            'alertData' => []
+        ];
         return view('admin/monitoring/balita', $data);
     }
 
     public function remaja()
     {
-        $data = ['title' => 'Monitoring Remaja'];
+        $data = [
+            'title' => 'Monitoring Remaja',
+            'alertCount' => 0,
+            'alertData' => []
+        ];
         return view('admin/monitoring/remaja', $data);
     }
 

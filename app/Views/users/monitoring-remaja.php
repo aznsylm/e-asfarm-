@@ -1,73 +1,73 @@
-<?= $this->extend('layouts/dashboard_layout') ?>
+<?= $this->extend('layouts/user_layout') ?>
 <?= $this->section('content') ?>
 
-<div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h2><?= $title ?></h2>
-            <p class="text-muted">Data monitoring kesehatan remaja Anda</p>
-        </div>
-    </div>
+<?php if (!$hasMonitoring): ?>
+<div class="alert alert-warning">
+    <h5><i class="fas fa-exclamation-triangle"></i> Belum Ada Data Monitoring</h5>
+    <p class="mb-0">Data monitoring kesehatan remaja Anda belum tersedia. Silakan hubungi kader kesehatan di padukuhan Anda.</p>
+</div>
 
-    <?php if (!$hasMonitoring): ?>
-        <div class="row">
-            <div class="col-12">
-                <div class="card border-info">
-                    <div class="card-body text-center py-5">
-                        <i class="ti ti-clipboard-off" style="font-size: 5rem; color: #ccc;"></i>
-                        <h4 class="mt-3">Belum Ada Data Monitoring Remaja</h4>
-                        <p class="text-muted">Anda belum memiliki data monitoring kesehatan remaja. Silakan hubungi admin atau kader kesehatan untuk mendaftarkan monitoring.</p>
+<div class="card">
+    <div class="card-body text-center py-5">
+        <i class="fas fa-user-friends fa-5x text-muted mb-3"></i>
+        <h4>Monitoring Kesehatan Remaja</h4>
+        <p class="text-muted">Fitur ini akan menampilkan data monitoring kesehatan remaja yang diinput oleh tenaga kesehatan.</p>
+        <a href="<?= base_url('pengguna/dashboard') ?>" class="btn btn-primary mt-3">
+            <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
+        </a>
+    </div>
+</div>
+<?php else: ?>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-user"></i> Data Identitas Remaja</h3>
+                <div class="card-tools">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-danger" onclick="window.location.href='<?= base_url('pengguna/monitoring-remaja/export-pdf/' . $monitoring['id']) ?>'"><i class="fas fa-file-pdf"></i> PDF</button>
+                        <button type="button" class="btn btn-sm btn-success" onclick="window.location.href='<?= base_url('pengguna/monitoring-remaja/export-excel/' . $monitoring['id']) ?>'"><i class="fas fa-file-excel"></i> Excel</button>
                     </div>
                 </div>
             </div>
-        </div>
-    <?php else: ?>
-        <!-- Data Identitas -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header bg-info text-white">
-                        <h6 class="mb-0"><i class="ti ti-user"></i> Data Identitas</h6>
-                    </div>
-                    <div class="card-body">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
                         <table class="table table-sm table-borderless">
-                            <tr><td><strong>Nama Lengkap</strong></td><td>: <?= esc($identitas['nama_lengkap']) ?></td></tr>
-                            <tr><td><strong>NIK</strong></td><td>: <?= esc($identitas['nik'] ?: '-') ?></td></tr>
-                            <tr><td><strong>Tanggal Lahir</strong></td><td>: <?= date('d M Y', strtotime($identitas['tanggal_lahir'])) ?></td></tr>
-                            <tr><td><strong>Jenis Kelamin</strong></td><td>: <?= $identitas['jenis_kelamin'] === 'L' ? 'Laki-laki' : 'Perempuan' ?></td></tr>
-                            <tr><td><strong>Nama Wali</strong></td><td>: <?= esc($identitas['nama_wali']) ?></td></tr>
-                            <tr><td><strong>No. HP Wali</strong></td><td>: <?= esc($identitas['no_hp_wali']) ?></td></tr>
+                            <tr><th width="40%">Nama Lengkap</th><td>: <?= esc($identitas['nama_lengkap']) ?></td></tr>
+                            <tr><th>NIK</th><td>: <?= esc($identitas['nik'] ?: '-') ?></td></tr>
+                            <tr><th>Tanggal Lahir</th><td>: <?= date('d M Y', strtotime($identitas['tanggal_lahir'])) ?></td></tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-sm table-borderless">
+                            <tr><th width="40%">Jenis Kelamin</th><td>: <?= $identitas['jenis_kelamin'] === 'L' ? 'Laki-laki' : 'Perempuan' ?></td></tr>
+                            <tr><th>Nama Wali</th><td>: <?= esc($identitas['nama_wali']) ?></td></tr>
+                            <tr><th>No. HP Wali</th><td>: <?= esc($identitas['no_hp_wali']) ?></td></tr>
                         </table>
                     </div>
                 </div>
             </div>
-
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header bg-info text-white">
-                        <h6 class="mb-0"><i class="ti ti-chart-line"></i> Ringkasan</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span>Total Kunjungan</span>
-                            <h3 class="mb-0 text-info"><?= $totalKunjungan ?></h3>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span>Status</span>
-                            <span class="badge bg-success">Aktif</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3><?= $totalKunjungan ?></h3>
+                <p>Total Kunjungan Pemeriksaan</p>
+            </div>
+            <div class="icon"><i class="fas fa-clipboard-list"></i></div>
+        </div>
+    </div>
+</div>
 
-        <!-- Riwayat Kunjungan -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header bg-success text-white">
-                        <h5 class="mb-0"><i class="ti ti-history"></i> Riwayat Kunjungan (<?= $totalKunjungan ?> Kunjungan)</h5>
-                    </div>
+<div class="card">
+    <div class="card-header" style="background:#047d78;color:#fff;">
+        <h3 class="card-title"><i class="fas fa-history"></i> Riwayat Kunjungan (<?= $totalKunjungan ?> Kunjungan)</h3>
+    </div>
                     <div class="card-body">
                         <?php if (empty($allKunjungan)): ?>
                             <p class="text-muted text-center py-4">Belum ada data kunjungan</p>
@@ -76,17 +76,17 @@
                                 <?php foreach ($allKunjungan as $index => $detail): ?>
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button <?= $index !== 0 ? 'collapsed' : '' ?>" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $detail['kunjungan']['id'] ?>">
-                                            <strong>Kunjungan ke-<?= $detail['kunjungan']['kunjungan_ke'] ?></strong>
-                                            <span class="badge bg-secondary ms-2"><?= date('d M Y', strtotime($detail['kunjungan']['tanggal_kunjungan'])) ?></span>
+                                        <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse<?= $detail['kunjungan']['id'] ?>">
+                                            <strong>Kunjungan ke-<?= $detail['kunjungan']['kunjungan_ke'] ?></strong> - <?= date('d M Y', strtotime($detail['kunjungan']['tanggal_kunjungan'])) ?>
+                                            <?php if ($index === 0): ?><span class="badge badge-success">Terbaru</span><?php endif; ?>
                                         </button>
                                     </h2>
                                     <div id="collapse<?= $detail['kunjungan']['id'] ?>" class="accordion-collapse collapse <?= $index === 0 ? 'show' : '' ?>" data-bs-parent="#accordionKunjungan">
                                         <div class="accordion-body">
                                             <div class="row">
                                                 <!-- Antropometri -->
-                                                <div class="col-md-6 mb-3">
-                                                    <h6 class="text-info"><i class="ti ti-ruler"></i> Antropometri</h6>
+                                                <div class="col-md-6">
+                                                    <h6><i class="fas fa-ruler"></i> Antropometri</h6>
                                                     <?php if ($detail['antropometri']): ?>
                                                     <table class="table table-sm">
                                                         <tr><td>Berat Badan</td><td><strong><?= $detail['antropometri']['berat_badan'] ?> kg</strong></td></tr>
@@ -98,8 +98,8 @@
                                                 </div>
 
                                                 <!-- Skrining Anemia -->
-                                                <div class="col-md-6 mb-3">
-                                                    <h6 class="text-info"><i class="ti ti-heart-rate-monitor"></i> Skrining Anemia</h6>
+                                                <div class="col-md-6">
+                                                    <h6><i class="fas fa-heartbeat"></i> Skrining Anemia</h6>
                                                     <?php if ($detail['anemia']): ?>
                                                         <?php $gejala = json_decode($detail['anemia']['gejala_anemia'], true) ?? []; ?>
                                                         <?php if (empty($gejala) || in_array('Tidak Ada', $gejala)): ?>
@@ -116,8 +116,8 @@
 
                                                 <!-- Riwayat Haid (jika perempuan) -->
                                                 <?php if ($identitas['jenis_kelamin'] === 'P' && $detail['haid']): ?>
-                                                <div class="col-md-6 mb-3">
-                                                    <h6 class="text-info"><i class="ti ti-calendar-event"></i> Riwayat Haid</h6>
+                                                <div class="col-md-6">
+                                                    <h6><i class="fas fa-calendar"></i> Riwayat Haid</h6>
                                                     <table class="table table-sm">
                                                         <tr><td>Sudah Menstruasi</td><td><strong><?= $detail['haid']['sudah_menstruasi'] ?></strong></td></tr>
                                                         <tr><td>Keteraturan</td><td><strong><?= $detail['haid']['keteraturan_haid'] ?></strong></td></tr>
@@ -127,8 +127,8 @@
                                                 <?php endif; ?>
 
                                                 <!-- Gaya Hidup -->
-                                                <div class="col-md-6 mb-3">
-                                                    <h6 class="text-info"><i class="ti ti-activity"></i> Gaya Hidup & Risiko PTM</h6>
+                                                <div class="col-md-6">
+                                                    <h6><i class="fas fa-running"></i> Gaya Hidup & Risiko PTM</h6>
                                                     <?php if ($detail['gaya_hidup']): ?>
                                                         <?php $risiko = json_decode($detail['gaya_hidup']['risiko_ptm'], true) ?? []; ?>
                                                         <?php if (empty($risiko) || in_array('Tidak Ada', $risiko)): ?>
@@ -144,8 +144,8 @@
                                                 </div>
 
                                                 <!-- Suplementasi -->
-                                                <div class="col-md-6 mb-3">
-                                                    <h6 class="text-info"><i class="ti ti-pill"></i> Suplementasi & Gizi</h6>
+                                                <div class="col-md-6">
+                                                    <h6><i class="fas fa-pills"></i> Suplementasi & Gizi</h6>
                                                     <?php if ($detail['suplementasi']): ?>
                                                     <table class="table table-sm">
                                                         <tr><td>Dapat TTD</td><td><?= $detail['suplementasi']['dapat_ttd'] ? '<span class="badge bg-success">Ya</span>' : '<span class="badge bg-secondary">Tidak</span>' ?></td></tr>
@@ -156,8 +156,8 @@
                                                 </div>
 
                                                 <!-- Swamedikasi -->
-                                                <div class="col-md-6 mb-3">
-                                                    <h6 class="text-info"><i class="ti ti-first-aid-kit"></i> Perilaku Swamedikasi</h6>
+                                                <div class="col-md-6">
+                                                    <h6><i class="fas fa-first-aid"></i> Perilaku Swamedikasi</h6>
                                                     <?php if ($detail['swamedikasi']): ?>
                                                         <?php $perilaku = json_decode($detail['swamedikasi']['perilaku_swamedikasi'], true) ?? []; ?>
                                                         <?php if (empty($perilaku)): ?>

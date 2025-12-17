@@ -1,4 +1,5 @@
 <?= $this->extend('layouts/app') ?>
+<?= $this->section('title') ?>Login<?= $this->endSection() ?>
 <?= $this->section('content') ?>
 
 <style>

@@ -6,7 +6,7 @@
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h3 class="card-title">Data Admin</h3>
-        <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalPengguna" onclick="setModalTitle('Tambah Admin')">
+        <button class="btn btn-primary btn-sm" onclick="tambahAdmin()">
             <i class="fas fa-plus"></i> Tambah
         </button>
     </div>

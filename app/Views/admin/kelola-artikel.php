@@ -23,7 +23,7 @@
                     </button>
                 </li>
             </ul>
-            <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalArtikel">
+            <button class="btn btn-primary btn-sm" onclick="tambahArtikel()">
                 <i class="fas fa-plus"></i> Tambah
             </button>
         </div>

@@ -12,23 +12,25 @@
                     <div class="mb-3">
                         <label>Username *</label>
                         <div class="error-message text-danger small mb-1" id="error-username" style="display:none;"></div>
-                        <input type="text" class="form-control form-control-sm" name="username" id="usernameInput" required>
+                        <input type="text" class="form-control form-control-sm" name="username" id="usernameInput" placeholder="Masukkan username" required>
+                        <small class="text-muted helper-text" id="helper-username" style="display:none;"><i class="bi bi-info-circle"></i> Minimal 3 karakter</small>
                     </div>
                     <div class="mb-3">
                         <label>Email *</label>
                         <div class="error-message text-danger small mb-1" id="error-email" style="display:none;"></div>
-                        <input type="email" class="form-control form-control-sm" name="email" id="emailInput" required>
+                        <input type="email" class="form-control form-control-sm" name="email" id="emailInput" placeholder="contoh@email.com" required>
+                        <small class="text-muted helper-text" id="helper-email" style="display:none;"><i class="bi bi-info-circle"></i> Gunakan format email yang valid</small>
                     </div>
                     <div class="mb-3" id="passwordFieldAdd">
                         <label>Password *</label>
                         <div class="error-message text-danger small mb-1" id="error-password" style="display:none;"></div>
                         <div class="input-group input-group-sm">
-                            <input type="password" class="form-control" name="password" id="password" required>
+                            <input type="password" class="form-control" name="password" id="password" placeholder="Masukkan password" required>
                             <button class="btn btn-outline-secondary" type="button" onclick="togglePassword()">
                                 <i class="bi bi-eye" id="toggleIcon"></i>
                             </button>
                         </div>
-                        <small class="text-muted"><i class="bi bi-info-circle"></i> Minimal 8 karakter</small>
+                        <small class="text-muted helper-text" id="helper-password" style="display:none;"><i class="bi bi-info-circle"></i> Minimal 8 karakter, kombinasi huruf dan angka</small>
                     </div>
                     <div class="mb-3" id="passwordFieldEdit" style="display:none;">
                         <div class="form-check mb-2">
@@ -46,7 +48,7 @@
                                     <i class="bi bi-eye" id="toggleIconEdit"></i>
                                 </button>
                             </div>
-                            <small class="text-muted"><i class="bi bi-info-circle"></i> Minimal 8 karakter</small>
+                            <small class="text-muted helper-text" id="helper-password-edit" style="display:none;"><i class="bi bi-info-circle"></i> Minimal 8 karakter, kombinasi huruf dan angka</small>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -54,23 +56,21 @@
                         <div class="error-message text-danger small mb-1" id="error-phone_number" style="display:none;"></div>
                         <input type="text" class="form-control form-control-sm" name="phone_number" id="phone_number" 
                                placeholder="08xxxxxxxxxx" pattern="^08[0-9]{8,13}$" maxlength="15" required>
-                        <small class="text-muted"><i class="bi bi-info-circle"></i> Format: 08xxxxxxxxxx (10-15 digit, dimulai dengan 08)</small>
+                        <small class="text-muted helper-text" id="helper-phone" style="display:none;"><i class="bi bi-info-circle"></i> Harus dimulai dengan 08, minimal 10 digit, maksimal 15 digit</small>
                     </div>
                     <div class="mb-2">
-                        <label>Padukuhan *</label>
+                        <label>Padukuhan</label>
                         <?php if (session()->get('role') === 'admin'): ?>
                             <?php 
                             $padukuhanModel = new \App\Models\PadukuhanModel();
                             $currentPadukuhan = $padukuhanModel->find(session()->get('padukuhan_id'));
                             ?>
-                            <select class="form-select form-select-sm" name="padukuhan_id" id="padukuhan_id" disabled required>
-                                <option value="<?= session()->get('padukuhan_id') ?>" selected><?= esc($currentPadukuhan['nama_padukuhan']) ?></option>
-                            </select>
-                            <small class="text-muted"><i class="bi bi-info-circle"></i> Otomatis terisi: <?= esc($currentPadukuhan['nama_padukuhan']) ?></small>
+                            <p class="text-muted small mb-0 mt-1"><i class="bi bi-info-circle"></i> <em>Pengguna ini akan otomatis terdaftar di Padukuhan: <strong><?= esc($currentPadukuhan['nama_padukuhan']) ?></strong></em></p>
                             <input type="hidden" name="padukuhan_id" value="<?= session()->get('padukuhan_id') ?>">
                         <?php else: ?>
+                            <div class="error-message text-danger small mb-1" id="error-padukuhan_id" style="display:none;"></div>
                             <select class="form-select form-select-sm" name="padukuhan_id" id="padukuhan_id" required>
-                                <option value="">Pilih Padukuhan</option>
+                                <option value="">-- Pilih Padukuhan --</option>
                                 <?php 
                                 $padukuhanModel = new \App\Models\PadukuhanModel();
                                 $padukuhanList = $padukuhanModel->findAll();
@@ -79,6 +79,7 @@
                                 <option value="<?= $p['id'] ?>"><?= esc($p['nama_padukuhan']) ?></option>
                                 <?php endforeach; ?>
                             </select>
+                            <small class="text-muted helper-text" id="helper-padukuhan" style="display:none;"><i class="bi bi-info-circle"></i> Pilih padukuhan untuk pengguna ini</small>
                         <?php endif; ?>
                     </div>
                     <?php if (session()->get('role') === 'superadmin'): ?>
@@ -147,6 +148,7 @@ function togglePasswordReset() {
         passwordInput.required = false;
         passwordInput.disabled = true;
         passwordInput.value = '';
+        $('#helper-password-edit').hide();
     }
 }
 
@@ -176,6 +178,95 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    
+    // Show/hide helper text on focus/blur
+    $('#usernameInput').on('focus', function() {
+        $('#helper-username').slideDown(200);
+    }).on('blur', function() {
+        $('#helper-username').slideUp(200);
+    });
+    
+    $('#emailInput').on('focus', function() {
+        $('#helper-email').slideDown(200);
+    }).on('blur', function() {
+        $('#helper-email').slideUp(200);
+    });
+    
+    $('#password').on('focus', function() {
+        $('#helper-password').slideDown(200);
+    }).on('blur', function() {
+        $('#helper-password').slideUp(200);
+    });
+    
+    $('#password_edit').on('focus', function() {
+        $('#helper-password-edit').slideDown(200);
+    }).on('blur', function() {
+        $('#helper-password-edit').slideUp(200);
+    });
+    
+    $('#phone_number').on('focus', function() {
+        $('#helper-phone').slideDown(200);
+    }).on('blur', function() {
+        $('#helper-phone').slideUp(200);
+    });
+    
+    $('#padukuhan_id').on('focus', function() {
+        $('#helper-padukuhan').slideDown(200);
+    }).on('blur', function() {
+        $('#helper-padukuhan').slideUp(200);
+    });
+    
+    // Modal Artikel
+    $('#titleInput').on('focus', function() {
+        $('#helper-title').slideDown(200);
+    }).on('blur', function() {
+        $('#helper-title').slideUp(200);
+    });
+    
+    $('#contentArtikel').on('focus', function() {
+        $('#helper-content').slideDown(200);
+    }).on('blur', function() {
+        $('#helper-content').slideUp(200);
+    });
+    
+    // Modal FAQ
+    $('#pertanyaanInput').on('focus', function() {
+        $('#helper-pertanyaan').slideDown(200);
+    }).on('blur', function() {
+        $('#helper-pertanyaan').slideUp(200);
+    });
+    
+    $('#jawabanFaq').on('focus', function() {
+        $('#helper-jawaban').slideDown(200);
+    }).on('blur', function() {
+        $('#helper-jawaban').slideUp(200);
+    });
+    
+    // Modal Poster
+    $('#posterTitleInput').on('focus', function() {
+        $('#helper-poster-title').slideDown(200);
+    }).on('blur', function() {
+        $('#helper-poster-title').slideUp(200);
+    });
+    
+    $('#linkDriveInput').on('focus', function() {
+        $('#helper-link-drive').slideDown(200);
+    }).on('blur', function() {
+        $('#helper-link-drive').slideUp(200);
+    });
+    
+    // Modal Modul
+    $('#modulTitleInput').on('focus', function() {
+        $('#helper-modul-title').slideDown(200);
+    }).on('blur', function() {
+        $('#helper-modul-title').slideUp(200);
+    });
+    
+    $('#modulLinkDriveInput').on('focus', function() {
+        $('#helper-modul-link-drive').slideDown(200);
+    }).on('blur', function() {
+        $('#helper-modul-link-drive').slideUp(200);
+    });
 });
 </script>
 
@@ -193,7 +284,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="mb-3">
                         <label>Judul *</label>
                         <div class="error-message text-danger small mb-1" id="error-title" style="display:none;"></div>
-                        <input type="text" class="form-control form-control-sm" name="title" id="titleInput" required>
+                        <input type="text" class="form-control form-control-sm" name="title" id="titleInput" placeholder="Masukkan judul artikel" required>
+                        <small class="text-muted helper-text" id="helper-title" style="display:none;"><i class="bi bi-info-circle"></i> Minimal 10 karakter</small>
                     </div>
                     <div class="mb-3">
                         <label>Kategori * <small class="text-muted">(Pilih minimal 1)</small></label>
@@ -214,7 +306,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="mb-3">
                         <label>Konten *</label>
                         <div class="error-message text-danger small mb-1" id="error-content" style="display:none;"></div>
-                        <textarea class="form-control form-control-sm" name="content" id="contentArtikel" rows="5" required></textarea>
+                        <textarea class="form-control form-control-sm" name="content" id="contentArtikel" rows="5" placeholder="Tulis konten artikel di sini..." required></textarea>
+                        <small class="text-muted helper-text" id="helper-content" style="display:none;"><i class="bi bi-info-circle"></i> Minimal 50 karakter</small>
                     </div>
                     <div class="mb-3">
                         <label>Gambar * 
@@ -264,12 +357,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="mb-3">
                         <label>Pertanyaan *</label>
                         <div class="error-message text-danger small mb-1" id="error-pertanyaan" style="display:none;"></div>
-                        <textarea class="form-control form-control-sm" name="pertanyaan" id="pertanyaanInput" rows="3" required></textarea>
+                        <textarea class="form-control form-control-sm" name="pertanyaan" id="pertanyaanInput" rows="3" placeholder="Tulis pertanyaan di sini..." required></textarea>
+                        <small class="text-muted helper-text" id="helper-pertanyaan" style="display:none;"><i class="bi bi-info-circle"></i> Minimal 10 karakter</small>
                     </div>
                     <div class="mb-3">
                         <label>Jawaban *</label>
                         <div class="error-message text-danger small mb-1" id="error-jawaban" style="display:none;"></div>
-                        <textarea class="form-control form-control-sm" name="jawaban" id="jawabanFaq" rows="5" required></textarea>
+                        <textarea class="form-control form-control-sm" name="jawaban" id="jawabanFaq" rows="5" placeholder="Tulis jawaban di sini..." required></textarea>
+                        <small class="text-muted helper-text" id="helper-jawaban" style="display:none;"><i class="bi bi-info-circle"></i> Minimal 20 karakter</small>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -370,7 +465,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="mb-3">
                         <label>Judul *</label>
                         <div class="error-message text-danger small mb-1" id="error-poster-title" style="display:none;"></div>
-                        <input type="text" class="form-control form-control-sm" name="title" id="posterTitleInput" required>
+                        <input type="text" class="form-control form-control-sm" name="title" id="posterTitleInput" placeholder="Masukkan judul poster" required>
+                        <small class="text-muted helper-text" id="helper-poster-title" style="display:none;"><i class="bi bi-info-circle"></i> Minimal 5 karakter</small>
                     </div>
                     <div class="mb-3">
                         <label>Kategori * <small class="text-muted">(Pilih minimal 1)</small></label>
@@ -392,6 +488,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <label>Link Google Drive *</label>
                         <div class="error-message text-danger small mb-1" id="error-link_drive" style="display:none;"></div>
                         <input type="url" class="form-control form-control-sm" name="link_drive" id="linkDriveInput" placeholder="https://drive.google.com/..." required>
+                        <small class="text-muted helper-text" id="helper-link-drive" style="display:none;"><i class="bi bi-info-circle"></i> Harus berupa link dari Google Drive</small>
                     </div>
                     <div class="mb-3">
                         <label>Thumbnail *</label>
@@ -423,7 +520,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="mb-3">
                         <label>Judul *</label>
                         <div class="error-message text-danger small mb-1" id="error-modul-title" style="display:none;"></div>
-                        <input type="text" class="form-control form-control-sm" name="title" id="modulTitleInput" required>
+                        <input type="text" class="form-control form-control-sm" name="title" id="modulTitleInput" placeholder="Masukkan judul modul" required>
+                        <small class="text-muted helper-text" id="helper-modul-title" style="display:none;"><i class="bi bi-info-circle"></i> Minimal 5 karakter</small>
                     </div>
                     <div class="mb-3">
                         <label>Kategori * <small class="text-muted">(Pilih minimal 1)</small></label>
@@ -445,6 +543,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <label>Link Google Drive *</label>
                         <div class="error-message text-danger small mb-1" id="error-modul-link_drive" style="display:none;"></div>
                         <input type="url" class="form-control form-control-sm" name="link_drive" id="modulLinkDriveInput" placeholder="https://drive.google.com/..." required>
+                        <small class="text-muted helper-text" id="helper-modul-link-drive" style="display:none;"><i class="bi bi-info-circle"></i> Harus berupa link dari Google Drive</small>
                     </div>
                     <div class="mb-3">
                         <label>Thumbnail *</label>

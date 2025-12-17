@@ -409,6 +409,7 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('scripts') ?>
+<script src="<?= base_url('assets/js/form-guard.js') ?>"></script>
 <script>
 let currentStep = 1;
 const totalSteps = 7;

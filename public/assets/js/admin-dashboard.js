@@ -1,6 +1,100 @@
 const baseUrl = window.location.origin;
 
+// ARTIKEL
+function tambahArtikel() {
+    $('#formArtikel')[0].reset();
+    $('#artikelId').val('');
+    $('#titleArtikel').text('Tambah Artikel');
+    $('#titleInput').val('');
+    $('.artikel-category-checkbox').prop('checked', false);
+    if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances.contentArtikel) {
+        CKEDITOR.instances.contentArtikel.setData('');
+    }
+    $('#imageArtikel').attr('required', 'required');
+    $('.error-message').hide().text('');
+    $('.form-control, .form-select').removeClass('is-invalid');
+    $('.helper-text').hide();
+    $('#modalArtikel').modal('show');
+}
+
+// FAQ
+function tambahFaq() {
+    $('#formFaq')[0].reset();
+    $('#faqId').val('');
+    $('#titleFaq').text('Tambah FAQ');
+    $('.faq-category-checkbox').prop('checked', false);
+    $('#pertanyaanInput').val('');
+    if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances.jawabanFaq) {
+        CKEDITOR.instances.jawabanFaq.setData('');
+    }
+    $('.error-message').hide().text('');
+    $('.form-control, .form-select').removeClass('is-invalid');
+    $('.helper-text').hide();
+    $('#modalFaq').modal('show');
+}
+
+// POSTER
+function tambahPoster() {
+    $('#formPoster')[0].reset();
+    $('#posterId').val('');
+    $('#titlePoster').text('Tambah Poster');
+    $('#posterTitleInput').val('');
+    $('.poster-category-checkbox').prop('checked', false);
+    $('#linkDriveInput').val('');
+    $('#thumbnailPoster').attr('required', 'required');
+    $('.error-message').hide().text('');
+    $('.form-control, .form-select').removeClass('is-invalid');
+    $('.helper-text').hide();
+    $('#modalPoster').modal('show');
+}
+
+// MODUL
+function tambahModul() {
+    $('#formModul')[0].reset();
+    $('#modulId').val('');
+    $('#titleModul').text('Tambah Modul');
+    $('#modulTitleInput').val('');
+    $('.modul-category-checkbox').prop('checked', false);
+    $('#modulLinkDriveInput').val('');
+    $('#thumbnailModul').attr('required', 'required');
+    $('.error-message').hide().text('');
+    $('.form-control, .form-select').removeClass('is-invalid');
+    $('.helper-text').hide();
+    $('#modalModul').modal('show');
+}
+
 // PENGGUNA
+function tambahPengguna() {
+    // Reset form completely
+    $('#formPengguna')[0].reset();
+    $('#penggunaId').val('');
+    $('#titlePengguna').text('Tambah Pengguna');
+    
+    // Clear all inputs
+    $('#usernameInput').val('');
+    $('#emailInput').val('');
+    $('#phone_number').val('');
+    $('#password').val('');
+    $('#padukuhan_id').val('');
+    
+    // Show add password field, hide edit password field
+    $('#passwordFieldAdd').show();
+    $('#password').attr('disabled', false).attr('required', 'required');
+    
+    $('#passwordFieldEdit').hide();
+    $('#password_edit').attr('disabled', true).removeAttr('required').val('');
+    $('#resetPasswordCheck').prop('checked', false);
+    $('#passwordResetField').hide();
+    
+    // Clear error messages and helper texts
+    $('.error-message').hide().text('');
+    $('.form-control, .form-select').removeClass('is-invalid');
+    $('.helper-text').hide();
+    
+    // Show modal
+    $('#modalPengguna').modal('show');
+}
+
 $('#formPengguna').on('submit', function(e) {
     e.preventDefault();
     
@@ -21,6 +115,10 @@ $('#formPengguna').on('submit', function(e) {
         $('#error-username').text('Username minimal 3 karakter').show();
         $('#usernameInput').addClass('is-invalid');
         hasError = true;
+    } else if (username.length > 50) {
+        $('#error-username').text('Username maksimal 50 karakter').show();
+        $('#usernameInput').addClass('is-invalid');
+        hasError = true;
     }
     
     // Validate email
@@ -31,7 +129,7 @@ $('#formPengguna').on('submit', function(e) {
         $('#emailInput').addClass('is-invalid');
         hasError = true;
     } else if (!emailRegex.test(email)) {
-        $('#error-email').text('Format email tidak valid').show();
+        $('#error-email').text('Format email tidak valid (contoh: nama@email.com)').show();
         $('#emailInput').addClass('is-invalid');
         hasError = true;
     }
@@ -47,6 +145,10 @@ $('#formPengguna').on('submit', function(e) {
             $('#error-password').text('Password minimal 8 karakter').show();
             $('#password').addClass('is-invalid');
             hasError = true;
+        } else if (!/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)) {
+            $('#error-password').text('Password harus mengandung huruf dan angka').show();
+            $('#password').addClass('is-invalid');
+            hasError = true;
         }
     } else if ($('#resetPasswordCheck').is(':checked')) {
         const passwordEdit = $('#password_edit').val();
@@ -56,6 +158,10 @@ $('#formPengguna').on('submit', function(e) {
             hasError = true;
         } else if (passwordEdit.length < 8) {
             $('#error-password-edit').text('Password minimal 8 karakter').show();
+            $('#password_edit').addClass('is-invalid');
+            hasError = true;
+        } else if (!/[a-zA-Z]/.test(passwordEdit) || !/[0-9]/.test(passwordEdit)) {
+            $('#error-password-edit').text('Password harus mengandung huruf dan angka').show();
             $('#password_edit').addClass('is-invalid');
             hasError = true;
         }
@@ -75,6 +181,20 @@ $('#formPengguna').on('submit', function(e) {
         $('#error-phone_number').text('Nomor harus 10-15 digit').show();
         $('#phone_number').addClass('is-invalid');
         hasError = true;
+    } else if (!/^[0-9]+$/.test(phone)) {
+        $('#error-phone_number').text('Nomor hanya boleh berisi angka').show();
+        $('#phone_number').addClass('is-invalid');
+        hasError = true;
+    }
+    
+    // Validate padukuhan (only for superadmin)
+    if ($('#padukuhan_id').is(':visible') && !$('#padukuhan_id').is(':disabled')) {
+        const padukuhan = $('#padukuhan_id').val();
+        if (!padukuhan) {
+            $('#error-padukuhan_id').text('Padukuhan wajib dipilih').show();
+            $('#padukuhan_id').addClass('is-invalid');
+            hasError = true;
+        }
     }
     
     if (hasError) {
@@ -117,8 +237,8 @@ function editPengguna(id) {
     const user = dataUsers.find(u => u.id == id);
     $('#titlePengguna').text('Edit Pengguna');
     $('#penggunaId').val(user.id);
-    $('[name="username"]').val(user.username);
-    $('[name="email"]').val(user.email);
+    $('#usernameInput').val(user.username);
+    $('#emailInput').val(user.email);
     $('#phone_number').val(user.phone_number);
     $('#padukuhan_id').val(user.padukuhan_id);
     if ($('[name="role"]').length) {
@@ -611,14 +731,25 @@ $('.modal').on('hidden.bs.modal', function() {
         CKEDITOR.instances.jawabanFaq.setData('');
     }
     
-    // Reset password fields
-    $('#passwordFieldAdd').show();
-    $('#password').attr('disabled', false).attr('required', 'required');
-    
-    $('#passwordFieldEdit').hide();
-    $('#password_edit').attr('disabled', true).removeAttr('required');
-    $('#resetPasswordCheck').prop('checked', false);
-    $('#passwordResetField').hide();
+    // Reset password fields for Pengguna modal
+    if ($(this).attr('id') === 'modalPengguna') {
+        $('#passwordFieldAdd').show();
+        $('#password').attr('disabled', false).attr('required', 'required').val('');
+        
+        $('#passwordFieldEdit').hide();
+        $('#password_edit').attr('disabled', true).removeAttr('required').val('');
+        $('#resetPasswordCheck').prop('checked', false);
+        $('#passwordResetField').hide();
+        
+        // Clear all input fields
+        $('#usernameInput').val('');
+        $('#emailInput').val('');
+        $('#phone_number').val('');
+        $('#padukuhan_id').val('');
+        
+        // Hide all helper texts
+        $('.helper-text').hide();
+    }
 });
 
 // Clear error on input change - Artikel
@@ -633,7 +764,7 @@ $('.artikel-category-checkbox').on('change', function() {
 });
 
 // Clear error on input change - Pengguna
-$('#usernameInput, #emailInput, #password, #password_edit, #phone_number').on('change input', function() {
+$('#usernameInput, #emailInput, #password, #password_edit, #phone_number, #padukuhan_id').on('change input', function() {
     const fieldName = $(this).attr('name');
     const errorId = this.id === 'password_edit' ? 'error-password-edit' : `error-${fieldName}`;
     $(`#${errorId}`).hide().text('');

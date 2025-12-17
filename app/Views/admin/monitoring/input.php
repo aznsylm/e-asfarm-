@@ -83,6 +83,11 @@
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
+                                    <label class="form-label">Nomor Telepon/WhatsApp *</label>
+                                    <input type="text" name="nomor_telepon" class="form-control" placeholder="08xxxxxxxxxx" pattern="^08[0-9]{8,13}$" maxlength="15" required>
+                                    <small class="text-muted">Format: 08xxxxxxxxxx</small>
+                                </div>
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Rencana Tanggal Persalinan *</label>
                                     <input type="date" name="rencana_tanggal_persalinan" class="form-control" required>
                                 </div>
@@ -199,6 +204,7 @@
 
 <?= $this->section('scripts') ?>
 <script src="<?= base_url('assets/js/monitoring-wizard.js') ?>"></script>
+<script src="<?= base_url('assets/js/form-guard.js') ?>"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM Loaded - Initializing form handler');

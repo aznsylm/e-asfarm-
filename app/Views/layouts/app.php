@@ -9,6 +9,15 @@
 
     <!-- Favicon icon-->
     <link rel="shortcut icon" type="image/png" href="<?= base_url('assets/images/logos/E-Asfarm-Logo.png'); ?>" />
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#047d78">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="E-Asfarm">
+    <link rel="manifest" href="<?= base_url('manifest.json'); ?>">
+    <link rel="apple-touch-icon" href="<?= base_url('assets/images/logos/icon-192x192.png'); ?>">
 
     <!-- Core Css -->
     <link rel="stylesheet" href="<?= base_url('assets/css/styles.css'); ?>" />
@@ -396,6 +405,22 @@
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
+    <!-- PWA Service Worker Registration -->
+    <script>
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('[PWA] Service Worker registered:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('[PWA] Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
+    
     <!-- WhatsApp Button Script -->
     <script>
         let currentStep = 1;
